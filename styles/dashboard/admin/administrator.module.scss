@@ -1,0 +1,13 @@
+@import "../variables.module";
+.container {
+   width: auto;
+   padding: 10px;
+   display: flex;
+   flex-direction: column;
+   gap: 10px;
+   .overlay {
+      display: flex;
+      position: absolute;
+      inset: 0;
+   }
+}

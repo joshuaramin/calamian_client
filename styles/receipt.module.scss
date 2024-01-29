@@ -1,0 +1,67 @@
+.container {
+   width: 219px;
+   page-break-after: always;
+   padding: 10px;
+   h2 {
+      font-size: 14px;
+   }
+   span {
+      font-size: 11px;
+   }
+   .header,
+   .footer {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      text-align: center;
+      gap: 5px;
+   }
+   .time {
+      padding: 5px 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      h2 {
+         font-size: 12px;
+      }
+      span {
+         font-size: 13px;
+      }
+   }
+   table {
+      width: 100%;
+      tr {
+         width: 100%;
+         td {
+            &:nth-child(1) {
+               text-align: left;
+            }
+            &:nth-child(2) {
+               text-align: left;
+            }
+            &:nth-child(3) {
+               text-align: left;
+            }
+            font-size: 12px;
+         }
+      }
+   }
+
+   .totals {
+      table {
+         width: 100%;
+         tr {
+            width: 100%;
+            td {
+               width: 75%;
+               font-size: 12px;
+               &:nth-child(2) {
+                  text-align: left;
+               }
+            }
+         }
+      }
+   }
+}

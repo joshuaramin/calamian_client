@@ -1,0 +1,95 @@
+@import "../../../styles/dashboard/variables.module";
+
+.container {
+   width: 100%;
+   height: 100vh;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   flex-direction: column;
+   padding: 20px;
+   .con {
+      width: 500px;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 25px;
+      padding: 5px;
+      .message {
+         width: 100%;
+         border-radius: 5px;
+         span {
+            color: $secondaryBtn;
+         }
+      }
+      .intro {
+         width: 100%;
+         display: flex;
+         flex-direction: column;
+         gap: 10px;
+         h2 {
+            font-size: 35px;
+         }
+         span {
+            font-size: 16px;
+         }
+      }
+      form {
+         width: 100%;
+         display: flex;
+         flex-direction: column;
+         gap: 15px;
+         .inputForm,
+         button {
+            width: 100%;
+            height: 50px;
+            padding: 10px;
+            border-radius: 5px;
+            border: none;
+            outline: none;
+            font-size: 14px;
+         }
+         .inputForm {
+            box-shadow: 0px 0px 3px 0px #ccc;
+         }
+         button {
+            background-color: $primaryBtn;
+            color: #fff;
+            cursor: pointer;
+            span {
+               font-size: 16px;
+            }
+            &:disabled {
+               background-color: $disableBtn;
+            }
+         }
+         .rememberMe {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            .checkBox {
+               appearance: none;
+               width: 18px;
+               height: 18px;
+               box-shadow: 0px 0px 3px 0px #ccc;
+               border-radius: 3px;
+               &:checked {
+                  background-color: $primaryBtn;
+               }
+            }
+            span {
+               font-size: 14px;
+            }
+         }
+      }
+   }
+   .copyright {
+      span {
+         color: #acacac;
+         font-size: 16px;
+      }
+   }
+}

@@ -1,0 +1,29 @@
+@import "../../variables.module";
+.container {
+   width: 100%;
+   padding: 10px;
+   .containerHeader {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      button {
+         padding: 10px 15px;
+         border-radius: 100px;
+         background-color: transparent;
+         border: none;
+         cursor: pointer;
+         &:hover {
+            background-color: $primaryBtn;
+            color: #fff;
+         }
+         span {
+            user-select: none;
+         }
+      }
+      .active {
+         background-color: $primaryBtn;
+         color: #fff;
+      }
+   }
+}

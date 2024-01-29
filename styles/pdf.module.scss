@@ -1,0 +1,78 @@
+@import "../styles/dashboard/variables.module";
+
+.container {
+   width: 612px;
+   height: 791px;
+   border: 1px solid #ccc;
+   padding: 5px;
+   display: flex;
+   justify-content: space-between;
+   flex-direction: column;
+   gap: 5px;
+   .header {
+      width: 100%;
+      height: 100px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding: 10px;
+      border-bottom: 1px solid #ccc;
+   }
+   .tables {
+      width: 100%;
+      height: 100%;
+      table {
+         width: 100%;
+         border-collapse: collapse;
+         thead,
+         tbody {
+            tr {
+               width: 100%;
+
+               th {
+                  border-bottom: 1px solid #000;
+                  background-color: $primaryBtn;
+                  color: #fff;
+                  height: 50px;
+                  &:nth-child(1) {
+                     border-right: 1px solid #000;
+                  }
+                  &:nth-child(2) {
+                     border-right: 1px solid #000;
+                  }
+                  &:nth-child(3) {
+                     border-right: 1px solid #000;
+                  }
+               }
+               td {
+                  height: 50px;
+                  border-bottom: 1px solid #000;
+                  text-align: center;
+                  &:nth-child(1) {
+                     border-right: 1px solid #000;
+                  }
+                  &:nth-child(2) {
+                     border-right: 1px solid #000;
+                  }
+                  &:nth-child(3) {
+                     border-right: 1px solid #000;
+                  }
+               }
+            }
+         }
+      }
+   }
+
+   .footer {
+      height: 70px;
+      background-color: $primaryBtn;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding: 0 10px;
+      h2 {
+         font-size: 18px;
+         color: #fff;
+      }
+   }
+}

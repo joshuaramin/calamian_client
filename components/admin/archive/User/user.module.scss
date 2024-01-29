@@ -1,0 +1,105 @@
+@import "../../../../styles/dashboard/variables.module";
+.container {
+   width: 100%;
+   padding: 10px 0;
+   table {
+      width: 100%;
+      border-collapse: collapse;
+      thead,
+      tbody {
+         width: 100%;
+         tr {
+            border-bottom: 1px solid #ccc;
+            &:nth-last-child(1) {
+               border: none;
+            }
+            th {
+               background-color: $primaryBtn;
+               color: #fff;
+               padding: 0 10px;
+               height: 60px;
+            }
+            td {
+               width: 250px;
+               vertical-align: middle;
+               text-align: center;
+               justify-content: center;
+               &:nth-child(1) {
+                  border-right: 1px solid #ccc;
+               }
+               &:nth-child(2) {
+                  border-right: 1px solid #ccc;
+               }
+               &:nth-child(3) {
+                  border-right: 1px solid #ccc;
+               }
+               &:nth-child(4) {
+                  border-right: 1px solid #ccc;
+               }
+               &:nth-child(5) {
+                  border-right: 1px solid #ccc;
+               }
+               &:nth-child(6) {
+                  border-right: 1px solid #ccc;
+               }
+               .overlay {
+                  width: 100%;
+                  inset: 0;
+                  position: fixed;
+                  background-color: rgba(255, 255, 255, 0.8);
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  z-index: 999;
+               }
+               .overlay2 {
+                  width: 100%;
+                  inset: 0;
+                  position: fixed;
+                  background-color: rgba(255, 255, 255, 0.2);
+                  display: flex;
+                  align-items: center;
+                  justify-content: flex-end;
+               }
+               padding: 10px;
+            }
+            .actionsBtn {
+               display: flex;
+               align-items: center;
+               justify-content: flex;
+               vertical-align: middle;
+               width: 100px;
+               .actBtn {
+                  height: 40px;
+                  width: 40px;
+                  border-radius: 100px;
+                  border: none;
+                  cursor: pointer;
+                  background-color: transparent;
+                  position: relative;
+                  svg {
+                     stroke: $primaryBtn;
+                  }
+                  &:hover {
+                     background-color: #e4e4e4;
+                     &::after {
+                        content: "UnArchive";
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        position: absolute;
+                        top: 28px;
+                        left: -12px;
+                        background-color: $primaryBtn;
+                        padding: 5px;
+                        border-radius: 5px;
+                        color: #fff;
+                        font-size: 12px;
+                     }
+                  }
+               }
+            }
+         }
+      }
+   }
+}

@@ -1,0 +1,203 @@
+@import "../../variables.module";
+
+.container {
+   width: 100%;
+   padding: 10px;
+   position: relative;
+
+   .overlay {
+      width: 100%;
+      inset: 0;
+      position: fixed;
+      background-color: rgba(255, 255, 255, 0.9);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+   }
+   .addbtn {
+      width: 100%;
+      height: 80px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 5px;
+      display: flex;
+      input {
+         width: 100%;
+         height: 50px;
+         border-radius: 3px;
+         outline: none;
+         border: none;
+         box-shadow: 0px 0px 3px 0px #ccc;
+         padding: 10px;
+      }
+      .goback {
+         width: 120px;
+         display: flex;
+         align-items: center;
+         gap: 3px;
+         svg {
+            stroke: #fff;
+         }
+      }
+      button {
+         width: 80px;
+         height: 50px;
+         border-radius: 3px;
+         background-color: $primaryBtn;
+         border-radius: 3px;
+         outline: none;
+         border: none;
+         display: flex;
+         align-items: center;
+         justify-content: center;
+         cursor: pointer;
+         span {
+            font-size: 15px;
+            color: #fff;
+         }
+      }
+   }
+   table {
+      width: 100%;
+      border-collapse: collapse;
+      thead,
+      tbody {
+         width: 100%;
+         tr {
+            border-bottom: 1px solid #ccc;
+            &:nth-last-child(1) {
+               border-bottom: 1px solid #ccc;
+            }
+            th {
+               background-color: $primaryBtn;
+               color: #fff;
+               padding: 0 10px;
+               height: 60px;
+               &:nth-child(1) {
+                  width: 40%;
+                  text-align: left;
+               }
+               &:nth-child(2) {
+                  width: 10%;
+                  text-align: center;
+               }
+               &:nth-child(3) {
+                  width: 10%;
+                  text-align: center;
+               }
+               &:nth-child(4) {
+                  width: 10%;
+                  text-align: center;
+               }
+               &:nth-child(5) {
+                  width: 18%;
+                  text-align: left;
+               }
+            }
+            td {
+               .overlay {
+                  width: 100%;
+                  inset: 0;
+                  position: fixed;
+                  background-color: rgba(255, 255, 255, 0.2);
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+               }
+               .overlay2 {
+                  width: 100%;
+                  inset: 0;
+                  position: fixed;
+                  background-color: rgba(255, 255, 255, 0.2);
+                  display: flex;
+                  align-items: center;
+                  justify-content: flex-end;
+               }
+               padding: 10px;
+               &:nth-child(1) {
+                  width: 40%;
+                  border-right: 1px solid #ccc;
+               }
+               &:nth-child(2) {
+                  width: 10%;
+                  text-align: center;
+                  border-right: 1px solid #ccc;
+               }
+               &:nth-child(3) {
+                  width: 10%;
+                  text-align: center;
+                  border-right: 1px solid #ccc;
+               }
+               &:nth-child(4) {
+                  width: 10%;
+                  text-align: center;
+                  border-right: 1px solid #ccc;
+               }
+               &:nth-child(5) {
+                  width: 18%;
+                  text-align: left;
+                  border-right: 1px solid #ccc;
+               }
+               &:nth-child(6) {
+                  width: 100%;
+                  display: flex;
+                  align-items: center;
+                  vertical-align: middle;
+               }
+            }
+            .actionsBtn {
+               display: flex;
+               align-items: center;
+               justify-content: center;
+               // width: 80px;
+               .actBtn {
+                  height: 40px;
+                  width: 40px;
+                  border-radius: 100px;
+                  border: none;
+                  cursor: pointer;
+                  background-color: transparent;
+                  svg {
+                     stroke: $primaryBtn;
+                  }
+                  &:hover {
+                     background-color: #e4e4e4;
+                     &:nth-child(1) {
+                        &::after {
+                           content: "Edit";
+                           display: flex;
+                           align-items: center;
+                           justify-content: center;
+                           position: absolute;
+                           top: 28px;
+                           left: 0;
+                           background-color: $primaryBtn;
+                           padding: 5px 10px;
+                           border-radius: 5px;
+                           color: #fff;
+                           font-size: 12px;
+                        }
+                     }
+                     &:nth-child(2) {
+                        &::after {
+                           content: "Archive";
+                           display: flex;
+                           align-items: center;
+                           justify-content: center;
+                           position: absolute;
+                           top: 28px;
+                           left: -8px;
+                           background-color: $primaryBtn;
+                           padding: 5px 10px;
+                           border-radius: 5px;
+                           color: #fff;
+                           font-size: 12px;
+                        }
+                     }
+                  }
+               }
+            }
+         }
+      }
+   }
+}
