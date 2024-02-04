@@ -7,7 +7,7 @@ import CategoriesQuery from './categoriesQuery'
 import styles from './categoies.module.scss'
 
 
-const ItemsArchiveTab = [ "Name", "No. of Items", "Acrhive Date", "Actions" ]
+const ItemsArchiveTab = [ "Name", "No. of Items", "Acrhive Date", "Action" ]
 const poppins = Poppins({
     weight: "500",
     subsets: [ "latin" ]

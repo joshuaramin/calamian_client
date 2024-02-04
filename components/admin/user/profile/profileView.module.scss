@@ -96,15 +96,18 @@
             }
             .card {
                width: 100%;
-
                padding: 20px;
                border-radius: 3px;
+               display: flex;
+               flex-direction: column;
+               gap: 10px;
                span {
                   display: none;
                }
                &:hover {
                   span {
-                     display: flex;
+                     display: block;
+                     text-align: right;
                   }
                   background-color: #f5f5f5;
                }

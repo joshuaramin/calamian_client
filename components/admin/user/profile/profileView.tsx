@@ -17,7 +17,7 @@ const oxygen = Oxygen({
     weight: "400",
     subsets: [ "latin" ]
 })
-export default function ProfileView({ userID, close }: { userID: string, close: () => void}) {
+export default function ProfileView({ userID, close }: { userID: string, close: () => void }) {
 
     const { loading, data } = useQuery(GetUserByid, {
         variables: {
@@ -72,9 +72,10 @@ export default function ProfileView({ userID, close }: { userID: string, close: 
                                     <div className={styles.card} key={logsID}>
                                         <div className={styles.cardHeader}>
                                             <h2 className={poppins.className}>{logs}</h2>
-                                            <span className={oxygen.className}>{format(new Date(createdAt), "MMMM dd, yyyy")}</span>
+
                                         </div>
                                         <p className={oxygen.className}>{descriptions}</p>
+                                        <span className={oxygen.className}>{format(new Date(createdAt), "MMMM dd, yyyy")}</span>
                                     </div>
                                 ))}
 

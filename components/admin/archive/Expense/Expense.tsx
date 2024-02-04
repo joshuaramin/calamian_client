@@ -6,7 +6,7 @@ import { useQuery } from '@apollo/client'
 import ExpenseQuery from './expenseQuery'
 import styles from './expense.module.scss'
 
-const ItemsArchiveTab = [ "Name", "Amount", "Acrhive Date", "Actions" ]
+const ItemsArchiveTab = [ "Name", "Amount", "Acrhive Date", "Action" ]
 
 const poppins = Poppins({
     weight: "500",

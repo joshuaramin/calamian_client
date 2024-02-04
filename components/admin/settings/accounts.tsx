@@ -54,6 +54,13 @@ export default function Accounts({ userID }: any) {
             variables: {
                 email: email,
                 userId: userID
+            },
+            onError(e) {
+                alert(e.message)
+            },
+            onCompleted: () => {
+                alert("Successfully Updated")
+                setEmail("")
             }
         })
     }
