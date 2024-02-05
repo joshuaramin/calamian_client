@@ -14,7 +14,7 @@ const oxygen = Oxygen({
     subsets: [ "latin" ]
 })
 
-export default function ItemTr({ itemsID, items, quantity, dosage, expiredDate, price, categoryID, userId }: any) {
+export default function ItemTr({ itemsID, items, quantity, dosage, expiredDate, price, categoryID, userID }: any) {
 
     const [ ed, setEdit ] = useState(false)
     const [ del, setDelete ] = useState(false)
@@ -45,13 +45,13 @@ export default function ItemTr({ itemsID, items, quantity, dosage, expiredDate, 
                 {
                     del ?
                         <div className={styles.overlay}>
-                            <Archive close={onHandleCloseDeleteItem} id={itemsID} categoryID={categoryID} userId={userId} />
+                            <Archive close={onHandleCloseDeleteItem} id={itemsID} categoryID={categoryID} userID={userID} />
                         </div> : null
                 }
                 {
                     ed ?
                         <div className={styles.overlay2}>
-                            <Edit close={onHandleCloseEditItem} id={itemsID} items={items} dosage={dosage} price={price} quantity={quantity} expiredDate={expiredDate} userId={userId} categoryID={categoryID} />
+                            <Edit close={onHandleCloseEditItem} id={itemsID} items={items} dosage={dosage} price={price} quantity={quantity} expiredDate={expiredDate} userID={userID} categoryID={categoryID} />
                         </div> : null
                 }
             </td>

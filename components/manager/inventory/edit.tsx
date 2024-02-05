@@ -13,7 +13,7 @@ const oxygen = Oxygen({
     weight: "400",
     subsets: [ "latin" ]
 })
-export default function Edit({ close, itemsID, items, dosage, price, quantity, expiredDate, userID, categoryID }: any) {
+export default function Edit({ close, id, items, dosage, price, quantity, expiredDate, userID, categoryID }: any) {
 
 
     const [ mItems, setMItems ] = useState({
@@ -29,7 +29,7 @@ export default function Edit({ close, itemsID, items, dosage, price, quantity, e
         e.preventDefault();
         UpdateMutate({
             variables: {
-                itemsId: itemsID,
+                itemsId: id,
                 userId: userID,
                 items: {
                     items: mItems.items,
@@ -79,7 +79,7 @@ export default function Edit({ close, itemsID, items, dosage, price, quantity, e
                     </div>
                     <div>
                         <label className={oxygen.className}>Expired Date</label>
-                        <input className={styles.inp} type="date" value={mItems.expiredDate === null ? "" : format(new Date(expiredDate), "MM/dd/yyyy")} onChange={(e) => setMItems({ ...mItems, expiredDate: e.target.value })} />
+                        <input className={styles.inp} type="date" placeholder={mItems.expiredDate === null ? "" : format(new Date(expiredDate), "MM/dd/yyyy")} onChange={(e) => setMItems({ ...mItems, expiredDate: e.target.value })} />
                     </div>
 
                 </div>

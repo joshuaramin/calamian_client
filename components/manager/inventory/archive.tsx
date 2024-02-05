@@ -14,7 +14,7 @@ const oxygen = Oxygen({
     weight: "400",
     subsets: [ "latin" ]
 })
-export default function Delete({ close, itemsID, categoryID, userID }: any) {
+export default function Delete({ close, id, categoryID, userID }: any) {
 
 
     const [ ArchiveMutation ] = useMutation(CreateItemArchive)
@@ -23,7 +23,7 @@ export default function Delete({ close, itemsID, categoryID, userID }: any) {
         e.preventDefault()
         ArchiveMutation({
             variables: {
-                itemsId: itemsID,
+                itemsId: id,
                 userId: userID
             },
             onCompleted: () => {
