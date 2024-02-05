@@ -1,9 +1,9 @@
-import React, { SyntheticEvent } from 'react'
+import React, { SyntheticEvent, useEffect, useState } from 'react'
 import { useMutation } from '@apollo/client'
 import { ResetDefaultPassword } from '@/lib/util/User/user.mutation'
 import styles from './resetPassword.module.scss'
 import { Poppins, Oxygen } from 'next/font/google'
-
+import Message from '@/components/message/message'
 
 
 
@@ -20,8 +20,8 @@ const poppins = Poppins({
 
 export default function ResetPassword({ userID, close }: any) {
 
-    const [ UserMutation ] = useMutation(ResetDefaultPassword)
-
+    const [ UserMutation, { data } ] = useMutation(ResetDefaultPassword)
+    const [ message, setMessage ] = useState<boolean>(false)
 
     const onHandleResetDefault = (e: SyntheticEvent) => {
         e.preventDefault();
@@ -30,13 +30,21 @@ export default function ResetPassword({ userID, close }: any) {
                 userId: userID
             },
             onCompleted: () => {
-                alert("Successfully reset password")
+                setMessage(true)
             }
         })
     }
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setMessage(false)
+        }, 2000);
 
+
+        return () => clearInterval(interval)
+    }, [ message ])
     return (
         <div className={styles.container}>
+            {data && message == true ? <Message msg="Successfully Reset Password" /> : null}
             <div className={styles.header}>
                 <h2 className={poppins.className}>Reset Password</h2>
                 <span className={oxygen.className}>Resetting a user password to default, with the default password being the user{"'"}s birthday in <b>{"'"}YYYYMMDD{"'"}</b> format, provides a convenient and secure method for users to regain access to their accounts when they have forgotten their passwords. This approach combines user-friendliness with security, allowing individuals to easily reset their passwords by entering a personal and memorable date. The format <b>{"'"}YYYYMMDD{"'"}</b> ensures consistency and accuracy, enhancing the overall user experience.</span>

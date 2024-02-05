@@ -1,9 +1,10 @@
-import React, { SyntheticEvent, useState } from 'react'
+import React, { SyntheticEvent, useEffect, useState } from 'react'
 import styles from './update.module.scss'
 import { Oxygen, Poppins } from 'next/font/google'
 import { useMutation } from '@apollo/client'
 import { UpdateExpense } from '@/lib/util/finance/finance.mutation'
 import { GetAllExpense } from '@/lib/util/finance/finance.query'
+import Message from '@/components/message/message'
 
 const oxygen = Oxygen({
     weight: "400",
@@ -24,8 +25,10 @@ export default function UpdateExpensed({ expenseID, expense, amount, mod, payDat
 
     })
 
+    const [ message, setMessage ] = useState<boolean>(false)
 
-    const [ UpdateExpenses ] = useMutation(UpdateExpense, {
+
+    const [ UpdateExpenses, { data } ] = useMutation(UpdateExpense, {
         variables: {
             expenseId: expenseID,
             expenses: {
@@ -36,7 +39,7 @@ export default function UpdateExpensed({ expenseID, expense, amount, mod, payDat
             }
         },
         onCompleted: () => {
-            alert("Successfully Updated")
+            setMessage(true)
         },
         refetchQueries: [ {
             query: GetAllExpense, variables: {
@@ -51,8 +54,20 @@ export default function UpdateExpensed({ expenseID, expense, amount, mod, payDat
         e.preventDefault();
         UpdateExpenses()
     }
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setMessage(false)
+        }, 2000);
+
+
+        return () => clearInterval(interval)
+    }, [ message ])
+
+
     return (
         <div className={styles.container}>
+            {data && message == true ? <Message msg="Successfully Reset Password" /> : null}
             <h2 className={poppins.className}>Expense Update</h2>
             <form onSubmit={onHandleSubmitForm}>
                 <input type="date" value={updateNewExpenses.payDate} onChange={(e) => setUpdateNewExpenses({ ...updateNewExpenses, payDate: e.target.value })} />

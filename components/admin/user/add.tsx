@@ -1,9 +1,10 @@
-import React, { useState, SyntheticEvent } from 'react'
+import React, { useState, SyntheticEvent, useEffect } from 'react'
 import { useMutation } from '@apollo/client'
 import { CreateUser } from '@/lib/util/User/user.mutation';
 import styles from './add.module.scss';
 import { TbChevronUp, TbChevronDown } from 'react-icons/tb';
 import { Poppins, Oxygen, } from 'next/font/google';
+import Message from '@/components/message/message';
 
 
 const poppins = Poppins({
@@ -35,6 +36,7 @@ interface User {
 export default function AddUser({ close }: any) {
 
     const [ role, setRoles ] = useState(false)
+    const [ message, setMessage ] = useState<Boolean>(false)
 
     const [ users, setUsers ] = useState<User>({
         "email": "",
@@ -47,7 +49,7 @@ export default function AddUser({ close }: any) {
     })
 
 
-    const [ userMutate ] = useMutation(CreateUser)
+    const [ userMutate, { data } ] = useMutation(CreateUser)
 
     const onUserFormSubmit = (e: SyntheticEvent) => {
         e.preventDefault();
@@ -65,7 +67,7 @@ export default function AddUser({ close }: any) {
             },
             errorPolicy: "all",
             onCompleted: () => {
-                alert("Successfully Added");
+                setMessage(true)
                 setUsers({
                     "email": "",
                     "firstname": "",
@@ -79,8 +81,19 @@ export default function AddUser({ close }: any) {
 
         })
     }
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setMessage(false)
+        }, 2000);
+
+
+        return () => clearInterval(interval)
+    }, [ message ])
+
     return (
         <div className={styles.container}>
+            {data && message === true ? <Message msg="Successfully Added" /> : null}
             <h2 className={poppins.className}>Add User </h2>
             <form onSubmit={onUserFormSubmit}>
                 <input value={users.email} className={styles.inp} type="email" placeholder='Email Address' onChange={(e) => setUsers({ ...users, email: e.target.value })} />

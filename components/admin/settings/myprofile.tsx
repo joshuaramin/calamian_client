@@ -4,6 +4,7 @@ import { Poppins } from 'next/font/google'
 import { ProfileByUserId } from '@/lib/util/User/profile/profile.query'
 import { useMutation, useQuery } from '@apollo/client'
 import { ProfileUpdate } from '@/lib/util/User/profile/profile.mutation'
+import Message from '@/components/message/message'
 
 const poppins = Poppins({
     weight: '500',
@@ -39,8 +40,8 @@ export default function MyProfile({ userID }: any) {
 
 
 
-    const [ mutate ] = useMutation(ProfileUpdate)
-
+    const [ mutate, { data: ProfileData } ] = useMutation(ProfileUpdate)
+    const [ message, setMessage ] = useState<Boolean>(false)
     const ProfileSubmitForm = (e: SyntheticEvent) => {
         e.preventDefault();
         mutate({
@@ -52,6 +53,7 @@ export default function MyProfile({ userID }: any) {
                 birthday: profile.birthday
             },
             onCompleted: () => {
+                setMessage(true)
                 alert("Successfully Updated")
             },
             refetchQueries: [ {
@@ -63,10 +65,18 @@ export default function MyProfile({ userID }: any) {
         })
     }
 
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setMessage(false)
+        }, 2000);
 
+
+        return () => clearInterval(interval)
+    }, [ message ])
 
     return (
         <div className={styles.container}>
+            {ProfileData && message === true ? <Message msg="Successfully Updated" /> : null}
             <div className={styles.header}>
                 <h2 className={poppins.className}>My Profile</h2>
             </div>

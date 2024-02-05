@@ -1,0 +1,20 @@
+.container {
+   width: 250px;
+   height: 60px;
+   background-color: #37ce85;
+   position: absolute;
+   top: 20px;
+   right: 20px;
+   border-radius: 5px;
+   padding: 10px;
+   display: flex;
+   align-items: center;
+   gap: 5px;
+   span {
+      color: #fff;
+      font-size: 18px;
+   }
+   svg {
+      stroke: #fff;
+   }
+}

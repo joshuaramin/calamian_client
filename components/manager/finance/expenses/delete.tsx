@@ -1,9 +1,10 @@
-import React, { SyntheticEvent } from 'react'
+import React, { SyntheticEvent, useState } from 'react'
 import { Poppins, Oxygen } from 'next/font/google'
 import styles from './delete.module.scss'
 import { useMutation } from '@apollo/client'
 import { DeleteExpense } from '@/lib/util/finance/finance.mutation'
 import { GetAllExpense, GetAllExpenseFolder } from '@/lib/util/finance/finance.query'
+import Message from '@/components/message/message'
 
 
 const poppins = Poppins({
@@ -17,8 +18,8 @@ const oxygen = Oxygen({
 })
 export default function DeleteExepenses({ close, items, data, folderId, deleted }: any) {
 
-    const [ mutate ] = useMutation(DeleteExpense)
-
+    const [ mutate, { data: ExpenseData } ] = useMutation(DeleteExpense)
+    const [ message, setMessage ] = useState<boolean>(false)
     const onHandleDeleteCategory = (e: SyntheticEvent) => {
         e.preventDefault();
         mutate({
@@ -29,7 +30,7 @@ export default function DeleteExepenses({ close, items, data, folderId, deleted 
                 console.log(error)
             },
             onCompleted: () => {
-                alert("Successfully Deleted")
+                setMessage(true)
                 deleted()
                 close()
             },
@@ -44,6 +45,7 @@ export default function DeleteExepenses({ close, items, data, folderId, deleted 
     }
     return (
         <div className={styles.container}>
+            {ExpenseData && message == true ? <Message msg="Successfully Deleted" /> : null}
             <h2 className={poppins.className}>Delete</h2>
             <span className={oxygen.className}>Are you sure you want to delete this {items} item/s?</span>
             <form onSubmit={onHandleDeleteCategory}>

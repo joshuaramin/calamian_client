@@ -1,10 +1,11 @@
-import React, { SyntheticEvent, useState } from 'react'
+import React, { SyntheticEvent, useEffect, useState } from 'react'
 import styles from './edit.module.scss'
 import { TbX } from 'react-icons/tb'
 import { Oxygen } from 'next/font/google'
 import { useMutation } from '@apollo/client'
 import { UpdateUserAccounts } from '@/lib/util/User/user.mutation'
 import { getAllUserQuery } from '@/lib/util/User/user.query'
+import Message from '@/components/message/message'
 
 
 const oxygen = Oxygen({
@@ -15,7 +16,8 @@ const oxygen = Oxygen({
 export default function UserEdit({ close, userID, email, phone, salary, fullname, firstname, lastname, birthday }: any) {
 
 
-    const [ UUA ] = useMutation(UpdateUserAccounts)
+    const [ UUA, { data } ] = useMutation(UpdateUserAccounts)
+    const [ message, setMessage ] = useState<Boolean>(false)
 
 
     const [ uua, setUUA ] = useState({
@@ -42,14 +44,26 @@ export default function UserEdit({ close, userID, email, phone, salary, fullname
                 }
             },
             onCompleted: () => {
-                alert("Successfully Updated")
+                setMessage(true)
             },
             refetchQueries: [ getAllUserQuery ]
         })
     }
 
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setMessage(false)
+        }, 2000);
+
+
+        return () => clearInterval(interval)
+    }, [ message ])
+
+
+
     return (
         <div className={styles.container}>
+            {data && message == true ? <Message msg="Successfully Updated" /> : null}
             <div className={styles.editHeader}>
                 <h2 className={oxygen.className}>Edit User</h2>
                 <button onClick={close}>

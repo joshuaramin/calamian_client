@@ -1,5 +1,5 @@
 "use client"
-import React, { SyntheticEvent, useState } from 'react'
+import React, { SyntheticEvent, useEffect, useState } from 'react'
 import { Oxygen, Rubik, Poppins } from 'next/font/google'
 import { useMutation } from "@apollo/client"
 import { Authentication } from '@/lib/util/Authentication/authenticate.mutaiton'
@@ -8,6 +8,7 @@ import { jwtDecode } from 'jwt-decode'
 import { useRouter } from 'next/router'
 import styles from './form.module.scss'
 import Cookies from 'js-cookie'
+import Message from '@/components/message/message'
 const rubik = Rubik({
     display: "auto",
     subsets: [ "latin" ],
@@ -32,7 +33,7 @@ const poppins = Poppins({
 export default function Form() {
 
     const router = useRouter()
-
+    const [ message, setMessage ] = useState<Boolean>(false)
     const years = new Date().getFullYear()
     const [ users, setUsers ] = useState({
         email: "",
@@ -42,6 +43,8 @@ export default function Form() {
     const onToggleEvent = () => {
         setToggle(() => !toggle)
     }
+
+
     const [ Authenticate, { error, loading, data } ] = useMutation(Authentication)
 
     const onHandleSubmitForm = (e: SyntheticEvent) => {
@@ -54,7 +57,7 @@ export default function Form() {
             errorPolicy: "all",
             onCompleted: (data) => {
 
-
+                setMessage(true)
 
                 Cookies.set("pha-tkn", data.login.token, {
                     httpOnly: false,
@@ -79,7 +82,14 @@ export default function Form() {
         })
     }
 
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setMessage(false)
+        }, 2000);
 
+
+        return () => clearInterval(interval)
+    }, [ message ])
 
 
 
@@ -105,6 +115,10 @@ export default function Form() {
 
     return (
         <div className={styles.container}>
+            {
+                data && message == true ?
+                    <Message msg="Successfully Login" /> : null
+            }
             <div className={styles.con}>
                 {error ?
                     <div className={styles.message}>

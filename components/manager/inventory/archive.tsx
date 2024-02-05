@@ -1,9 +1,10 @@
-import React, { SyntheticEvent } from 'react'
+import React, { SyntheticEvent, useEffect, useState } from 'react'
 import styles from './archive.module.scss'
 import { useMutation } from '@apollo/client'
 import { Poppins, Oxygen } from 'next/font/google'
 import { CreateItemArchive } from '@/lib/util/archive/archive.mutation'
 import { getItemByCategoryid } from '@/lib/util/Items/item.query'
+import Message from '@/components/message/message'
 
 const poppins = Poppins({
     weight: "500",
@@ -17,7 +18,9 @@ const oxygen = Oxygen({
 export default function Delete({ close, id, categoryID, userID }: any) {
 
 
-    const [ ArchiveMutation ] = useMutation(CreateItemArchive)
+    const [ ArchiveMutation, { data } ] = useMutation(CreateItemArchive)
+
+    const [ message, setMessage ] = useState<Boolean>(false)
 
     const onHandleDeleteItems = (e: SyntheticEvent) => {
         e.preventDefault()
@@ -27,6 +30,7 @@ export default function Delete({ close, id, categoryID, userID }: any) {
                 userId: userID
             },
             onCompleted: () => {
+                setMessage(true)
                 alert("Successfully Archived")
             },
             refetchQueries: [ {
@@ -38,8 +42,20 @@ export default function Delete({ close, id, categoryID, userID }: any) {
         })
     }
 
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setMessage(false)
+        }, 2000);
+
+
+        return () => clearInterval(interval)
+    }, [ message ])
+
+
     return (
         <div className={styles.container}>
+            {data && message == true ? <Message msg="Successfully Archived" /> : null}
             <h2 className={poppins.className}>Archive</h2>
             <span className={oxygen.className}>Are you sure you want to archive this item?</span>
             <form onSubmit={onHandleDeleteItems}>

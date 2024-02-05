@@ -1,8 +1,9 @@
-import React, { useState, SyntheticEvent } from 'react'
+import React, { useState, SyntheticEvent, useEffect } from 'react'
 import { Poppins } from 'next/font/google'
 import { CreateExpenseFolderMutation } from '@/lib/util/finance/finance.mutation'
 import { useMutation } from '@apollo/client'
 import styles from './add.module.scss'
+import Message from '@/components/message/message'
 
 const poppins = Poppins({
     weight: "400",
@@ -11,7 +12,8 @@ const poppins = Poppins({
 export default function AddExpenseFolder({ close, userID }: any) {
 
     const [ exFolder, setexFolder ] = useState("")
-    const [ mutate ] = useMutation(CreateExpenseFolderMutation)
+    const [ mutate, { data } ] = useMutation(CreateExpenseFolderMutation)
+    const [ message, setMessage ] = useState<boolean>(false)
 
     const onHandleAddCatgory = (e: SyntheticEvent) => {
         e.preventDefault()
@@ -21,14 +23,24 @@ export default function AddExpenseFolder({ close, userID }: any) {
                 userId: userID
             },
             onCompleted: () => {
-                alert("Successfully Added")
+                setMessage(true)
                 setexFolder("")
             },
             errorPolicy: "all"
         })
     }
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setMessage(false)
+        }, 2000);
+
+
+        return () => clearInterval(interval)
+    }, [ message ])
     return (
         <div className={styles.container}>
+            {data && message == true ? <Message msg="Successfully Added" /> : null}
             <h2 className={poppins.className}>Add Expense Folder</h2>
             <form onSubmit={onHandleAddCatgory}>
                 <input className={styles.inp} type="text" value={exFolder} placeholder='Expense Folder Name' onChange={(e) => setexFolder(e.target.value)} />

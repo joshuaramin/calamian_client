@@ -1,4 +1,4 @@
-import React, { SyntheticEvent, useState } from 'react'
+import React, { SyntheticEvent, useEffect, useState } from 'react'
 import styles from './edit.module.scss'
 import { UpdateMedicalItem } from '@/lib/util/Items/item.mutation'
 import { useMutation } from '@apollo/client'
@@ -6,6 +6,7 @@ import { Oxygen } from 'next/font/google'
 import { TbX } from 'react-icons/tb'
 import { format } from 'date-fns'
 import { getItemByCategoryid } from '@/lib/util/Items/item.query'
+import Message from '@/components/message/message'
 
 
 
@@ -23,7 +24,9 @@ export default function Edit({ close, id, items, dosage, price, quantity, expire
         expiredDate: expiredDate,
         dosage: dosage
     })
-    const [ UpdateMutate ] = useMutation(UpdateMedicalItem)
+    const [ UpdateMutate, { data } ] = useMutation(UpdateMedicalItem)
+
+    const [ message, setMessage ] = useState(false)
 
     const onHandleUpdateForm = (e: SyntheticEvent) => {
         e.preventDefault();
@@ -40,6 +43,7 @@ export default function Edit({ close, id, items, dosage, price, quantity, expire
                 }
             },
             onCompleted: () => {
+                setMessage(true)
                 alert("Successfully Updated")
             },
             refetchQueries: [ {
@@ -50,8 +54,20 @@ export default function Edit({ close, id, items, dosage, price, quantity, expire
             } ]
         })
     }
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setMessage(false)
+        }, 2000);
+
+
+        return () => clearInterval(interval)
+    }, [ message ])
+
     return (
         <div className={styles.container}>
+            {data && message === true ? <Message msg="Successfully Updated" /> : null}
+
             <div className={styles.editHeader}>
                 <h2 className={oxygen.className}>Edit Items</h2>
                 <button onClick={close}>

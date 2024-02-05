@@ -1,10 +1,11 @@
-import React, { SyntheticEvent } from 'react'
+import React, { SyntheticEvent, useEffect, useState } from 'react'
 import styles from './archivePrompt.module.scss'
 import { Poppins, Oxygen } from 'next/font/google'
 import { UpdateArchive } from '@/lib/util/archive/archive.mutation'
 import { useMutation } from '@apollo/client'
 import { GetAllArchive } from '@/lib/util/archive/archive.query'
 import { useRouter } from 'next/router'
+import Message from '@/components/message/message'
 
 const poppins = Poppins({
     weight: "500",
@@ -18,7 +19,9 @@ const oxygen = Oxygen({
 export default function ArchivePrompt({ archiveID, label, close, tab, userIds }: { archiveID: string, label: string, close: () => void, tab: any, userIds: string }) {
 
     const router = useRouter();
-    const [ mutate ] = useMutation(UpdateArchive)
+    const [ mutate, { data } ] = useMutation(UpdateArchive)
+
+    const [ message, setMessage ] = useState<boolean>(false)
     const onHandleUnArchiveForm = (e: SyntheticEvent) => {
         e.preventDefault();
         mutate({
@@ -27,7 +30,7 @@ export default function ArchivePrompt({ archiveID, label, close, tab, userIds }:
                 userId: userIds
             },
             onCompleted: () => {
-                alert("Successfully unarchive")
+                setMessage(true)
                 close();
                 router.reload()
             },
@@ -39,8 +42,20 @@ export default function ArchivePrompt({ archiveID, label, close, tab, userIds }:
             } ]
         })
     }
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setMessage(false)
+        }, 2000);
+
+
+        return () => clearInterval(interval)
+    }, [ message ])
+
+
     return (
         <div className={styles.container}>
+            {data && message === true ? <Message msg="Successfully UnArchive" /> : null}
             <h2 className={poppins.className}>Archive</h2>
             <span className={oxygen.className}>Are you sure you want to unarchive this {label}</span>
             <form onSubmit={onHandleUnArchiveForm}>

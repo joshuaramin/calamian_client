@@ -1,8 +1,9 @@
-import React, { SyntheticEvent, useState } from 'react'
+import React, { SyntheticEvent, useEffect, useState } from 'react'
 import styles from './accounts.module.scss'
 import { Oxygen, Poppins } from 'next/font/google'
 import { UpdateUserEmailAddress, UpdateUserPassword } from '@/lib/util/User/user.mutation'
 import { useMutation } from '@apollo/client'
+import Message from '@/components/message/message'
 
 const poppins = Poppins({
     weight: "500",
@@ -21,9 +22,9 @@ export default function Accounts({ userID }: any) {
         password: "",
         retypepass: ""
     })
-
-    const [ emailMutate ] = useMutation(UpdateUserEmailAddress)
-    const [ passwordMutate ] = useMutation(UpdateUserPassword)
+    const [ message, setMessage ] = useState<Boolean>(false)
+    const [ emailMutate, { data: EmailData } ] = useMutation(UpdateUserEmailAddress)
+    const [ passwordMutate, { data: PasswordData } ] = useMutation(UpdateUserPassword)
 
     const onChangePasswordForm = (e: SyntheticEvent) => {
         e.preventDefault();
@@ -38,6 +39,7 @@ export default function Accounts({ userID }: any) {
                 alert(e.message)
             },
             onCompleted: () => {
+                setMessage(true)
                 alert("Successfully Updated");
                 setPassword({
                     current: "",
@@ -59,13 +61,27 @@ export default function Accounts({ userID }: any) {
                 alert(e.message)
             },
             onCompleted: () => {
+                setMessage(true)
                 alert("Successfully Updated")
                 setEmail("")
             }
         })
     }
+
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setMessage(false)
+        }, 2000);
+
+
+        return () => clearInterval(interval)
+    }, [ message ])
+
     return (
         <div className={styles.container}>
+            {EmailData && message === true ? <Message msg="Successfully Updated" /> : null}
+            {PasswordData && message === true ? <Message msg="Successfully Updated" /> : null}
             <div className={styles.header}>
                 <h2 className={poppins.className}>Account</h2>
             </div>

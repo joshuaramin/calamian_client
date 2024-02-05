@@ -1,9 +1,10 @@
-import React, { SyntheticEvent } from 'react'
+import React, { SyntheticEvent, useEffect, useState } from 'react'
 import { Poppins, Oxygen } from 'next/font/google'
 import styles from './archive.module.scss'
 import { useMutation } from '@apollo/client'
 import { CreateArchiveCategory } from '@/lib/util/archive/archive.mutation'
 import { GetAllCategory } from '@/lib/util/category/category.query'
+import Message from '@/components/message/message'
 
 
 const poppins = Poppins({
@@ -17,8 +18,8 @@ const oxygen = Oxygen({
 })
 export default function DeleteCategory({ close, categoryID, userID }: any) {
 
-    const [ mutate ] = useMutation(CreateArchiveCategory)
-
+    const [ mutate, { data } ] = useMutation(CreateArchiveCategory)
+    const [ message, setMessage ] = useState<boolean>(false)
     const onHandleDeleteCategory = (e: SyntheticEvent) => {
         e.preventDefault();
         mutate({
@@ -27,7 +28,8 @@ export default function DeleteCategory({ close, categoryID, userID }: any) {
                 userId: userID
             },
             onCompleted: () => {
-                alert("Successfully Archived")
+                setMessage(true)
+
             },
             onError: (error) => {
                 console.log(error)
@@ -36,8 +38,20 @@ export default function DeleteCategory({ close, categoryID, userID }: any) {
         })
 
     }
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setMessage(false)
+        }, 2000);
+
+
+        return () => clearInterval(interval)
+    }, [ message ])
+
+
     return (
         <div className={styles.container}>
+            {data && message == true ? <Message msg="Successfully Archived" /> : null}
             <h2 className={poppins.className}>Archive</h2>
             <span className={oxygen.className}>Are you sure you want to archive this category?</span>
             <form onSubmit={onHandleDeleteCategory}>

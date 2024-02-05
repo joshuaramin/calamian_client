@@ -1,9 +1,9 @@
-import React, { SyntheticEvent, useState } from 'react'
+import React, { SyntheticEvent, useEffect, useState } from 'react'
 import styles from './add.module.scss'
 import { Poppins, Oxygen } from 'next/font/google'
 import { useMutation } from '@apollo/client'
 import { ItemMutation } from '@/lib/util/Items/item.mutation'
-
+import Message from '@/components/message/message'
 const poppins = Poppins({
     weight: "500",
     subsets: [ "latin" ]
@@ -17,6 +17,9 @@ export default function AddItem({ close, categoryID, userID }: any) {
 
     const [ numberOfDosage, setNumberOfDosage ] = useState(false)
     const [ expirationDate, setExpirationDate ] = useState(false)
+    const [ message, setMessage ] = useState<boolean>(false)
+
+
     const [ items, setItems ] = useState({
         items: "",
         dosage: "",
@@ -46,7 +49,7 @@ export default function AddItem({ close, categoryID, userID }: any) {
             },
             errorPolicy: "all",
             onCompleted: () => {
-                alert("Successfully Added")
+                setMessage(true)
                 setItems({
                     dosage: numberOfDosage ? items.dosage : "",
                     expiredDate: "",
@@ -68,9 +71,21 @@ export default function AddItem({ close, categoryID, userID }: any) {
         setExpirationDate(() => !expirationDate)
     }
 
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setMessage(false)
+        }, 2000);
+
+
+        return () => clearInterval(interval)
+    }, [ message ])
+
     return (
 
         <div className={styles.container}>
+            {
+                data && message === true ? <Message msg="Successfully Added" /> : null
+            }
             <h2 className={poppins.className}>Add Item</h2>
             <form onSubmit={onHandleMutation}>
                 <label className={oxygen.className}>Item Name</label>
