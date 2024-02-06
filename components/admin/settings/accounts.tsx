@@ -62,7 +62,6 @@ export default function Accounts({ userID }: any) {
             },
             onCompleted: () => {
                 setMessage(true)
-                alert("Successfully Updated")
                 setEmail("")
             }
         })

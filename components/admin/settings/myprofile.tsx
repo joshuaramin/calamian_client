@@ -54,7 +54,6 @@ export default function MyProfile({ userID }: any) {
             },
             onCompleted: () => {
                 setMessage(true)
-                alert("Successfully Updated")
             },
             refetchQueries: [ {
                 query: ProfileByUserId,
