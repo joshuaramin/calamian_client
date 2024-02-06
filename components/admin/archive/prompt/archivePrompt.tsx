@@ -55,7 +55,7 @@ export default function ArchivePrompt({ archiveID, label, close, tab, userIds }:
 
     return (
         <div className={styles.container}>
-            {data && message === true ? <Message msg="Successfully UnArchive" /> : null}
+            {!data && message === false ? <Message msg="Successfully UnArchive" /> : null}
             <h2 className={poppins.className}>Archive</h2>
             <span className={oxygen.className}>Are you sure you want to unarchive this {label}</span>
             <form onSubmit={onHandleUnArchiveForm}>

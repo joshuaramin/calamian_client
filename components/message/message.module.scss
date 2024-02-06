@@ -1,14 +1,14 @@
 .container {
-   width: 250px;
-   height: 60px;
+   width: auto;
+   padding: 15px 25px;
    background-color: #37ce85;
    position: absolute;
-   top: 20px;
    right: 20px;
+   top: 20px;
    border-radius: 5px;
-   padding: 10px;
    display: flex;
    align-items: center;
+   justify-content: flex-start;
    gap: 5px;
    span {
       color: #fff;
