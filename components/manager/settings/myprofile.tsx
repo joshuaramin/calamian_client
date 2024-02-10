@@ -83,7 +83,7 @@ export default function MyProfile({ userID }: any) {
                 <input type='text' value={profile.firstname} placeholder='Firstname' onChange={(e) => setProfile({ ...profile, firstname: e.target.value })} />
                 <input type='text' value={profile.lastname} placeholder='Lastanme' onChange={(e) => setProfile({ ...profile, lastname: e.target.value })} />
                 <input type='tel' value={profile.phone} placeholder='Phone' onChange={(e) => setProfile({ ...profile, phone: e.target.value })} />
-                <input type='date' value={profile.birthday} placeholder='Birthday' onChange={(e) => setProfile({ ...profile, phone: e.target.value })} />
+                <input type='date' value={profile.birthday} placeholder='Birthday' onChange={(e) => setProfile({ ...profile, birthday: e.target.value })} />
                 <div className={styles.btn}>
                     <button type="submit">Save</button>
                 </div>
