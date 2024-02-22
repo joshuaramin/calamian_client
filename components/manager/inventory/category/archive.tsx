@@ -57,7 +57,7 @@ export default function DeleteCategory({ close, categoryID, userID }: any) {
             <form onSubmit={onHandleDeleteCategory}>
                 <div className={styles.addBtnGrp}>
                     <button onClick={close} type="button" className={`${styles.cancelBtn} ${poppins.className}`}>Cancel</button>
-                    <button type="submit" className={`${styles.addBtn} ${poppins.className}`}>Yes, Delete this category</button>
+                    <button type="submit" className={`${styles.addBtn} ${poppins.className}`}>Yes, Archive this category</button>
                 </div>
             </form>
         </div>

@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 
 
 import { format } from 'date-fns'
-import { TbEdit, TbTrash } from 'react-icons/tb'
+import { TbEdit, TbArchive } from 'react-icons/tb'
 import Archive from './archive'
 import Edit from './edit'
 import styles from '@/styles/dashboard/manager/inventory/category.module.scss'
@@ -40,7 +40,7 @@ export default function ItemTr({ itemsID, items, quantity, dosage, expiredDate, 
                     <TbEdit size={23} />
                 </button>
                 <button className={styles.actBtn} onClick={onHandleCloseDeleteItem}>
-                    <TbTrash size={23} />
+                    <TbArchive size={23} />
                 </button>
                 {
                     del ?

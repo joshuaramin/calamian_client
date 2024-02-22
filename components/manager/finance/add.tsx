@@ -30,7 +30,7 @@ export default function AddExpenseFolder({ close, userID }: any) {
     }
     return (
         <div className={styles.container}>
-            {data && message == true ? <Message msg="Successfully Reset Password" /> : null}
+            {data && message == true ? <Message msg="Successfully Added" /> : null}
             <h2 className={poppins.className}>Add Expense Folder</h2>
             <form onSubmit={onHandleAddCatgory}>
                 <input className={styles.inp} type="text" value={exFolder} placeholder='Expense Folder Name' onChange={(e) => setexFolder(e.target.value)} />
