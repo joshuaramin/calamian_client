@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import styles from './menu.module.scss'
-import { GetAllItemQuery, getSearchItems, getSearchStaff } from '@/lib/util/Items/item.query'
+import { GetAllItemQuery, getSearchItems, getSearchStaff } from '@/lib/apollo/Items/item.query'
 import { useQuery, useLazyQuery } from '@apollo/client'
 import MenuCard from './card/card'
 
@@ -25,14 +25,14 @@ export default function Menu() {
             clearInterval(intervalPolling)
             stopPolling()
         }
-    }, [ startPolling, stopPolling ])
+    }, [startPolling, stopPolling])
 
-    const [ search, setSearch ] = useState("")
-
-
+    const [search, setSearch] = useState("")
 
 
-    const [ ItemsSearch, { data: searchData } ] = useLazyQuery(getSearchStaff)
+
+
+    const [ItemsSearch, { data: searchData }] = useLazyQuery(getSearchStaff)
 
     console.log(searchData)
     const onChangeSearch = (e: any) => {

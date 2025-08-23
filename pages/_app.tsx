@@ -1,5 +1,5 @@
 import '@/styles/globals.scss'
-import ApolloWrapper from '@/lib/apolloWrapper'
+import ApolloWrapper from '@/lib/apollo/apolloWrapper'
 import PageWithLayout from '@/layout/page.layout'
 
 

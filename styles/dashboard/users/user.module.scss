@@ -1,0 +1,205 @@
+@use "../variables.module" as *;
+
+.container {
+   width: 100%;
+   padding: 10px;
+
+   .overlay {
+      position: fixed;
+      inset: 0;
+      background-color: rgba(255, 255, 255, 0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      z-index: 999;
+   }
+
+   .addbtn {
+      width: 100%;
+      height: 80px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 5px;
+      display: flex;
+
+      input {
+         width: 100%;
+         height: 50px;
+         border-radius: 3px;
+         outline: none;
+         border: none;
+         box-shadow: 0px 0px 3px 0px #ccc;
+         padding: 10px;
+      }
+
+      div {
+         display: flex;
+         gap: 5px;
+
+         .addBtn {
+            width: 80px;
+            height: 50px;
+            border-radius: 3px;
+            background-color: $primaryBtn;
+            border-radius: 3px;
+            outline: none;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+
+            span {
+               font-size: 15px;
+               color: #fff;
+            }
+         }
+      }
+   }
+
+   table {
+      width: 100%;
+      border-collapse: collapse;
+
+      thead,
+      tbody {
+         tr {
+            border-bottom: 1px solid #ccc;
+
+            th {
+               width: 250px;
+               background-color: $primaryBtn;
+               color: #fff;
+               padding: 0 10px;
+               height: 60px;
+            }
+
+            td {
+               .overlay2 {
+                  position: fixed;
+                  inset: 0;
+                  background-color: rgba(156, 156, 156, 0.9);
+                  display: flex;
+                  align-items: center;
+                  justify-content: flex-end;
+                  z-index: 999;
+               }
+
+               &:nth-child(even) {
+                  border-left: 1px solid #ccc;
+               }
+
+               &:nth-child(3) {
+                  border-left: 1px solid #ccc;
+               }
+
+               &:nth-child(5) {
+                  border-left: 1px solid #ccc;
+               }
+
+               &:nth-child(7) {
+                  border-left: 1px solid #ccc;
+               }
+
+               padding: 10px;
+               text-align: center;
+
+               // border: 1px solid #ccc;
+               button {
+                  height: 40px;
+                  width: 40px;
+                  border-radius: 100px;
+                  border: none;
+                  cursor: pointer;
+                  background-color: transparent;
+                  position: relative;
+
+                  svg {
+                     stroke: $primaryBtn;
+                  }
+
+                  &:hover {
+                     background-color: #e4e4e4;
+
+                     &:nth-child(1) {
+                        &::after {
+                           content: "Reset Password";
+                           width: 100px;
+                           display: flex;
+                           align-items: center;
+                           justify-content: center;
+                           position: absolute;
+                           top: 28px;
+                           left: -28px;
+                           background-color: $primaryBtn;
+                           padding: 5px;
+                           border-radius: 5px;
+                           color: #fff;
+                           font-size: 12px;
+                        }
+                     }
+
+                     &:nth-child(2) {
+                        &::after {
+                           content: "Edit";
+                           display: flex;
+                           align-items: center;
+                           justify-content: center;
+                           position: absolute;
+                           top: 28px;
+                           left: 0;
+                           background-color: $primaryBtn;
+                           padding: 5px 10px;
+                           border-radius: 5px;
+                           color: #fff;
+                           font-size: 12px;
+                        }
+                     }
+
+                     &:nth-child(3) {
+                        &::after {
+                           content: "View";
+                           display: flex;
+                           align-items: center;
+                           justify-content: center;
+                           position: absolute;
+                           top: 28px;
+                           left: 3px;
+                           background-color: $primaryBtn;
+                           padding: 5px;
+                           border-radius: 5px;
+                           color: #fff;
+                           font-size: 12px;
+                        }
+                     }
+                  }
+               }
+
+               .deleteBtn {
+                  svg {
+                     stroke: $secondaryBtn;
+                  }
+
+                  &:hover {
+                     &::after {
+                        content: "Delete";
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        position: absolute;
+                        top: 28px;
+                        left: 0;
+                        background-color: $primaryBtn;
+                        padding: 5px;
+                        border-radius: 5px;
+                        color: #fff;
+                        font-size: 12px;
+                     }
+                  }
+               }
+            }
+         }
+      }
+   }
+}

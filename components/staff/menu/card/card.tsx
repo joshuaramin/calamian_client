@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import styles from './card.module.scss'
 import { Oxygen, Poppins } from 'next/font/google'
 import { TbPlus, TbMinus, TbShoppingCart, TbChevronRight } from 'react-icons/tb'
-import { carrItemsVar } from "@/lib/apolloWrapper"
+import { carrItemsVar } from "@/lib/apollo/apolloWrapper"
 import { useReactiveVar } from '@apollo/client'
 
 interface Items {
@@ -16,17 +16,17 @@ interface Items {
 
 const poppins = Poppins({
     weight: "400",
-    subsets: [ "latin" ]
+    subsets: ["latin"]
 })
 
 const oxygen = Oxygen({
     weight: "400",
-    subsets: [ "latin" ]
+    subsets: ["latin"]
 })
 export default function MenuCard({ itemsID, items, category, price, quan }: Items) {
 
 
-    const [ quantity, setQuantity ] = useState(0)
+    const [quantity, setQuantity] = useState(0)
 
     const handleQuantityIncrement = () => {
         setQuantity(() => quantity + 1)
@@ -50,7 +50,7 @@ export default function MenuCard({ itemsID, items, category, price, quan }: Item
         if (cart.length === 0) {
             setQuantity(0)
         }
-    }, [ cart.length ])
+    }, [cart.length])
     return (
         <div className={styles.container}>
             {category.map(({ category }: any) => (
@@ -73,7 +73,7 @@ export default function MenuCard({ itemsID, items, category, price, quan }: Item
                         <TbMinus size={23} />
                     </button>
                 </div>
-                <button className={item ? styles.active : styles.inactive} disabled={quantity <= 0} onClick={() => carrItemsVar(item ? removeDuplicateItem : [ ...carrItemsVar(), { itemsID, items, price, quantity, total: price * quantity } ] as any)}>
+                <button className={item ? styles.active : styles.inactive} disabled={quantity <= 0} onClick={() => carrItemsVar(item ? removeDuplicateItem : [...carrItemsVar(), { itemsID, items, price, quantity, total: price * quantity }] as any)}>
                     <TbShoppingCart size={23} />
                 </button>
             </div>

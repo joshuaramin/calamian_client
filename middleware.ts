@@ -1,16 +1,25 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
-export default function Middleware(req: NextRequest) {
-    let cookies = req.cookies.get("pha-tkn");
+export async function middleware(req: NextRequest) {
+  //   const apkey: any = process.env.NEXT_PUBLIC_X_API_KEY;
+  const authToken = req.cookies.get("pha_tkn");
 
-    if (!cookies) {
-        return NextResponse.redirect(new URL("/", req.url));
-    }
+  const requestHeaders = new Headers(req.headers);
 
+  const response = NextResponse.next({
+    request: {
+      headers: requestHeaders,
+    },
+  });
 
+  if (!authToken) {
+    return NextResponse.redirect(new URL("/", req.url));
+  }
+
+  return response;
 }
-
 
 export const config = {
-    matcher: [ "/dashboard/:path*" ]
-}
+  matcher: "/dashboard/:path*",
+};
