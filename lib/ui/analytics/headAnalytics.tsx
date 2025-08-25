@@ -1,14 +1,14 @@
 import React, { useState } from 'react'
-import { Poppins, Oxygen } from 'next/font/google'
 import { TbDownload, TbBox, TbWallet, TbShoppingBag } from 'react-icons/tb'
 import { useQuery } from '@apollo/client'
-import { GetAllTotalRevenue, GetTotalOrders, GetTotalOrderHistoryFiltered } from '@/lib/apollo/order/order.query'
-import { GetTotalOfNumberItems } from '@/lib/apollo/Items/item.query'
+import { GetTotalOrderHistoryFiltered, GetTotal } from '@/lib/apollo/order/order.query'
 import { Chart as ChartJS, Tooltip, Legend, CategoryScale, LinearScale, BarElement, LineElement, PointElement, Title, ArcElement } from "chart.js";
 import { Bar } from 'react-chartjs-2'
 import { DateFilter } from '@/lib/util/dateFilter'
 import Exports from './export/export'
 import styles from './headAnalytics.module.scss'
+import { oxygen, poppins } from '@/lib/typography'
+import Spinner from '@/components/spinner';
 
 ChartJS.register(CategoryScale,
     LinearScale,
@@ -18,16 +18,6 @@ ChartJS.register(CategoryScale,
     Tooltip, ArcElement,
     BarElement,
     Legend);
-const poppins = Poppins({
-    weight: "600",
-    subsets: ["latin"]
-})
-
-
-const oxygen = Oxygen({
-    weight: "400",
-    subsets: ["latin"]
-})
 
 
 
@@ -51,9 +41,7 @@ export default function HeadAnalytics() {
             alert(error.message)
         }
     })
-    const { loading: totalRevenueLoading, data: totalRevenue } = useQuery(GetAllTotalRevenue)
-    const { loading: totalOrdersLoading, data: totalOrders } = useQuery(GetTotalOrders)
-    const { loading: totalItemsLoading, data: totalItems } = useQuery(GetTotalOfNumberItems)
+    const { loading: totalLoading, data: totalData } = useQuery(GetTotal)
     return (
 
         <div className={styles.container}>
@@ -81,10 +69,7 @@ export default function HeadAnalytics() {
                                         <TbWallet size={35} />
                                         <div className={styles.body2}>
                                             <h2 className={poppins.className}>Total Profit</h2>
-                                            {totalRevenueLoading ? "" : <span className={oxygen.className}>{totalRevenue.getTotalRevenue.toString().length === 5 ?
-                                                Intl.NumberFormat("en-PH", { style: "currency", currency: "PHP" }).format(totalRevenue.getTotalRevenue) : Intl.NumberFormat("en-PH", { style: "currency", currency: "PHP", notation: "standard" }).format(totalRevenue.getTotalRevenue)
-
-                                            }</span>}
+                                            {totalLoading ? <Spinner heigth={35} width={35} /> : <span className={oxygen.className}>{Intl.NumberFormat("en-PH", { style: "currency", currency: "PHP", notation: "standard" }).format(totalData?.getTotal.totalRevenue)}</span>}
                                         </div>
                                     </div>
                                 </div>
@@ -94,7 +79,7 @@ export default function HeadAnalytics() {
                                         <TbBox size={35} />
                                         <div className={styles.body2}>
                                             <h2 className={poppins.className}>Total No. Of Items</h2>
-                                            <span className={oxygen.className}>{totalItemsLoading ? "" : totalItems.getTotalNoOfItems}</span>
+                                            {totalLoading ? <Spinner heigth={35} width={35} /> : <span className={oxygen.className}>{totalData?.getTotal.totalItems}</span>}
                                         </div>
                                     </div>
                                 </div>
@@ -104,8 +89,7 @@ export default function HeadAnalytics() {
                                         <TbShoppingBag size={35} />
                                         <div className={styles.body2}>
                                             <h2 className={poppins.className}>Total No. Orders</h2>
-                                            <span className={oxygen.className}>{totalOrdersLoading ? "" : totalOrders.getTotalNoOfOrders
-                                            }</span>
+                                            {totalLoading ? <Spinner heigth={35} width={35} /> : <span className={oxygen.className}>{totalData?.getTotal.totalOrders}</span>}
                                         </div>
                                     </div>
                                 </div>
@@ -150,15 +134,14 @@ export default function HeadAnalytics() {
                                                     label: "Revenue",
                                                     borderColor: "#244173",
                                                     backgroundColor: "#244173",
-                                                    data: loading ? "" : data.getAllOrderHistory.map(({ date, total }: {
+                                                    data: loading ? "" : data?.getAllOrderHistory.map(({ date, total }: {
                                                         date: any, total: number
                                                     }) => {
                                                         return { x: date, y: total }
                                                     })
                                                 }
                                             ]
-                                        }}
-                                    /></div>
+                                        }} /></div>
                             </div>
                         </div>
                     </div>

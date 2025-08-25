@@ -17,6 +17,9 @@ import z from 'zod'
 import { CategorySchema } from '@/lib/validation/CategorySchema'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { AddCategory } from '@/lib/apollo/category/category.mutation'
+import toast from 'react-hot-toast'
+import ToastNotification from '@/components/toastNotification'
+import Spinner from '@/components/spinner'
 
 type Categories = {
     categoryID: string
@@ -32,6 +35,7 @@ const Index: FC = () => {
     useEffect(() => {
         setUserId(user?.user_id)
     }, [user?.user_id])
+
     const dataStore = useLocalStorageValue("CROW", { initializeWithValue: false })
     const onHandleLocalStorageStore = () => {
         dataStore.set(true)
@@ -68,6 +72,12 @@ const Index: FC = () => {
             variables: {
                 category: data.category,
                 userId: userID
+            },
+            onCompleted: () => {
+                toast.success("Successfully Created")
+                reset({
+                    category: ""
+                })
             }
         })
     }
@@ -129,10 +139,12 @@ const Index: FC = () => {
                 </button>
             </div>
             <div className={dataStore.value ? `${styles.row}` : `${styles.column}`}>
-                {loading ? "Loading..." : data?.getAllCategory.map(({ categoryID, category }: Categories) => (
-                    <CardCategory key={categoryID} category={category} categoryID={categoryID} userID={userID} />
-                ))}
+                {loading ? <Spinner heigth={35} width={35} /> :
+                    data?.getAllCategory.map(({ categoryID, category }: Categories) => (
+                        <CardCategory key={categoryID} category={category} categoryID={categoryID} userID={userID} />
+                    ))}
             </div>
+            <ToastNotification />
         </div >
     )
 }

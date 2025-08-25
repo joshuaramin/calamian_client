@@ -37,6 +37,7 @@
       "react-hook-form": "^7.62.0",
       "react-hot-toast": "^2.6.0",
       "react-icons": "^5.0.1",
+      "react-loader-spinner": "^6.1.6",
       "react-to-print": "^2.14.15",
       "sass": "^1.70.0",
       "store2": "^2.14.4",

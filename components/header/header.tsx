@@ -10,6 +10,7 @@ import Cookies from 'js-cookie'
 import Notifications from './notification/notification'
 import store from 'store2'
 import { oxygen, poppins } from '@/lib/typography'
+import Spinner from '../spinner'
 
 
 export default function Header() {
@@ -110,40 +111,36 @@ export default function Header() {
                     : null
             }
 
-            <div onClick={() => setToggle(() => !toggle)} className={styles.profile}>
-                {loading ? "" : data.getProfileByUserId.map(({ profileID, fullname }: any) => (
-                    <h2 key={profileID} className={poppins.className}>{fullname}</h2>
-                ))}
-                {toggle ? <TbChevronUp size={25} /> : <TbChevronDown size={25} />}
-            </div>
+            {loading ?
+                <Spinner heigth={35} width={35} /> : <div onClick={() => setToggle(() => !toggle)} className={styles.profile}>
+                    <h2 className={poppins.className}>{data?.getProfileByUserId?.fullname}</h2>
+                    {toggle ? <TbChevronUp size={25} /> : <TbChevronDown size={25} />}
+                </div>}
             {
-                toggle ?
-                    <div className={styles.logoutContainer}>
-                        <div className={styles.profileCon}>
-                            <div className={styles.prof}>
-                                {loading ? "" : data.getProfileByUserId.map(({ profileID, fullname, firstname, lastname }: any) => (
-                                    <div key={profileID}>
-                                        <div className={styles.avatar}>
-                                            <span className={poppins.className}>{firstname[0]}{lastname[0]}</span>
-                                        </div>
-                                        <h2 className={poppins.className}>{fullname}</h2>
-                                    </div>
-                                ))}
+                toggle &&
+                <div className={styles.logoutContainer}>
+                    <div className={styles.profileCon}>
+                        <div className={styles.prof}>
+                            <div key={data.getProfileByUserId.profileID}>
+                                <div className={styles.avatar}>
+                                    <span className={poppins.className}>{data.getProfileByUserId.firstname[0]}{data.getProfileByUserId.lastname[0]}</span>
+                                </div>
+                                <h2 className={poppins.className}>{data.getProfileByUserId.fullname}</h2>
                             </div>
                         </div>
-                        <hr />
-                        <button className={styles.settingsBtn} onClick={() => router.push("/dashboard/settings")}>
-                            <TbSettings size={20} />
-                            <span className={oxygen.className}>Settings</span>
-                        </button>
-                        <hr />
-                        <button className={styles.logout} onClick={onHandleLogout}>
-                            <TbLogout size={20} />
-                            <span className={oxygen.className}>Logout</span>
-                        </button>
                     </div>
-                    :
-                    null
+                    <hr />
+                    <button className={styles.settingsBtn} onClick={() => router.push("/dashboard/settings")}>
+                        <TbSettings size={20} />
+                        <span className={oxygen.className}>Settings</span>
+                    </button>
+                    <hr />
+                    <button className={styles.logout} onClick={onHandleLogout}>
+                        <TbLogout size={20} />
+                        <span className={oxygen.className}>Logout</span>
+                    </button>
+                </div>
+
             }
         </div>
     )

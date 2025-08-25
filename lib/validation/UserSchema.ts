@@ -18,3 +18,9 @@ export const UserCreation = z.object({
   role: z.enum(["admin", "manager", "staff"]),
   salary: z.float64(),
 });
+
+export const UserPassword = z.object({
+  current: z.string().min(1, "Current password is required"),
+  password: z.string().min(1, "New password is required"),
+  retype: z.string().min(1, "Re-type password is required"),
+});

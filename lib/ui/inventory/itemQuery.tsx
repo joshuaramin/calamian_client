@@ -15,8 +15,8 @@ import CentralPrompt from '@/components/prompt'
 import { useMutation } from '@apollo/client'
 import { DeleteMedicalItem, UpdateMedicalItem } from '@/lib/apollo/Items/item.mutation'
 import { getItemByCategoryid } from '@/lib/apollo/Items/item.query'
-import store from 'store2'
 import { useRouter } from 'next/router'
+import toast from 'react-hot-toast'
 
 
 type ItemFormValue = z.infer<typeof ItemSchema>
@@ -61,7 +61,7 @@ export default function ItemTr({ itemsID, items, quantity, dosage, expiredDate, 
                 }
             },
             onCompleted: () => {
-                alert("Hello world")
+                toast.success("Successfully Updated")
             },
             refetchQueries: [{
                 query: getItemByCategoryid,
@@ -80,6 +80,7 @@ export default function ItemTr({ itemsID, items, quantity, dosage, expiredDate, 
                 userId: userId,
             },
             onCompleted: () => {
+                toast.success("Successfully Deletd")
                 router.reload()
             }
         })

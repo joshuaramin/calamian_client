@@ -1,18 +1,20 @@
 "use client"
 
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { useMutation } from "@apollo/client"
 import { Authentication } from '@/lib/apollo/Authentication/authenticate.mutaiton'
 import { useRouter } from 'next/router'
 import styles from './form.module.scss'
 import store from 'store2'
-import Message from '@/components/message/message'
 import z from 'zod'
 import { LoginSchema } from '@/lib/validation/AuthSchema'
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { oxygen, poppins, rubik } from '@/lib/typography'
 import Cookies from 'js-cookie'
+import { InputText } from '@/components/input'
+import ToastNotification from '@/components/toastNotification'
+import toast from 'react-hot-toast'
 
 
 
@@ -47,8 +49,7 @@ export default function Form() {
             },
             onCompleted: (data) => {
 
-
-                console.log(data)
+                toast.success("Successfully Login")
 
                 store.set("UserAccount", {
                     user_id: data.login.user.userID,
@@ -82,17 +83,6 @@ export default function Form() {
         })
     }
 
-    useEffect(() => {
-        const interval = setInterval(() => {
-            setMessage(false)
-        }, 2000);
-
-
-        return () => clearInterval(interval)
-    }, [message])
-
-
-
     // const dataStore = useLocalStorageValue("credentials", {
     //     defaultValue: {
     //         username: "",
@@ -115,10 +105,6 @@ export default function Form() {
 
     return (
         <div className={styles.container}>
-            {
-                data && message == true ?
-                    <Message msg="Successfully Login" /> : null
-            }
             <div className={styles.con}>
                 <div className={styles.intro}>
                     <h2 className={rubik.className}>Welcome</h2>
@@ -128,16 +114,24 @@ export default function Form() {
                     </span>
                 </div>
                 <form onSubmit={handleSubmit(onHandleSubmitForm)}>
-                    <input className={`${styles.inputForm} ${oxygen.className}`} type="text" placeholder='Email Address'
-                        {...register("email")} />
-                    {errors && <div className={styles.message}>
-                        <span>{errors?.email?.message}</span>
-                    </div>}
-                    <input className={`${styles.inputForm} ${oxygen.className}`} type="password" placeholder='Password'
-                        {...register("password")} />
-                    {errors && <div className={styles.message}>
-                        <span>{errors?.password?.message}</span>
-                    </div>}
+                    <InputText
+                        icon={false}
+                        label={'Email Address'}
+                        name={'email'}
+                        isRequired={true}
+                        error={errors.email}
+                        register={register}
+                        type='text'
+                    />
+                    <InputText
+                        icon={false}
+                        label={'Password'}
+                        name={'password'}
+                        isRequired={true}
+                        error={errors.password}
+                        register={register}
+                        type='password'
+                    />
                     <div className={styles.rememberMe}>
                         <input type="checkbox" className={styles.checkBox} onClick={onToggleEvent} />
                         <label className={oxygen.className}>Remember Me</label>
@@ -150,6 +144,7 @@ export default function Form() {
             <div className={styles.copyright}>
                 <span className={poppins.className}>&copy; {years} ALL RIGHTS RESERVED</span>
             </div>
+            <ToastNotification />
         </div >
     )
 }

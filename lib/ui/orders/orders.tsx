@@ -1,6 +1,5 @@
 import { format } from 'date-fns'
 import React, { useState } from 'react'
-import { Oxygen } from 'next/font/google'
 import styles from '@/styles/dashboard/orders/order.module.scss'
 import OrderView from './orderView'
 import { oxygen } from '@/lib/typography'

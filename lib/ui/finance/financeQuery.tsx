@@ -13,6 +13,8 @@ import { DeleteExpenseFolder, UpdateExpenseFolder } from '@/lib/apollo/finance/f
 import z from 'zod';
 import { GetAllExpenseFolder } from '@/lib/apollo/finance/finance.query';
 import store from 'store2';
+import toast from 'react-hot-toast';
+import ToastNotification from '@/components/toastNotification';
 
 
 type ExpenseFolderFormValue = z.infer<typeof ExpenseFolderSchema>
@@ -59,7 +61,7 @@ export default function FinanceQuery({ expFolderID, exFolder }: { exFolder: stri
                 userId: userId
             },
             onCompleted: () => {
-
+                toast.success("Successfully Updated")
             },
             refetchQueries: [GetAllExpenseFolder]
         })
@@ -73,7 +75,7 @@ export default function FinanceQuery({ expFolderID, exFolder }: { exFolder: stri
                 userId: userId
             },
             onCompleted: () => {
-
+                toast.success("Successfully Deleted")
             },
             onError: (error) => {
                 console.log(error)
@@ -149,6 +151,7 @@ export default function FinanceQuery({ expFolderID, exFolder }: { exFolder: stri
                     </div> : null
                 }
             </div>
+            <ToastNotification />
         </div>
     )
 }

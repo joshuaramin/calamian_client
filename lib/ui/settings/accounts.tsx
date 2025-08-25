@@ -1,14 +1,31 @@
 import React, { SyntheticEvent, useEffect, useState } from 'react'
 import styles from './accounts.module.scss'
-import { Oxygen, Poppins } from 'next/font/google'
 import { UpdateUserEmailAddress, UpdateUserPassword } from '@/lib/apollo/User/user.mutation'
 import { useMutation } from '@apollo/client'
 import Message from '@/components/message/message'
-import { poppins, oxygen } from '@/lib/typography'
+import { poppins } from '@/lib/typography'
+import { InputText } from '@/components/input'
+import toast from 'react-hot-toast'
+import { SubmitHandler, useForm } from 'react-hook-form'
+import z from 'zod'
+import { UserPassword, UserSchema } from '@/lib/validation/UserSchema'
+import { zodResolver } from '@hookform/resolvers/zod'
+import store from 'store2'
 
-export default function Accounts({ userID }: any) {
 
-    const [email, setEmail] = useState("")
+type UserFormValue = z.infer<typeof UserSchema>
+type UserPasswordFormValue = z.infer<typeof UserPassword>
+
+export default function Accounts() {
+
+    const [userID, setUserID] = useState("");
+
+    useEffect(() => {
+        const user = store.get("UserAccount")
+
+        setUserID(user.user_id)
+    }, [userID])
+
     const [pass, setPassword] = useState({
         current: "",
         password: "",
@@ -18,21 +35,37 @@ export default function Accounts({ userID }: any) {
     const [emailMutate, { data: EmailData }] = useMutation(UpdateUserEmailAddress)
     const [passwordMutate, { data: PasswordData }] = useMutation(UpdateUserPassword)
 
-    const onChangePasswordForm = (e: SyntheticEvent) => {
-        e.preventDefault();
+
+    const { register: emailRegister, handleSubmit: emailHandleSubmit, formState: { errors: emailError }, reset: emailReset } = useForm<UserFormValue>({
+        resolver: zodResolver(UserSchema),
+        defaultValues: {
+            email: ""
+        }
+    })
+
+    const { register: passwordRegister, handleSubmit: passwordHandleSubmit, formState: { errors: passwordError }, reset } = useForm<UserPasswordFormValue>({
+        resolver: zodResolver(UserPassword),
+        defaultValues: {
+            current: "",
+            password: "",
+            retype: ""
+        }
+    })
+
+    const onChangePasswordForm: SubmitHandler<UserPasswordFormValue> = (data) => {
         passwordMutate({
             variables: {
                 userId: userID,
-                currentPasword: pass.current,
-                password: pass.password,
-                retype: pass.retypepass
+                currentPasword: data.current,
+                password: data.password,
+                retype: data.retype
             },
             onError: (e) => {
                 alert(e.message)
             },
             onCompleted: () => {
                 setMessage(true)
-                alert("Successfully Updated");
+                toast.success("Successfully Password Updated");
                 setPassword({
                     current: "",
                     password: "",
@@ -42,32 +75,19 @@ export default function Accounts({ userID }: any) {
         })
     }
 
-    const onChangeEmailAddressForm = (e: SyntheticEvent) => {
-        e.preventDefault();
+
+    const onHandleEmailAddress: SubmitHandler<UserFormValue> = (data) => {
         emailMutate({
             variables: {
-                email: email,
+                email: data.email,
                 userId: userID
             },
-            onError(e) {
-                alert(e.message)
-            },
+            errorPolicy: "all",
             onCompleted: () => {
-                setMessage(true)
-                setEmail("")
+                toast.success("Successffully Email Address Updated")
             }
         })
     }
-
-
-    useEffect(() => {
-        const interval = setInterval(() => {
-            setMessage(false)
-        }, 2000);
-
-
-        return () => clearInterval(interval)
-    }, [message])
 
     return (
         <div className={styles.container}>
@@ -77,13 +97,21 @@ export default function Accounts({ userID }: any) {
                 <h2 className={poppins.className}>Account</h2>
             </div>
             <div className={styles.email}>
-                <h2 className={poppins.className}>Emaill Address</h2>
-                <form onSubmit={onChangeEmailAddressForm}>
-                    <input className={oxygen.className} type="email" value={email} placeholder='Email Address' onChange={(e) => setEmail(e.target.value)} />
+                <form onSubmit={emailHandleSubmit(onHandleEmailAddress)}>
+                    <InputText
+                        icon={false}
+                        label={'Email Address'}
+                        name={'email'}
+                        isRequired={false}
+                        error={emailError.email}
+                        register={emailRegister}
+                        type='text'
+                    />
                     <div className={styles.btn}>
                         <button type="submit" className={poppins.className}>Save</button>
                     </div>
                 </form>
+
             </div>
             <div className={styles.password}>
                 <div className={styles.passHeader}>
@@ -91,10 +119,34 @@ export default function Accounts({ userID }: any) {
                 </div>
                 <div className={styles.pc}>
                     <div className={styles.pass}>
-                        <form onSubmit={onChangePasswordForm}>
-                            <input value={pass.current} type="password" onChange={(e) => setPassword({ ...pass, current: e.target.value })} placeholder='Current Password' />
-                            <input value={pass.password} type="password" onChange={(e) => setPassword({ ...pass, password: e.target.value })} placeholder='New Password' />
-                            <input value={pass.retypepass} type="password" onChange={(e) => setPassword({ ...pass, retypepass: e.target.value })} placeholder='Retype Password' />
+                        <form onSubmit={passwordHandleSubmit(onChangePasswordForm)}>
+                            <InputText
+                                icon={false}
+                                label={'Current Password'}
+                                name={'current'}
+                                isRequired={false}
+                                error={passwordError.current}
+                                register={passwordRegister}
+                                type='text'
+                            />
+                            <InputText
+                                icon={false}
+                                label={'New Password'}
+                                name={'password'}
+                                isRequired={false}
+                                error={passwordError.password}
+                                register={passwordRegister}
+                                type='text'
+                            />
+                            <InputText
+                                icon={false}
+                                label={'Re-Type Password'}
+                                name={'retype'}
+                                isRequired={false}
+                                error={passwordError.retype}
+                                register={passwordRegister}
+                                type='text'
+                            />
                             <div className={styles.btn}>
                                 <button type="submit" className={poppins.className}>Save</button>
                             </div>

@@ -2,20 +2,11 @@ import React from 'react'
 import styles from './orderReport.module.scss'
 import { CSVLink } from 'react-csv'
 import { format } from 'date-fns'
-import { Poppins, Oxygen } from 'next/font/google'
 import { TbDownload, TbArrowLeft } from 'react-icons/tb'
+import { oxygen, poppins } from '@/lib/typography'
+
 const tableHead = [ "Order No.", "No. Of Items", "Total", "Date Order Created" ]
 
-
-const poppins = Poppins({
-    weight: "500",
-    subsets: [ "latin" ]
-})
-
-const oxygen = Oxygen({
-    weight: "400",
-    subsets: [ "latin" ]
-})
 
 export default function OrderReport({ data, close }: any) {
 

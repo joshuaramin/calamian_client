@@ -1,90 +1,113 @@
 import React, { SyntheticEvent, useEffect, useState } from 'react'
-import { Oxygen, Poppins } from 'next/font/google'
 import { useMutation } from '@apollo/client'
 import { UpdateExpense } from '@/lib/apollo/finance/finance.mutation'
 import { GetAllExpense } from '@/lib/apollo/finance/finance.query'
-import styles from '@/styles/dashboard/finance/expense/update.module.scss'
-import Message from '@/components/message/message'
+import CentralPrompt from '@/components/prompt'
+import { RegisterOptions, SubmitHandler, useForm, UseFormRegisterReturn } from 'react-hook-form'
+import { InputText } from '@/components/input'
+import toast from 'react-hot-toast'
+import z from 'zod'
+import { ExpenseSchema } from '@/lib/validation/ExpenseSchema'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { Select } from '@/components/select'
+import ToastNotification from '@/components/toastNotification'
+import useSearch from '@/lib/hooks/useSearch'
 
-const oxygen = Oxygen({
-    weight: "400",
-    subsets: ["latin"]
-})
 
-const poppins = Poppins({
-    weight: "500",
-    subsets: ["latin"]
-})
+type ExpenseFormValue = z.infer<typeof ExpenseSchema>
+
 export default function UpdateExpensed({ expenseID, expense, amount, mod, payDate, close, expenseFolderID }: { expenseID: string, expense: string, amount: number, mod: string, payDate: any, close: () => void, expenseFolderID: string }) {
 
-    const [updateNewExpenses, setUpdateNewExpenses] = useState({
-        expense: expense,
-        amount: amount,
-        mod: mod,
-        payDate: payDate
+    const search = useSearch();
 
+    const { register, handleSubmit, reset, formState: { errors }, setValue, watch } = useForm<ExpenseFormValue>({
+        resolver: zodResolver(ExpenseSchema),
+        defaultValues: {
+            amount: amount, expense: expense, mod: "Card", payDate: payDate
+        }
     })
 
 
-    const [message, setMessage] = useState<boolean>(false)
-
-    const [UpdateExpenses, { data }] = useMutation(UpdateExpense, {
-        variables: {
-            expenseId: expenseID,
-            expenses: {
-                expense: updateNewExpenses.expense,
-                mod: updateNewExpenses.mod,
-                payDate: updateNewExpenses.payDate,
-                amount: updateNewExpenses.amount
-            }
-        },
-        onCompleted: () => {
-            setMessage(true)
-        },
-        refetchQueries: [{
-            query: GetAllExpense, variables: {
-                expFolderId: expenseFolderID
-            }
-        }]
-    })
-
-    useEffect(() => {
-        const interval = setInterval(() => {
-            setMessage(false)
-        }, 2000);
 
 
-        return () => clearInterval(interval)
-    }, [message])
+    const [UpdateExpenses] = useMutation(UpdateExpense)
 
-    const onHandleSubmitForm = (e: SyntheticEvent) => {
-        e.preventDefault();
-        UpdateExpenses()
+
+    const onHandleSubmitForm: SubmitHandler<ExpenseFormValue> = (data) => {
+
+        UpdateExpenses({
+            variables: {
+                expenseId: expenseID,
+                expenses: {
+                    expense: data.expense,
+                    mod: data.mod,
+                    payDate: data.payDate,
+                    amount: data.amount
+                }
+            },
+            onCompleted: () => {
+                toast.success("Expense Updated")
+            },
+            refetchQueries: [{
+                query: GetAllExpense, variables: {
+                    expFolderId: expenseFolderID
+                }
+            }]
+        })
     }
     return (
-        <div className={styles.container}>
-            {data && message == true ? <Message msg="Successfully Updated" /> : null}
-            <h2 className={poppins.className}>Expense Update</h2>
-            <form onSubmit={onHandleSubmitForm}>
-                <input type="date" value={updateNewExpenses.payDate} onChange={(e) => setUpdateNewExpenses({ ...updateNewExpenses, payDate: e.target.value })} />
-                <input type="text" value={updateNewExpenses.expense} onChange={(e) => setUpdateNewExpenses({ ...updateNewExpenses, expense: e.target.value })} />
-                <input type="text" value={updateNewExpenses.amount} onChange={(e) => {
-                    setUpdateNewExpenses({ ...updateNewExpenses, amount: parseFloat(e.target.value) })
-                    if (isNaN(parseFloat(e.target.value))) {
-                        setUpdateNewExpenses({ ...updateNewExpenses, amount: "" as unknown as number })
-                    }
-                }} />
-                <select value={updateNewExpenses.mod} onChange={(e) => setUpdateNewExpenses({ ...updateNewExpenses, mod: e.target.value })}>
-                    <option className={oxygen.className} value="-">Please Select</option>
-                    <option className={oxygen.className} value="Cash">Cash</option>
-                    <option className={oxygen.className} value="Card">Card</option>
-                    <option className={oxygen.className} value="Paypal">Paypal</option>
-                </select>
-                <div className={styles.addBtnGrp}>
-                    <button onClick={close} type="button">Cancel</button>
-                    <button className={styles.addBtn} type="submit">Yes, Change it</button>
-                </div>
-            </form>
-        </div>
+        <>
+            <CentralPrompt
+                title={'Expense Update'}
+                headerClose={false}
+                submitHandler={handleSubmit(onHandleSubmitForm)}
+                onClose={close}
+                footer={true}
+                buttoName='Save'
+                body={
+                    <>
+
+                        <InputText
+                            icon={false}
+                            label={'Expense Name'}
+                            name={'expense'}
+                            isRequired={false}
+                            error={errors.expense}
+                            register={register}
+                        />
+
+                        <Select label={'Mode of Payment'} name={'mod'} isRequired={false}
+                            error={errors.mod} options={["Cash", "Card", "Paypal"].map((mod, index) => {
+                                return {
+                                    label: mod,
+                                    value: mod
+                                }
+                            })} setValue={setValue} value={watch("mod")} register={register} />
+                        <InputText
+                            icon={false}
+                            label={'Amount'}
+                            name={'amount'}
+                            isRequired={false}
+                            error={errors.amount}
+                            register={register}
+                        />
+                        <InputText
+                            icon={false}
+                            label={'Expense Date'}
+                            name={'payDate'}
+                            isRequired={false}
+                            error={errors.payDate}
+                            register={register}
+                            type='date'
+                        />
+
+                    </>
+                }
+
+            />
+
+            <ToastNotification />
+
+        </>
     )
 }

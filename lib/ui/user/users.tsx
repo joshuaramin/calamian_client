@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from 'react'
+import React, { SyntheticEvent, useEffect, useState } from 'react'
 import { TbEdit, TbKey, TbTrash, TbEye } from 'react-icons/tb'
 import z from 'zod'
 import styles from '@/styles/dashboard/users/user.module.scss'
@@ -14,6 +14,8 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation } from '@apollo/client'
 import { ResetDefaultPassword, UpdateUserAccounts, DeleteUser as DeleteUserAccount } from '@/lib/apollo/User/user.mutation'
 import { getAllUserQuery } from '@/lib/apollo/User/user.query'
+import toast from 'react-hot-toast'
+import store from 'store2'
 
 
 
@@ -21,8 +23,15 @@ type UserFormValues = z.infer<typeof UserCreation>
 
 
 
-export default function UsersQuery({ userID, email, role, salary, fullname, phone, firstname, lastname, birthday, mUser }: any) {
+export default function UsersQuery({ userID, email, role, salary, fullname, phone, firstname, lastname, birthday }: any) {
 
+
+    const [userId, setUserID] = useState("")
+
+    useEffect(() => {
+        const user = store.get("UserAccount")
+        setUserID(user.user_id)
+    }, [])
     const router = useRouter()
 
     const [edit, setEdituser] = useState(false)
@@ -43,7 +52,7 @@ export default function UsersQuery({ userID, email, role, salary, fullname, phon
     const [editMutate] = useMutation(UpdateUserAccounts)
     const [deleteMutate] = useMutation(DeleteUserAccount)
 
-    const { register, handleSubmit, reset, formState: { errors } } = useForm<UserFormValues>({
+    const { register, handleSubmit, formState: { errors } } = useForm<UserFormValues>({
         resolver: zodResolver(UserCreation),
         defaultValues: {
             birthday: birthday,
@@ -56,26 +65,28 @@ export default function UsersQuery({ userID, email, role, salary, fullname, phon
         }
     })
 
-    console.log("Edit Profile", errors)
-    const onHandleResetPassword = () => {
+    const onHandleResetPassword = (e: SyntheticEvent) => {
+        e.preventDefault()
         resetMutate({
             variables: {
                 userId: userID
             },
             onCompleted: () => {
-                router.reload()
+                toast.success("Successfully Updated")
+
             }
         })
     }
 
-    const onHandleDeleteUser = () => {
+    const onHandleDeleteUser = (e: SyntheticEvent) => {
+        e.preventDefault()
         deleteMutate({
             variables: {
                 userId: userID,
-                main: mUser
+                main: userId
             },
             onCompleted: () => {
-
+                toast.success("Successfully Deleted")
             },
             refetchQueries: [getAllUserQuery]
         })
@@ -97,6 +108,7 @@ export default function UsersQuery({ userID, email, role, salary, fullname, phon
                 }
             },
             onCompleted: () => {
+                toast.success("Successfully Updated")
             },
             refetchQueries: [getAllUserQuery]
         })

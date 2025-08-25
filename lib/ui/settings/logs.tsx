@@ -1,30 +1,26 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import styles from './logs.module.scss'
 import { UsersActivityLogs } from '@/lib/apollo/User/logs/logs.query'
 import { useQuery } from '@apollo/client'
 import { format } from 'date-fns'
-import { Poppins, Oxygen } from 'next/font/google'
 import { TbChevronLeft, TbChevronRight } from 'react-icons/tb'
+import { oxygen, poppins } from '@/lib/typography'
+import store from 'store2'
 
 const orders = [
     { name: "Newest", value: "desc" },
     { name: "Oldest", value: "asc" }
 ]
 
+export default function ActivityLogs() {
 
 
-const poppins = Poppins({
-    weight: "500",
-    subsets: ["latin"]
-})
+    const [userID, setUserID] = useState("")
 
-
-const oxygen = Oxygen({
-    weight: "400",
-    subsets: ["latin"]
-})
-export default function ActivityLogs({ userID }: any) {
-
+    useEffect(() => {
+        const user = store.get("UserAccount")
+        setUserID(user.user_id)
+    }, [userID])
 
     const [order, setOrders] = useState("desc")
     const [pages, setPages] = useState(0)

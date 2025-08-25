@@ -1,11 +1,9 @@
 import Dashboard from '@/layout/dashboard.layout'
 import PageWithLayout from '@/layout/page.layout'
-import React, { FC, useState, useEffect } from 'react'
+import React, { FC, useEffect } from 'react'
 import Head from 'next/head'
 import styles from '@/styles/dashboard/users/user.module.scss'
-import { useMutation, useQuery } from '@apollo/client'
-import { getAllUserQuery } from '@/lib/apollo/User/user.query'
-import { UserSubscriptions } from '@/lib/apollo/User/user.subscriptions'
+
 import UsersQuery from '@/lib/ui/user/users'
 
 import { oxygen, poppins } from '@/lib/typography'
@@ -16,25 +14,30 @@ import z from 'zod'
 import { UserCreation } from '@/lib/validation/UserSchema'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CreateUser } from '@/lib/apollo/User/user.mutation'
+import { useMutation, useQuery } from '@apollo/client'
+import { getAllUserQuery } from '@/lib/apollo/User/user.query'
+import { UserSubscriptions } from '@/lib/apollo/User/user.subscriptions'
+import ToastNotification from '@/components/toastNotification'
+import toast from 'react-hot-toast'
+import useSearch from '@/lib/hooks/useSearch'
+import useToggle from '@/lib/hooks/useToggle'
 
 
 type UserFormValues = z.infer<typeof UserCreation>
 
 const UserThead = ["Name", "Email Address", "Role", "Contact No.", "Salary", "Actions"]
 
-const Users: FC = ({ userIds }: any) => {
-    const [search, setSearch] = useState("")
-    const [add, setAdduser] = useState(false)
+const Users: FC = () => {
+
+    const search = useSearch()
+    const toggle = useToggle()
 
     const { loading, data, subscribeToMore } = useQuery(getAllUserQuery, {
         variables: {
-            search
+            search: search.search
         }
     })
 
-    const onHandleUserClose = () => {
-        setAdduser(() => !add)
-    }
 
     const { register, handleSubmit, formState: { errors }, reset } = useForm<UserFormValues>({
         resolver: zodResolver(UserCreation),
@@ -52,8 +55,6 @@ const Users: FC = ({ userIds }: any) => {
 
     const [mutate] = useMutation(CreateUser)
 
-    console.log(errors)
-
     const onHandleSubmit: SubmitHandler<UserFormValues> = (data) => {
         mutate({
             variables: {
@@ -67,6 +68,9 @@ const Users: FC = ({ userIds }: any) => {
                     salary: data.salary
                 }
 
+            },
+            onCompleted: () => {
+                toast.success("Successfully Created")
             }
         })
     }
@@ -91,7 +95,7 @@ const Users: FC = ({ userIds }: any) => {
                 <title>Users</title>
             </Head>
             {
-                add && <CentralPrompt
+                toggle.toggle && <CentralPrompt
                     title={'Add New User'}
                     headerClose={false}
                     body={<>
@@ -154,17 +158,16 @@ const Users: FC = ({ userIds }: any) => {
                     </>}
                     buttoName='Add new User'
                     submitHandler={handleSubmit(onHandleSubmit)}
-                    onClose={onHandleUserClose}
+                    onClose={toggle.updateToggle}
                     footer={true} />
             }
 
             <div className={styles.addbtn}>
 
-                <input type='search' className={oxygen.className} placeholder='Find User' onChange={(e) => {
-                    setSearch(e.target.value)
-                }} />
+                <input type='search' className={oxygen.className} placeholder='Find User'
+                    onChange={(e) => search.updateSearch(e.currentTarget.value)} />
                 <div>
-                    <button className={styles.addBtn} onClick={() => setAdduser(() => !add)}>
+                    <button className={styles.addBtn} onClick={toggle.updateToggle}>
                         <span className={oxygen.className}>Add</span>
                     </button>
                 </div>
@@ -185,14 +188,15 @@ const Users: FC = ({ userIds }: any) => {
                             <td></td>
                             <td></td>
                             <td></td>
-                        </tr> : data.getAllUserAccount.map(({ userID, email, role, salary, createdAt, myProfile }: any) => (
+                        </tr> : data?.getAllUserAccount.map(({ userID, email, role, salary, createdAt, myProfile }: any) => (
 
-                            <UsersQuery key={userID} userID={userID} email={email} role={role} salary={salary.salary} createdAt={createdAt} fullname={myProfile.fullname} phone={myProfile.phone} firstname={myProfile.firstname} lastname={myProfile.lastname} birthday={myProfile.birthday} mUser={userIds} />
+                            <UsersQuery key={userID} userID={userID} email={email} role={role} salary={salary.salary} createdAt={createdAt} fullname={myProfile.fullname} phone={myProfile.phone} firstname={myProfile.firstname} lastname={myProfile.lastname} birthday={myProfile.birthday} />
 
                         ))}
                     </tbody>
                 </table>
             </div>
+            <ToastNotification />
         </div>
     )
 }

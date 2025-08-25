@@ -1,20 +1,10 @@
 import { formatDistance, subDays } from 'date-fns'
-import { Poppins, Oxygen } from 'next/font/google'
 import { getNotificationUpdate } from '@/lib/apollo/notification/notification.mutation'
 import { GetAllNotification, GetAllUnreadNotification } from '@/lib/apollo/notification/notification.query'
 import React, { SyntheticEvent } from 'react'
 import styles from '../header.module.scss'
 import { useMutation } from '@apollo/client'
-
-const poppins = Poppins({
-    weight: "500",
-    subsets: ["latin"]
-})
-
-const oxygen = Oxygen({
-    weight: "400",
-    subsets: ["latin"]
-})
+import { poppins, oxygen } from '@/lib/typography'
 
 export default function Notifications({ notificationID, notification, createdAt, notifStatus }:
     { notificationID: string, notification: string, createdAt: any, notifStatus: string }) {

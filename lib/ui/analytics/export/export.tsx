@@ -6,6 +6,8 @@ import { useMutation } from '@apollo/client'
 import OrderReport from './orderReport/orderReport'
 import { ReportOrders } from '@/lib/apollo/order/order.mutation'
 import Message from '@/components/message/message'
+import toast from 'react-hot-toast'
+import ToastNotification from '@/components/toastNotification'
 const poppins = Poppins({
     weight: "500",
     subsets: ["latin"]
@@ -18,7 +20,6 @@ const oxygen = Oxygen({
 export default function Export({ close }: { close: () => void }) {
 
     const [report, setReport] = useState(false)
-    const [message, setMEssage] = useState(false)
 
     const [dates, setDates] = useState({
         startDate: "",
@@ -38,7 +39,7 @@ export default function Export({ close }: { close: () => void }) {
                 endDate: dates.endDate
             },
             onCompleted: () => {
-                setMEssage(true)
+                toast.success("Successffully Exported")
                 setReport(true)
             }
         })
@@ -47,7 +48,6 @@ export default function Export({ close }: { close: () => void }) {
 
     return (
         <div className={styles.container}>
-            {data && message === true ? <Message msg="Successfully Download" /> : null}
             <div className={styles.header}>
                 <h2 className={poppins.className}>Generate Report</h2>
                 <button onClick={close}>
@@ -73,6 +73,7 @@ export default function Export({ close }: { close: () => void }) {
                     <span className={oxygen.className}>Generate Report</span>
                 </button>
             </form>
+            <ToastNotification />
         </div>
     )
 }

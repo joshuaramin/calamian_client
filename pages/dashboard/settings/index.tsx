@@ -12,16 +12,7 @@ import Cookies from 'js-cookie'
 import { client } from '@/lib/apollo/apolloWrapper'
 import Head from 'next/head'
 import store from 'store2'
-const oxygen = Oxygen({
-    weight: "400",
-    subsets: ["latin"]
-})
-
-const poppins = Poppins({
-    weight: "500",
-    subsets: ["latin"]
-})
-
+import { poppins, oxygen } from '@/lib/typography'
 
 const settingAcc = [
     { name: "Account", value: "accounts" },
@@ -35,12 +26,6 @@ const Settings: FC = () => {
     const router = useRouter();
 
     const user = store.get("UserAccount");
-
-
-    useEffect(() => {
-        setUserId(user.user_id)
-    }, [user.user_id])
-
 
     const [accounts, setAccounts] = useState("accounts");
 
@@ -72,7 +57,7 @@ const Settings: FC = () => {
                     </button>
                     <hr />
                     <div className={styles.versioning}>
-                        <span className={`${oxygen.className} ${styles.systemVersion}`}>Version 1.0.0</span>
+                        <span className={`${oxygen.className} ${styles.systemVersion}`}>Version 1.1.1</span>
                     </div>
                 </div>
                 <div className={styles.content}>
@@ -82,9 +67,9 @@ const Settings: FC = () => {
                         </button>
                     </div>
                     <div className={styles.aa}>
-                        {accounts === "accounts" ? <Accounts userID={userId} /> : null}
-                        {accounts === "profiles" ? <MyProfile userID={userId} /> : null}
-                        {accounts === "logs" ? <ActivityLogs userID={userId} /> : null}
+                        {accounts === "accounts" ? <Accounts /> : null}
+                        {accounts === "profiles" ? <MyProfile /> : null}
+                        {accounts === "logs" ? <ActivityLogs /> : null}
                     </div>
                 </div>
             </div>

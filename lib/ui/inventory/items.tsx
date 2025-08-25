@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import { useQuery } from '@apollo/client'
-import { Oxygen, Poppins } from 'next/font/google'
 import { getItemByCategoryid } from '@/lib/apollo/Items/item.query'
 
 import { createItemSubscriptons } from '@/lib/apollo/Items/items.subscriptionts'
 import ItemQuery from './itemQuery'
 import { poppins } from '@/lib/typography'
+import ToastNotification from '@/components/toastNotification'
 
 
 type Items = {
@@ -23,11 +23,12 @@ type Info = {
 
 const heads = ["Name", "Price", "Quantity", "Dosage", "Expired Date", "Actions"]
 
-export default function Items({ categoryID, search, dataItems, userId }: any) {
+export default function Items({ categoryID, search, userId }: any) {
 
 
 
-    const { loading, data, subscribeToMore } = useQuery(getItemByCategoryid, { variables: { categoryId: categoryID, search } })
+    const { loading, data, subscribeToMore } = useQuery(getItemByCategoryid,
+        { variables: { categoryId: categoryID, search: search } })
 
 
     useEffect(() => {
@@ -62,14 +63,7 @@ export default function Items({ categoryID, search, dataItems, userId }: any) {
                 </thead>
                 <tbody>
                     {loading ?
-                        <tr>
-                            <td>Loading</td>
-                            <td>Loading</td>
-                            <td>Loading</td>
-                            <td>Loading</td>
-                            <td>Loading</td>
-                            <td>Loading</td>
-                        </tr> : data?.getItemsByCategoryId.map(({ itemsID, items, dosage, storeInfo }: Items) => (
+                        "" : data?.getItemsByCategoryId.map(({ itemsID, items, dosage, storeInfo }: Items) => (
                             storeInfo.map(({ price, quantity, expiredDate }: Info) => (
                                 <ItemQuery key={itemsID} itemsID={itemsID} items={items} dosage={dosage} price={price} quantity={quantity} expiredDate={expiredDate} categoryID={categoryID} userId={userId} />
                             ))
@@ -78,6 +72,7 @@ export default function Items({ categoryID, search, dataItems, userId }: any) {
 
                 </tbody>
             </table>
+            <ToastNotification />
         </div>
     )
 }

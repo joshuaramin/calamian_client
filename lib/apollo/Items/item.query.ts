@@ -19,7 +19,7 @@ export const GetAllItemQuery = gql`
 `;
 
 export const getSearchItems = gql`
-  query GetItemBySearch($search: ID!, $categoryId: ID!) {
+  query GetItemBySearch($search: String, $categoryId: ID!) {
     getItemBySearch(search: $search, categoryID: $categoryId) {
       dosage
       items
@@ -48,12 +48,6 @@ export const getSearchStaff = gql`
         expiredDate
       }
     }
-  }
-`;
-
-export const GetTotalOfNumberItems = gql`
-  query Query {
-    getTotalNoOfItems
   }
 `;
 

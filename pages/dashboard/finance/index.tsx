@@ -19,6 +19,8 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { InputText } from '@/components/input'
 import useToggle from '@/lib/hooks/useToggle'
 import useSearch from '@/lib/hooks/useSearch'
+import ToastNotification from '@/components/toastNotification'
+import toast from 'react-hot-toast'
 
 
 
@@ -73,7 +75,7 @@ const Finance: FC = () => {
                 userId: userId
             },
             onCompleted: () => {
-                alert("Hello world")
+                toast.success("Successfully Created")
                 reset({ exFolder: "" })
             }
         })
@@ -139,6 +141,7 @@ const Finance: FC = () => {
                     <FinanceQuery key={expFolderID} exFolder={exFolder} expFolderID={expFolderID} />
                 ))}
             </div>
+            <ToastNotification />
         </div >
     )
 }

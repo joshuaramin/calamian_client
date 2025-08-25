@@ -11,6 +11,8 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation } from '@apollo/client'
 import { UpdateCategory, DeleteCategory } from '@/lib/apollo/category/category.mutation'
 import { poppins } from '@/lib/typography'
+import ToastNotification from '@/components/toastNotification'
+import toast from 'react-hot-toast'
 
 
 type Category = {
@@ -41,7 +43,9 @@ export default function CardCategory({ categoryID, category, userID }: Category)
     const [editMutate] = useMutation(UpdateCategory)
     const [deleteMutate] = useMutation(DeleteCategory,
         {
-            variables: { categoryId: categoryID, userId: userID }, onCompleted: () => {
+            variables: { categoryId: categoryID, userId: userID },
+            onCompleted: () => {
+                toast.success("Successfully Deleted")
                 router.reload()
             }
         }
@@ -57,7 +61,7 @@ export default function CardCategory({ categoryID, category, userID }: Category)
                 userId: userID
             },
             onCompleted: () => {
-
+                toast.success("Successfully Updated")
             },
             errorPolicy: "all",
         })
@@ -132,6 +136,7 @@ export default function CardCategory({ categoryID, category, userID }: Category)
                     }}>Delete</button>
                 </div>}
             </div>
+            <ToastNotification />
         </div>
     )
 }

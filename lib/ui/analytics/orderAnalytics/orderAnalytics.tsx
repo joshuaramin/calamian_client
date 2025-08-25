@@ -1,20 +1,10 @@
 import React from 'react'
 import { useRouter } from 'next/router'
 import { useQuery } from '@apollo/client';
-import { Poppins, Oxygen } from 'next/font/google';
 import { GetAllCurrentOrdersBy20 } from '@/lib/apollo/order/order.query';
 import { format } from 'date-fns';
 import styles from './orderAnalytics.module.scss'
-
-const poppins = Poppins({
-    weight: "400",
-    subsets: ["latin"]
-})
-
-const oxygen = Oxygen({
-    weight: "400",
-    subsets: ["latin"]
-})
+import { oxygen, poppins } from '@/lib/typography';
 
 
 const orderTableHead = ["Orders No.", "No. of Items", "Total", "Order Created"]

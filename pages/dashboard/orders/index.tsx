@@ -8,14 +8,10 @@ import { useQuery } from '@apollo/client'
 import { Poppins } from 'next/font/google'
 import OrdersTable from '@/lib/ui/orders/orders'
 import { OrderSubscriptions } from '@/lib/apollo/order/order.subscriptions'
+import { poppins } from '@/lib/typography'
 
 const orderTableHead = ["Orders No.", "No. of Items", "Total", "Order Created", "Action"]
 
-
-const poppins = Poppins({
-    weight: "400",
-    subsets: ["latin"]
-})
 const Orders: FC = () => {
     const { loading, data, subscribeToMore } = useQuery(GetAllOrders)
 
