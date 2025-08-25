@@ -1,7 +1,6 @@
 "use client"
 
 import React, { useEffect, useState } from 'react'
-import { Oxygen, Rubik, Poppins } from 'next/font/google'
 import { useMutation } from "@apollo/client"
 import { Authentication } from '@/lib/apollo/Authentication/authenticate.mutaiton'
 import { useRouter } from 'next/router'

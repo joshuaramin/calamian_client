@@ -1,8 +1,8 @@
 import React, { ChangeEvent, useEffect, useState } from 'react'
 import styles from '@/styles/components/input.module.scss'
 import { poppins } from '@/lib/typography'
-import { TbLock, TbEyeOff, TbMail, TbEye, TbX } from 'react-icons/tb'
-import { FieldError, FieldValues, Merge, UseFormRegister, UseFormSetValue } from 'react-hook-form'
+import { TbMail } from 'react-icons/tb'
+import { FieldError, FieldValues, UseFormRegister } from 'react-hook-form'
 import cn from '@/lib/util/cn'
 
 

@@ -1,0 +1,56 @@
+@use "../../variables.module" as *;
+
+.container {
+    width: 100%;
+    padding: 20px;
+
+
+
+    .header {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        position: relative;
+
+        .avatar {
+            height: 120px;
+            width: 120px;
+            overflow: hidden;
+            border-radius: 100px;
+            position: relative;
+        }
+
+        .basicInfo {
+            h1 {
+                font-weight: bolder;
+            }
+
+            p {
+                font-size: $fntbase;
+                text-transform: uppercase;
+            }
+        }
+    }
+
+    .body {
+        width: 100%;
+        padding: 20px 0;
+
+        table {
+            tr {
+                th {
+                    width: 250px;
+                    font-size: $fntlg;
+                    text-align: left;
+
+                }
+
+                td {
+                    font-size: $fntlg;
+                    text-align: left;
+                }
+            }
+        }
+    }
+}

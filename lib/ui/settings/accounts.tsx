@@ -4,16 +4,8 @@ import { Oxygen, Poppins } from 'next/font/google'
 import { UpdateUserEmailAddress, UpdateUserPassword } from '@/lib/apollo/User/user.mutation'
 import { useMutation } from '@apollo/client'
 import Message from '@/components/message/message'
+import { poppins, oxygen } from '@/lib/typography'
 
-const poppins = Poppins({
-    weight: "500",
-    subsets: ["latin"]
-})
-
-const oxygen = Oxygen({
-    weight: "400",
-    subsets: ["latin"]
-})
 export default function Accounts({ userID }: any) {
 
     const [email, setEmail] = useState("")

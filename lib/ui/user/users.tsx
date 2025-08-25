@@ -1,36 +1,106 @@
-import { Oxygen } from 'next/font/google'
+"use client"
+
 import React, { useState } from 'react'
 import { TbEdit, TbKey, TbTrash, TbEye } from 'react-icons/tb'
+import z from 'zod'
 import styles from '@/styles/dashboard/users/user.module.scss'
-import UserEdit from './edit'
-import DeleteUser from './delete'
-import ResetPassword from './resetpassword'
-import ProfileView from './profile/profileView'
+import { oxygen } from '@/lib/typography'
+import { useRouter } from 'next/router'
+import CentralPrompt from '@/components/prompt'
+import { InputText } from '@/components/input'
+import { SubmitHandler, useForm } from 'react-hook-form'
+import { UserCreation } from '@/lib/validation/UserSchema'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useMutation } from '@apollo/client'
+import { ResetDefaultPassword, UpdateUserAccounts, DeleteUser as DeleteUserAccount } from '@/lib/apollo/User/user.mutation'
+import { getAllUserQuery } from '@/lib/apollo/User/user.query'
 
-const oxygen = Oxygen({
-    weight: "400",
-    subsets: ["latin"]
-})
 
-export default function UsersQuery({ userID, email, role, salary, createdAt, fullname, phone, firstname, lastname, birthday, mUser }: any) {
 
-    const [profile, setProfile] = useState(false)
+type UserFormValues = z.infer<typeof UserCreation>
+
+
+
+export default function UsersQuery({ userID, email, role, salary, fullname, phone, firstname, lastname, birthday, mUser }: any) {
+
+    const router = useRouter()
+
     const [edit, setEdituser] = useState(false)
-    const [reset, setReset] = useState(false)
+    const [onReset, setReset] = useState(false)
     const [uDelete, setUDelete] = useState(false)
 
-
-    const onHandleProfileView = () => {
-        setProfile(() => !profile)
-    }
     const onHandleEditClose = () => {
         setEdituser(() => !edit)
     }
-    const onHandleResetPassword = () => {
-        setReset(() => !reset)
+    const onHandleResetPasswordClose = () => {
+        setReset(() => !onReset)
     }
     const onHandleDeleteCLose = () => {
         setUDelete(() => !uDelete)
+    }
+
+    const [resetMutate] = useMutation(ResetDefaultPassword)
+    const [editMutate] = useMutation(UpdateUserAccounts)
+    const [deleteMutate] = useMutation(DeleteUserAccount)
+
+    const { register, handleSubmit, reset, formState: { errors } } = useForm<UserFormValues>({
+        resolver: zodResolver(UserCreation),
+        defaultValues: {
+            birthday: birthday,
+            email: email,
+            firstname: firstname,
+            lastname: lastname,
+            phone: phone,
+            salary: salary,
+            role: role
+        }
+    })
+
+    console.log("Edit Profile", errors)
+    const onHandleResetPassword = () => {
+        resetMutate({
+            variables: {
+                userId: userID
+            },
+            onCompleted: () => {
+                router.reload()
+            }
+        })
+    }
+
+    const onHandleDeleteUser = () => {
+        deleteMutate({
+            variables: {
+                userId: userID,
+                main: mUser
+            },
+            onCompleted: () => {
+
+            },
+            refetchQueries: [getAllUserQuery]
+        })
+    }
+
+
+    const onHandleEditSubmit: SubmitHandler<UserFormValues> = (data) => {
+
+        editMutate({
+            variables: {
+                userId: userID,
+                user: {
+                    birthday: data.birthday,
+                    email: data.email,
+                    firstname: data.firstname,
+                    lastname: data.lastname,
+                    phone: data.phone,
+                    salary: data.salary
+                }
+            },
+            onCompleted: () => {
+            },
+            refetchQueries: [getAllUserQuery]
+        })
+
     }
     return (
         <tr key={userID}>
@@ -43,32 +113,113 @@ export default function UsersQuery({ userID, email, role, salary, createdAt, ful
             <td className={oxygen.className}>{Intl.NumberFormat("en-PH", { currency: "PHP", style: "currency" }).format(salary)}</td>
             <td className={oxygen.className}>
                 {
-                    reset ? <div className={styles.overlay2}>
-                        <ResetPassword userID={userID} close={onHandleResetPassword} />
-                    </div> : null
+                    onReset &&
+
+                    <CentralPrompt title={'Reset Password'}
+                        buttoName='Yes, Reset Password'
+                        headerClose={false}
+                        submitHandler={onHandleResetPassword}
+                        onClose={onHandleResetPasswordClose}
+                        footer={true}
+                        body={
+                            <span style={{ textAlign: "left" }} className={oxygen.className}>Resetting a user password to default, with the default password being the user{"'"}s birthday in <b>{"'"}YYYYMMDD{"'"}</b> format, provides a convenient and secure method for users to regain access to their accounts when they have forgotten their passwords. This approach combines user-friendliness with security, allowing individuals to easily reset their passwords by entering a personal and memorable date. The format <b>{"'"}YYYYMMDD{"'"}</b> ensures consistency and accuracy, enhancing the overall user experience.</span>
+                        }
+                    />
                 }
-                <button className={styles.resetPass} onClick={onHandleResetPassword}>
+                {
+                    uDelete && <CentralPrompt title={'Delete User Account'}
+                        headerClose={false}
+                        submitHandler={onHandleDeleteUser}
+                        onClose={onHandleDeleteCLose}
+                        footer={true}
+                        buttoName='Yes, Delete this user'
+                        body={<>
+                            <span className={oxygen.className}>
+                                Are you sure you want to delete this user? Deleting it will permanently remove all associated data, and once deleted, it cannot be recovered. Please confirm if you wish to proceed with this action
+                            </span>
+                        </>}
+                    />
+
+                }
+
+                {
+                    edit &&
+                    <CentralPrompt title={'Edit User Profile'}
+                        headerClose={false}
+                        submitHandler={handleSubmit(onHandleEditSubmit)} onClose={onHandleEditClose} footer={true}
+                        buttoName='Save'
+                        body={
+                            <>
+
+                                <InputText
+                                    icon={false}
+                                    isRequired={true}
+                                    label='Email'
+                                    name='email'
+                                    register={register}
+                                    type='text'
+                                    error={errors.email}
+                                />
+                                <InputText
+                                    icon={false}
+                                    isRequired={true}
+                                    label='First Name'
+                                    name='firstname'
+                                    register={register}
+                                    type='text'
+                                    error={errors.email}
+                                />
+                                <InputText
+                                    icon={false}
+                                    isRequired={true}
+                                    label='Last Name'
+                                    name='lastname'
+                                    register={register}
+                                    type='text'
+                                    error={errors.lastname}
+                                />
+                                <InputText
+                                    icon={false}
+                                    isRequired={true}
+                                    label='Birthday'
+                                    name='birthday'
+                                    register={register}
+                                    type='date'
+                                    error={errors.birthday}
+                                />
+                                <InputText
+                                    icon={false}
+                                    isRequired={true}
+                                    label='Phone'
+                                    name='phone'
+                                    register={register}
+                                    type='text'
+                                    error={errors.phone}
+                                    placeholder='start at +63 (e.g. +639499...)'
+                                />
+                                <InputText
+                                    icon={false}
+                                    isRequired={true}
+                                    label='Salary'
+                                    name='salary'
+                                    register={register}
+                                    type='number'
+                                    error={errors.salary}
+                                />
+
+                            </>
+                        }
+                    />
+                }
+                <button className={styles.resetPass} onClick={onHandleResetPasswordClose}>
                     <TbKey size={23} />
                 </button>
-                {
-                    edit ? <div className={styles.overlay2}>
-                        <UserEdit userID={userID} close={onHandleEditClose} salary={salary} email={email} phone={phone} lastname={lastname} firstname={firstname} birthday={birthday} mUser={mUser} />
-                    </div> : null
-                }
-                <button className={styles.editBtn} onClick={() => setEdituser(() => !edit)}>
+
+                <button className={styles.editBtn} onClick={onHandleEditClose}>
                     <TbEdit size={23} />
                 </button>
-                {
-                    uDelete ? <div className={styles.overlay}>
-                        <DeleteUser close={onHandleDeleteCLose} userID={userID} mUser={mUser} />
-                    </div> : null
-                }
-                {
-                    profile ? <div className={styles.overlay}>
-                        <ProfileView userID={userID} close={onHandleProfileView} />
-                    </div> : null
-                }
-                <button onClick={onHandleProfileView}>
+
+                <button className={styles.viewBtn} onClick={() => router.push(`/dashboard/users/${userID}`)}>
                     <TbEye size={23} />
                 </button>
                 <button className={styles.deleteBtn} onClick={onHandleDeleteCLose}>

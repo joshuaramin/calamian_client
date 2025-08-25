@@ -4,16 +4,6 @@
    width: 100%;
    padding: 10px;
 
-   .overlay {
-      position: fixed;
-      inset: 0;
-      background-color: rgba(255, 255, 255, 0.8);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      z-index: 999;
-   }
 
    .addbtn {
       width: 100%;
@@ -76,15 +66,15 @@
             }
 
             td {
-               .overlay2 {
-                  position: fixed;
-                  inset: 0;
-                  background-color: rgba(156, 156, 156, 0.9);
-                  display: flex;
-                  align-items: center;
-                  justify-content: flex-end;
-                  z-index: 999;
-               }
+               // .overlay2 {
+               //    position: fixed;
+               //    inset: 0;
+               //    background-color: rgba(156, 156, 156, 0.9);
+               //    display: flex;
+               //    align-items: center;
+               //    justify-content: flex-end;
+               //    z-index: 999;
+               // }
 
                &:nth-child(even) {
                   border-left: 1px solid #ccc;
@@ -103,10 +93,15 @@
                }
 
                padding: 10px;
+               vertical-align: middle;
                text-align: center;
 
-               // border: 1px solid #ccc;
-               button {
+               border: 1px solid #ccc;
+
+               .resetPass,
+               .editBtn,
+               .viewBtn,
+               .deleteBtn {
                   height: 40px;
                   width: 40px;
                   border-radius: 100px;

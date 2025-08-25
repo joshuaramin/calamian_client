@@ -3,7 +3,7 @@ import PageWithLayout from '@/layout/page.layout'
 import React, { FC, useState, useEffect } from 'react'
 import Head from 'next/head'
 import styles from '@/styles/dashboard/users/user.module.scss'
-import { useQuery } from '@apollo/client'
+import { useMutation, useQuery } from '@apollo/client'
 import { getAllUserQuery } from '@/lib/apollo/User/user.query'
 import { UserSubscriptions } from '@/lib/apollo/User/user.subscriptions'
 import UsersQuery from '@/lib/ui/user/users'
@@ -11,13 +11,14 @@ import UsersQuery from '@/lib/ui/user/users'
 import { oxygen, poppins } from '@/lib/typography'
 import CentralPrompt from '@/components/prompt'
 import { InputText } from '@/components/input'
-import { useForm } from 'react-hook-form'
+import { SubmitHandler, useForm } from 'react-hook-form'
 import z from 'zod'
-import { CreateUserSchema } from '@/lib/validation/UserSchema'
+import { UserCreation } from '@/lib/validation/UserSchema'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { CreateUser } from '@/lib/apollo/User/user.mutation'
 
 
-type UserFormValues = z.infer<typeof CreateUserSchema>
+type UserFormValues = z.infer<typeof UserCreation>
 
 const UserThead = ["Name", "Email Address", "Role", "Contact No.", "Salary", "Actions"]
 
@@ -36,9 +37,9 @@ const Users: FC = ({ userIds }: any) => {
     }
 
     const { register, handleSubmit, formState: { errors }, reset } = useForm<UserFormValues>({
-        // resolver: zodResolver(CreateUserSchema),
+        resolver: zodResolver(UserCreation),
         defaultValues: {
-            birthday: new Date(Date.now()),
+            birthday: "",
             email: "",
             firstname: "",
             lastname: "",
@@ -48,6 +49,27 @@ const Users: FC = ({ userIds }: any) => {
 
         }
     })
+
+    const [mutate] = useMutation(CreateUser)
+
+    console.log(errors)
+
+    const onHandleSubmit: SubmitHandler<UserFormValues> = (data) => {
+        mutate({
+            variables: {
+                input: {
+                    birthday: data.birthday,
+                    email: data.email,
+                    firstname: data.firstname,
+                    lastname: data.lastname,
+                    phone: data.phone,
+                    role: data.role,
+                    salary: data.salary
+                }
+
+            }
+        })
+    }
 
     useEffect(() => {
         return subscribeToMore(({
@@ -103,6 +125,16 @@ const Users: FC = ({ userIds }: any) => {
                         <InputText
                             icon={false}
                             isRequired={true}
+                            label='Phone'
+                            name='phone'
+                            register={register}
+                            type='text'
+                            error={errors.phone}
+                            placeholder='start at +63 (e.g. +639499...)'
+                        />
+                        <InputText
+                            icon={false}
+                            isRequired={true}
                             label='Birthday'
                             name='birthday'
                             register={register}
@@ -121,9 +153,7 @@ const Users: FC = ({ userIds }: any) => {
 
                     </>}
                     buttoName='Add new User'
-                    submitHandler={function (event: React.FormEvent<HTMLFormElement>): void {
-                        throw new Error('Function not implemented.')
-                    }}
+                    submitHandler={handleSubmit(onHandleSubmit)}
                     onClose={onHandleUserClose}
                     footer={true} />
             }
