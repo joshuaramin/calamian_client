@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import styles from './menu.module.scss'
 import { GetAllItemQuery, getSearchItems, getSearchStaff } from '@/lib/apollo/Items/item.query'
-import { useQuery, useLazyQuery } from '@apollo/client'
+import { useQuery, useLazyQuery } from '@apollo/client/react'
 import MenuCard from './card/card'
 
 interface Items {

@@ -1,5 +1,5 @@
 import React, { SyntheticEvent, useEffect, useState } from 'react'
-import { useMutation } from '@apollo/client'
+import { useMutation } from '@apollo/client/react'
 import { UpdateExpense } from '@/lib/apollo/finance/finance.mutation'
 import { GetAllExpense } from '@/lib/apollo/finance/finance.query'
 import CentralPrompt from '@/components/prompt'

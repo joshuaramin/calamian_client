@@ -4,7 +4,7 @@ import { getNotificationUpdate } from '@/lib/apollo/notification/notification.mu
 import { GetAllNotification, GetAllUnreadNotification } from '@/lib/apollo/notification/notification.query'
 import React, { SyntheticEvent } from 'react'
 import styles from '@/styles/layout/notificationLayout.module.scss'
-import { useMutation } from '@apollo/client'
+import { useMutation } from '@apollo/client/react'
 
 const poppins = Poppins({
     weight: "500",

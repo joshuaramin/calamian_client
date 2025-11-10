@@ -3,7 +3,7 @@ import { getNotificationUpdate } from '@/lib/apollo/notification/notification.mu
 import { GetAllNotification, GetAllUnreadNotification } from '@/lib/apollo/notification/notification.query'
 import React, { SyntheticEvent } from 'react'
 import styles from '../header.module.scss'
-import { useMutation } from '@apollo/client'
+import { useMutation } from '@apollo/client/react'
 import { poppins, oxygen } from '@/lib/typography'
 
 export default function Notifications({ notificationID, notification, createdAt, notifStatus }:

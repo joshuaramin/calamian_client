@@ -6,7 +6,7 @@ import { Poppins, Oxygen } from 'next/font/google'
 import Notifications from '@/components/notification/notification'
 import { TbBellRinging } from 'react-icons/tb'
 import { GetAllNotification, GetAllUnreadNotification } from '@/lib/apollo/notification/notification.query'
-import { useQuery } from '@apollo/client'
+import { useQuery } from '@apollo/client/react'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
 

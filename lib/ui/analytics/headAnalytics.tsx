@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { TbDownload, TbBox, TbWallet, TbShoppingBag } from 'react-icons/tb'
-import { useQuery } from '@apollo/client'
+import { useQuery } from '@apollo/client/react'
 import { GetTotalOrderHistoryFiltered, GetTotal } from '@/lib/apollo/order/order.query'
 import { Chart as ChartJS, Tooltip, Legend, CategoryScale, LinearScale, BarElement, LineElement, PointElement, Title, ArcElement } from "chart.js";
 import { Bar } from 'react-chartjs-2'
@@ -37,9 +37,6 @@ export default function HeadAnalytics() {
             dmy: dateFiltering,
         },
         errorPolicy: "all",
-        onError: (error) => {
-            alert(error.message)
-        }
     })
     const { loading: totalLoading, data: totalData } = useQuery(GetTotal)
     return (

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { useQuery } from '@apollo/client'
+import { useQuery } from '@apollo/client/react'
 import { getItemByCategoryid } from '@/lib/apollo/Items/item.query'
 
 import { createItemSubscriptons } from '@/lib/apollo/Items/items.subscriptionts'
@@ -30,27 +30,6 @@ export default function Items({ categoryID, search, userId }: any) {
     const { loading, data, subscribeToMore } = useQuery(getItemByCategoryid,
         { variables: { categoryId: categoryID, search: search } })
 
-
-    useEffect(() => {
-        return subscribeToMore({
-            document: createItemSubscriptons,
-            variables: {
-                categoryId: categoryID
-            },
-            updateQuery: (prev, { subscriptionData }) => {
-                if (!subscriptionData.data) return prev
-
-                const addedItems = subscriptionData.data.createItemSubscriptions
-
-                return Object.assign({}, {
-                    getItemsByCategoryId: [prev.getItemsByCategoryId, addedItems]
-                })
-
-            }
-        })
-    }, [categoryID, subscribeToMore])
-
-
     return (
         <div>
             <table>
@@ -63,7 +42,7 @@ export default function Items({ categoryID, search, userId }: any) {
                 </thead>
                 <tbody>
                     {loading ?
-                        "" : data?.getItemsByCategoryId.map(({ itemsID, items, dosage, storeInfo }: Items) => (
+                        "No data" : data?.getItemsByCategoryId.map(({ itemsID, items, dosage, storeInfo }: Items) => (
                             storeInfo.map(({ price, quantity, expiredDate }: Info) => (
                                 <ItemQuery key={itemsID} itemsID={itemsID} items={items} dosage={dosage} price={price} quantity={quantity} expiredDate={expiredDate} categoryID={categoryID} userId={userId} />
                             ))

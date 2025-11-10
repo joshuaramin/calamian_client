@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import styles from './myprofile.module.scss'
 import { ProfileByUserId } from '@/lib/apollo/User/profile/profile.query'
-import { useMutation, useQuery } from '@apollo/client'
+import { useMutation, useQuery } from '@apollo/client/react'
 import { ProfileUpdate } from '@/lib/apollo/User/profile/profile.mutation'
 import store from 'store2'
 import { SubmitHandler, useForm } from 'react-hook-form'

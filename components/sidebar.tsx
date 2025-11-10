@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import styles from '@/styles/components/sidebar.module.scss'
-import { TbBoxSeam, TbLayoutDashboard, TbUser, TbMoneybag, TbShoppingCart, TbArchive } from 'react-icons/tb'
+import { TbBox, TbLayoutDashboard, TbUser, TbMoneybag, TbShoppingCart, TbArchive } from 'react-icons/tb'
 import { useRouter } from 'next/router'
 import { jwtDecode } from 'jwt-decode'
 import Cookies from 'js-cookie'
@@ -14,7 +14,7 @@ const Links = [
         role: ["administrator", "manager"]
     },
     {
-        name: "Inventory", icon: <TbBoxSeam size={24} />,
+        name: "Inventory", icon: <TbBox size={24} />,
         url: "/dashboard/inventory", shortcut: "inventory",
         role: ["administrator", "manager"]
     },

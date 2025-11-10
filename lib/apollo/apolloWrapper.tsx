@@ -1,8 +1,6 @@
 import React from 'react'
-import { ApolloClient, ApolloProvider, gql, HttpLink, InMemoryCache, makeVar, split } from '@apollo/client'
-import { GraphQLWsLink } from '@apollo/client/link/subscriptions'
-import { createClient } from 'graphql-ws'
-import { getMainDefinition } from '@apollo/client/utilities'
+import { ApolloClient, gql, HttpLink, InMemoryCache, makeVar, } from '@apollo/client'
+import { ApolloProvider } from "@apollo/client/react";
 export const carrItemsVar = makeVar([])
 
 export const GET_CARTITEMS = gql`
@@ -16,29 +14,11 @@ query CartDetails {
 }
 }`
 
-const httpLink = new HttpLink({
-    uri: process.env.NEXT_PUBLIC_GRAPHQL_ENDPOINT as string
-
-})
-
-
-
-const webSocketLink = typeof window !== "undefined" ? new GraphQLWsLink(createClient({
-    url: process.env.NEXT_PUBLIC_GRAPHQL_WS as string
-})) : null
-
-
-
-const splitLink = typeof window !== "undefined" && webSocketLink !== null ? split(({ query }) => {
-    const definition = getMainDefinition(query)
-    return (
-        definition.kind === 'OperationDefinition' && definition.operation === 'subscription'
-    )
-}, webSocketLink, httpLink) : httpLink
-
 export const client = new ApolloClient({
-    link: splitLink,
-    credentials: "include",
+    link: new HttpLink({
+        uri: process.env.NEXT_PUBLIC_GRAPHQL_ENDPOINT as string
+
+    }),
     cache: new InMemoryCache({
         typePolicies: {
             Query: {

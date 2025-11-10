@@ -1,6 +1,6 @@
 import React, { SyntheticEvent, useEffect, useState } from 'react'
 import { Poppins, Oxygen } from 'next/font/google'
-import { useMutation } from '@apollo/client'
+import { useMutation } from '@apollo/client/react'
 import { DeleteExpense } from '@/lib/apollo/finance/finance.mutation'
 import { GetAllExpense } from '@/lib/apollo/finance/finance.query'
 import styles from '@/styles/dashboard/finance/expense/delete.module.scss'

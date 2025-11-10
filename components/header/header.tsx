@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { TbBell, TbSettings, TbChevronDown, TbChevronUp, TbLogout, TbBellRinging } from 'react-icons/tb'
 import { client } from '@/lib/apollo/apolloWrapper'
 import { useRouter } from 'next/router'
-import { useQuery } from '@apollo/client'
+import { useQuery } from '@apollo/client/react'
 import { ProfileByUserId } from '@/lib/apollo/User/profile/profile.query'
 import { GetAllNotification, GetAllUnreadNotification } from '@/lib/apollo/notification/notification.query'
 import styles from './header.module.scss'
@@ -59,7 +59,7 @@ export default function Header() {
             {roles === "manager" ? null : <div className={styles.profileSettings}>
                 <button onClick={onHandleNotification}>
                     <TbBell size={30} />
-                    {notificationUnreadData?.getAllUnreadNotification.length > 0 ? <div className={styles.notificationBadge} /> : null}
+                    {notificationUnreadData?.getAllUnreadNotification.length > 0 && <div className={styles.notificationBadge} />}
                 </button>
             </div>}
             {
@@ -111,11 +111,11 @@ export default function Header() {
                     : null
             }
 
-            {loading ?
+            {/* {loading ?
                 <Spinner heigth={35} width={35} /> : <div onClick={() => setToggle(() => !toggle)} className={styles.profile}>
                     <h2 className={poppins.className}>{data?.getProfileByUserId?.fullname}</h2>
                     {toggle ? <TbChevronUp size={25} /> : <TbChevronDown size={25} />}
-                </div>}
+                </div>} */}
             {
                 toggle &&
                 <div className={styles.logoutContainer}>

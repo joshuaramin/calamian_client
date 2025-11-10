@@ -8,7 +8,7 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import { ExpenseFolderSchema } from '@/lib/validation/ExpenseFolder';
 import { poppins } from '@/lib/typography';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation } from '@apollo/client';
+import { useMutation } from '@apollo/client/react';
 import { DeleteExpenseFolder, UpdateExpenseFolder } from '@/lib/apollo/finance/finance.mutation';
 import z from 'zod';
 import { GetAllExpenseFolder } from '@/lib/apollo/finance/finance.query';

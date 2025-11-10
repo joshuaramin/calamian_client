@@ -1,6 +1,6 @@
 import React from 'react'
 import { useRouter } from 'next/router'
-import { useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client/react';
 import { GetAllCurrentOrdersBy20 } from '@/lib/apollo/order/order.query';
 import { format } from 'date-fns';
 import styles from './orderAnalytics.module.scss'

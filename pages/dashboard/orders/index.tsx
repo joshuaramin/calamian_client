@@ -4,32 +4,15 @@ import React, { FC, useEffect } from 'react'
 import Head from 'next/head'
 import styles from '@/styles/dashboard/orders/order.module.scss'
 import { GetAllOrders } from '@/lib/apollo/order/order.query'
-import { useQuery } from '@apollo/client'
+import { useQuery } from '@apollo/client/react'
 import { Poppins } from 'next/font/google'
 import OrdersTable from '@/lib/ui/orders/orders'
-import { OrderSubscriptions } from '@/lib/apollo/order/order.subscriptions'
 import { poppins } from '@/lib/typography'
 
 const orderTableHead = ["Orders No.", "No. of Items", "Total", "Order Created", "Action"]
 
 const Orders: FC = () => {
-    const { loading, data, subscribeToMore } = useQuery(GetAllOrders)
-
-
-    useEffect(() => {
-        return subscribeToMore({
-            document: OrderSubscriptions,
-            updateQuery: (prev, { subscriptionData }) => {
-                if (!subscriptionData.data) return prev
-
-                const ordersAdded = subscriptionData.data.createOrders
-
-                return Object.assign({}, {
-                    getAllOrders: [...prev.getAllOrders, ordersAdded]
-                })
-            }
-        })
-    }, [subscribeToMore])
+    const { loading, data } = useQuery(GetAllOrders)
 
     return (
         <div className={styles.container}>

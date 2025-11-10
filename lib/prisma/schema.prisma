@@ -1,0 +1,148 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider          = "postgresql"
+  url               = env("DATABASE_URL")
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
+}
+
+enum roles {
+  admin
+  manager
+  staff
+}
+
+enum notifStatus {
+  read
+  unread
+}
+
+model User {
+  userID       String         @id @default(cuid())
+  email        String         @unique
+  password     String
+  role         roles
+  Profile      Profile?
+  salary       salary?
+  notification notification[]
+  expFolder    expFolder[]
+  logs         logs[]
+  is_deleted   Boolean        @default(false) @db.Boolean
+  createdAt    DateTime       @default(now()) @db.Timestamp()
+  updatedAt    DateTime       @default(now()) @db.Timestamp()
+}
+
+model notification {
+  notificationID String      @id @default(cuid())
+  notification   String
+  notifStatus    notifStatus @default(unread)
+  createdAt      DateTime    @default(now())
+  User           User?       @relation(fields: [userID], references: [userID])
+  userID         String?
+}
+
+model expFolder {
+  expFolderID String    @id @default(cuid())
+  exFolder    String
+  createdAt   DateTime  @default(now()) @db.Timestamp()
+  expense     expense[]
+  is_deleted  Boolean   @default(false) @db.Boolean
+  User        User?     @relation(fields: [userID], references: [userID])
+  userID      String?
+}
+
+model expense {
+  expenseID   String     @id @default(cuid())
+  expense     String
+  amount      Float
+  mod         String
+  payDate     DateTime
+  is_deleted  Boolean    @default(false) @db.Boolean
+  createdAt   DateTime   @default(now()) @db.Timestamp()
+  updatedAt   DateTime   @default(now()) @db.Timestamp()
+  expFolder   expFolder? @relation(fields: [expFolderID], references: [expFolderID])
+  expFolderID String?
+}
+
+model salary {
+  salaryID  String   @id @default(cuid())
+  salary    Float
+  createdAt DateTime @default(now()) @db.Timestamp()
+  updatedAt DateTime @default(now()) @db.Timestamp()
+  User      User?    @relation(fields: [userID], references: [userID])
+  userID    String?  @unique
+}
+
+model Profile {
+  profileID String   @id @default(cuid())
+  firstname String
+  lastname  String
+  phone     String
+  birthday  DateTime @db.Date
+  User      User?    @relation(fields: [userID], references: [userID])
+  userID    String?  @unique
+}
+
+model category {
+  categoryID String   @id @default(cuid())
+  category   String
+  is_deleted Boolean  @default(false) @db.Boolean
+  createdAt  DateTime @default(now()) @db.Timestamp()
+  updatedAt  DateTime @default(now()) @db.Timestamp()
+  items      items[]
+}
+
+model items {
+  itemsID       String           @id @default(cuid())
+  items         String
+  dosage        String?
+  category      category[]
+  info          storeInfo?
+  is_deleted    Boolean          @default(false) @db.Boolean
+  createdAt     DateTime         @default(now()) @db.Timestamp()
+  updatedAt     DateTime         @default(now()) @db.Timestamp()
+  OrderListItem OrederListitem[]
+}
+
+model storeInfo {
+  storeinfoID String    @id @default(cuid())
+  price       Float
+  quantity    Int
+  expiredDate DateTime? @db.Date
+  createdAt   DateTime  @default(now()) @db.Timestamp()
+  updatedAt   DateTime  @default(now()) @db.Timestamp()
+  items       items?    @relation(fields: [itemsID], references: [itemsID])
+  itemsID     String?   @unique
+}
+
+model OrederListitem {
+  orderListItemID String   @id @default(cuid())
+  total           Float
+  quantity        Int
+  items           items[]
+  createdAt       DateTime @default(now()) @db.Timestamp()
+  Order           Order?   @relation(fields: [orderID], references: [orderID])
+  orderID         String?
+}
+
+model Order {
+  orderID   String           @id @default(cuid())
+  order     String
+  total     Float
+  orderList OrederListitem[]
+  createdAt DateTime
+}
+
+model logs {
+  logsID       String   @id @default(cuid())
+  logs         String
+  descriptions String
+  createdAt    DateTime @default(now()) @db.Timestamp()
+  User         User?    @relation(fields: [userID], references: [userID])
+  userID       String?
+}

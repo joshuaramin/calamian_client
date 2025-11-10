@@ -5,10 +5,9 @@ import Head from 'next/head'
 import styles from '@/styles/dashboard/inventory/inventory.module.scss'
 import { TbLayoutList, TbLayoutColumns } from 'react-icons/tb'
 import { useLocalStorageValue } from '@react-hookz/web'
-import { useMutation, useQuery } from '@apollo/client'
+import { useMutation, useQuery } from '@apollo/client/react'
 import { GetAllCategory } from '@/lib/apollo/category/category.query'
 import CardCategory from '@/lib/ui/inventory/category/cardCategory'
-import { CategorySubscriptions } from '@/lib/apollo/category/category.subscriptions'
 import store from 'store2'
 import CentralPrompt from '@/components/prompt'
 import { InputText } from '@/components/input'
@@ -81,20 +80,6 @@ const Index: FC = () => {
             }
         })
     }
-
-    useEffect(() => {
-        return subscribeToMore({
-            document: CategorySubscriptions,
-            updateQuery: (prev: { getAllCategory: any }, { subscriptionData }: any) => {
-                if (!subscriptionData.data) return prev
-
-                const addedCategory = subscriptionData.data.categorySubscriptions
-                return Object.assign({}, {
-                    getAllCategory: [...prev.getAllCategory, addedCategory]
-                })
-            }
-        })
-    }, [subscribeToMore])
 
     return (
         <div className={styles.container}>

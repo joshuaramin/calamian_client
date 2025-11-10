@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import styles from './logs.module.scss'
 import { UsersActivityLogs } from '@/lib/apollo/User/logs/logs.query'
-import { useQuery } from '@apollo/client'
+import { useQuery } from '@apollo/client/react'
 import { format } from 'date-fns'
 import { TbChevronLeft, TbChevronRight } from 'react-icons/tb'
 import { oxygen, poppins } from '@/lib/typography'

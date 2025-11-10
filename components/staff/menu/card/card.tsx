@@ -3,7 +3,7 @@ import styles from './card.module.scss'
 import { Oxygen, Poppins } from 'next/font/google'
 import { TbPlus, TbMinus, TbShoppingCart, TbChevronRight } from 'react-icons/tb'
 import { carrItemsVar } from "@/lib/apollo/apolloWrapper"
-import { useReactiveVar } from '@apollo/client'
+import { useReactiveVar } from '@apollo/client/react'
 
 interface Items {
     itemsID: string

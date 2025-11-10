@@ -1,4 +1,3 @@
-import React, { ChangeEvent, useEffect, useState } from 'react'
 import styles from '@/styles/components/input.module.scss'
 import { poppins } from '@/lib/typography'
 import { TbMail } from 'react-icons/tb'

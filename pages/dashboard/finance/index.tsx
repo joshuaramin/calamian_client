@@ -6,9 +6,8 @@ import styles from '@/styles/dashboard/finance/finance.module.scss'
 import FinanceQuery from '@/lib/ui/finance/financeQuery'
 import { TbLayoutColumns, TbLayoutList } from 'react-icons/tb'
 import { useLocalStorageValue } from '@react-hookz/web'
-import { useMutation, useQuery } from '@apollo/client'
+import { useMutation, useQuery } from '@apollo/client/react'
 import { GetAllExpenseFolder } from '@/lib/apollo/finance/finance.query'
-import { ExpenseFolderSubscriptions } from '@/lib/apollo/finance/finance.subscriptions'
 import store from 'store2'
 import CentralPrompt from '@/components/prompt'
 import { SubmitHandler, useForm } from 'react-hook-form'
@@ -40,7 +39,7 @@ const Finance: FC = () => {
     }, [userId])
 
 
-    const { loading, data, subscribeToMore } = useQuery(GetAllExpenseFolder, {
+    const { loading, data } = useQuery(GetAllExpenseFolder, {
         variables: {
             search: search.search
         }
@@ -80,21 +79,6 @@ const Finance: FC = () => {
             }
         })
     }
-
-    useEffect(() => {
-        return subscribeToMore({
-            document: ExpenseFolderSubscriptions,
-            updateQuery: (prev, { subscriptionData }) => {
-                if (!subscriptionData.data) return prev
-                const newFolderAdded = subscriptionData.data.expenseFolderSubscriptions
-
-                return Object.assign({}, {
-                    getAllExpenseFolder: [...prev.getAllExpenseFolder, newFolderAdded]
-                })
-            }
-        })
-    }, [subscribeToMore])
-
 
     return (
         <div className={styles.container}>
@@ -137,7 +121,7 @@ const Finance: FC = () => {
                 </button>
             </div>
             <div className={dataStore.value ? `${styles.row}` : `${styles.column}`}>
-                {loading ? "Loading..." : data.getAllExpenseFolder.map(({ expFolderID, exFolder }: any) => (
+                {loading ? "Loading..." : data?.getAllExpenseFolder.map(({ expFolderID, exFolder }: any) => (
                     <FinanceQuery key={expFolderID} exFolder={exFolder} expFolderID={expFolderID} />
                 ))}
             </div>

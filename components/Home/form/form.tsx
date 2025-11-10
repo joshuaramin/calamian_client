@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from 'react'
-import { useMutation } from "@apollo/client"
+import { useMutation } from "@apollo/client/react"
 import { Authentication } from '@/lib/apollo/Authentication/authenticate.mutaiton'
 import { useRouter } from 'next/router'
 import styles from './form.module.scss'

@@ -5,6 +5,7 @@ const nextConfig = {
       config.resolve.fallback = { fs: false, os: false, path: false };
       return config;
    },
+   turbopack: true
 };
 
 module.exports = nextConfig;

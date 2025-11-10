@@ -8,7 +8,7 @@ import { GetAllCategory, GetCategoryID, } from '@/lib/apollo/category/category.q
 import { getSearchItems } from '@/lib/apollo/Items/item.query'
 import { client } from '@/lib/apollo/apolloWrapper'
 import { useRouter } from 'next/router'
-import { useMutation, useQuery } from '@apollo/client'
+import { useMutation, useQuery } from '@apollo/client/react'
 import Items from '@/lib/ui/inventory/items'
 import { oxygen } from '@/lib/typography'
 import store from 'store2'

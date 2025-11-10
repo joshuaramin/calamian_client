@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import styles from '@/styles/dashboard/users/profile/profileView.module.scss';
 
 import { GetUserByid } from '@/lib/apollo/User/user.query'
-import { useQuery } from '@apollo/client'
+import { useQuery } from '@apollo/client/react'
 import { Poppins, Oxygen } from 'next/font/google'
 import { TbChevronLeft, TbChevronRight, TbX } from 'react-icons/tb'
 import { format } from 'date-fns'

@@ -1,7 +1,7 @@
 import React, { SyntheticEvent, useEffect, useState } from 'react'
 import styles from './accounts.module.scss'
 import { UpdateUserEmailAddress, UpdateUserPassword } from '@/lib/apollo/User/user.mutation'
-import { useMutation } from '@apollo/client'
+import { useMutation } from '@apollo/client/react'
 import Message from '@/components/message/message'
 import { poppins } from '@/lib/typography'
 import { InputText } from '@/components/input'

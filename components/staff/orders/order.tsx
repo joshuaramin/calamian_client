@@ -1,7 +1,7 @@
 import React, { SyntheticEvent, useState, useRef } from 'react'
 import { Oxygen, Rubik, Poppins } from 'next/font/google'
 import { TbTrash, TbLogout } from 'react-icons/tb'
-import { useQuery, useMutation, useReactiveVar } from '@apollo/client'
+import { useQuery, useMutation, useReactiveVar } from '@apollo/client/react'
 import { GET_CARTITEMS, carrItemsVar } from '@/lib/apollo/apolloWrapper'
 import { CreateOrder } from '@/lib/apollo/order/order.mutation'
 import { useReactToPrint } from 'react-to-print'

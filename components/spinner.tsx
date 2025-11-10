@@ -12,11 +12,11 @@ interface SpinnerProps {
 export default function Spinner({ heigth, width }: SpinnerProps) {
     return (
         <div>
-            <ColorRing
+            {/* <ColorRing
                 colors={["#244173", "#244173", "#244173", "#244173", "#244173"]}
                 width={width}
                 height={heigth}
-            />
+            /> */}
         </div>
     )
 }

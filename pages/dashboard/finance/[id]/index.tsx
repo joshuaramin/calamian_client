@@ -4,9 +4,8 @@ import { useRouter } from 'next/router'
 import { client } from '@/lib/apollo/apolloWrapper'
 import { GetAllExpenseFolder, GetExpenseFolderById, GetAllExpense, GetExpenseByGroup } from '@/lib/apollo/finance/finance.query'
 import { GetStaticPropsContext } from 'next'
-import { useMutation, useQuery } from '@apollo/client'
+import { useMutation, useQuery } from '@apollo/client/react'
 import { CreateExpense } from '@/lib/apollo/finance/finance.mutation'
-import { ExpenseSubscriptions } from '@/lib/apollo/finance/finance.subscriptions'
 import { Chart as ChartJS, Tooltip, Legend, CategoryScale, LinearScale, BarElement, LineElement, PointElement, Title, ArcElement } from "chart.js";
 import { Bar } from 'react-chartjs-2'
 import { useLocalStorageValue } from '@react-hookz/web'
@@ -85,7 +84,7 @@ const FinanceID: FC = ({ expensed }: any) => {
 
     const [AddNewExpense] = useMutation(CreateExpense)
 
-    const { loading, data, subscribeToMore } = useQuery(GetAllExpense, {
+    const { loading, data } = useQuery(GetAllExpense, {
         variables: {
             expFolderId: router.query.id
         }
@@ -95,28 +94,7 @@ const FinanceID: FC = ({ expensed }: any) => {
         variables: {
             expFolderId: router.query.id
         },
-        // pollInterval: 1000
     })
-
-    useEffect(() => {
-        return subscribeToMore({
-            document: ExpenseSubscriptions,
-            variables: {
-                expFolderId: router.query.id
-            },
-            updateQuery: (prev, { subscriptionData }) => {
-                if (!subscriptionData.data) return prev
-
-                const newExpenseAdded = subscriptionData.data.expensesSubscriptions
-
-                console.log(newExpenseAdded)
-
-                return Object.assign({}, {
-                    getAllExpense: [...prev.getAllExpense, newExpenseAdded]
-                })
-            }
-        })
-    }, [router.query.id, subscribeToMore])
 
     useEffect(() => {
 
