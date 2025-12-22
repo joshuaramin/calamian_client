@@ -33,10 +33,6 @@ const Links = [
         url: "/dashboard/users", shortcut: "users",
         role: ["administrator", "manager"]
     },
-    {
-        name: "Archive", icon: <TbArchive size={24} />, url: "/dashboard/archive", shortcut: "archive",
-        role: ["administrator"]
-    }
 ]
 
 

@@ -15,8 +15,6 @@ import {
   UserCreation,
   UserSchema,
 } from "@/lib/validation/UserSchema";
-import { NextApiRequest, NextApiResponse } from "next";
-import { NextRequest, NextResponse } from "next/server";
 
 const { sign } = jsonwebtoken;
 
@@ -164,9 +162,6 @@ export const UserMutation = extendType({
           }
         );
 
-        // NextApi.("pha-tkn", token);
-
-        // NextResponse.next().cookies.set("pha-tkn", token);
 
         await prisma.logs.create({
           data: {

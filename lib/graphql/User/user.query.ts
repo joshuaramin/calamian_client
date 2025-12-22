@@ -10,6 +10,7 @@ export const UserQuery = extendType({
       resolve: async (_, { search, role }): Promise<any> => {
         let where: Prisma.UserWhereInput = {
           is_deleted: false,
+          role: role as any,
           ...(search && {
             OR: [
               {

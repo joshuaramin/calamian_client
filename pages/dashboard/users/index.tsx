@@ -1,6 +1,6 @@
 import Dashboard from '@/layout/dashboard.layout'
 import PageWithLayout from '@/layout/page.layout'
-import React, { FC, useEffect } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import Head from 'next/head'
 import styles from '@/styles/dashboard/users/user.module.scss'
 
@@ -16,42 +16,54 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { CreateUser } from '@/lib/apollo/User/user.mutation'
 import { useMutation, useQuery } from '@apollo/client/react'
 import { getAllUserQuery } from '@/lib/apollo/User/user.query'
-import { UserSubscriptions } from '@/lib/apollo/User/user.subscriptions'
 import ToastNotification from '@/components/toastNotification'
 import toast from 'react-hot-toast'
 import useSearch from '@/lib/hooks/useSearch'
 import useToggle from '@/lib/hooks/useToggle'
+import { TbChevronDown, TbChevronUp } from 'react-icons/tb'
+import { format } from 'date-fns'
+import { useRouter } from 'next/router'
 
 
 type UserFormValues = z.infer<typeof UserCreation>
 
 const UserThead = ["Name", "Email Address", "Role", "Contact No.", "Salary", "Actions"]
 
+const userRoles = [
+    { name: "Administator", value: "admin" },
+    { name: "Manager", value: "manager" },
+    { name: "Staff", value: "staff" }
+]
+
+
 const Users: FC = () => {
 
     const search = useSearch()
     const toggle = useToggle()
+    const router = useRouter()
 
-    const { loading, data, subscribeToMore } = useQuery(getAllUserQuery, {
+    const [role, setRoles] = useState<boolean>(false)
+
+    const { loading, data } = useQuery(getAllUserQuery, {
         variables: {
             search: search.search
         }
     })
 
 
-    const { register, handleSubmit, formState: { errors }, reset } = useForm<UserFormValues>({
-        resolver: zodResolver(UserCreation),
-        defaultValues: {
-            birthday: "",
-            email: "",
-            firstname: "",
-            lastname: "",
-            phone: "",
-            role: "admin",
-            salary: 1000
-
-        }
-    })
+    const { register, handleSubmit, formState: { errors }, reset, watch, setValue } =
+        useForm<UserFormValues>({
+            resolver: zodResolver(UserCreation),
+            defaultValues: {
+                birthday: undefined, // ✅ correct
+                email: "",
+                firstname: "",
+                lastname: "",
+                phone: "",
+                role: "manager",
+                salary: 0,
+            },
+        });
 
     const [mutate] = useMutation(CreateUser)
 
@@ -59,36 +71,22 @@ const Users: FC = () => {
         mutate({
             variables: {
                 input: {
-                    birthday: data.birthday,
+                    birthday: format(data.birthday, "yyyy-MM-dd"), // ✅ Date
                     email: data.email,
                     firstname: data.firstname,
                     lastname: data.lastname,
                     phone: data.phone,
                     role: data.role,
-                    salary: data.salary
-                }
-
+                    salary: data.salary,
+                },
             },
             onCompleted: () => {
-                toast.success("Successfully Created")
+                toast.success("User created successfully")
+                router.reload()
             }
-        })
-    }
+        });
+    };
 
-    useEffect(() => {
-        return subscribeToMore(({
-            document: UserSubscriptions,
-            updateQuery: (prev: { getAllUserAccount: any }, { subscriptionData }: any) => {
-                if (!subscriptionData.data) return prev
-
-                const userAdded = subscriptionData.data.createUserSubscriptions
-
-                return Object.assign({}, {
-                    getAllUserAccount: [prev.getAllUserAccount, userAdded]
-                })
-            }
-        }))
-    }, [subscribeToMore])
     return (
         <div className={styles.container}>
             <Head>
@@ -154,7 +152,20 @@ const Users: FC = () => {
                             type='number'
                             error={errors.salary}
                         />
-
+                        <div className={styles.selection}>
+                            <div onClick={() => setRoles(() => !role)} className={styles.select}>
+                                <span className={oxygen.className}>Select Role: {watch("role")} </span>
+                                {role ? <TbChevronUp /> : <TbChevronDown />}
+                            </div>
+                            {role ? <div className={styles.options}>
+                                {userRoles.map(({ name, value }) => (
+                                    <button onClick={(e) => {
+                                        setValue("role", value)
+                                        setRoles(false)
+                                    }} className={value === watch("role") ? `${styles.active}` : `${styles.notactive}`} type="button" key={name} value={value}>{name}</button>
+                                ))}
+                            </div> : null}
+                        </div>
                     </>}
                     buttoName='Add new User'
                     submitHandler={handleSubmit(onHandleSubmit)}

@@ -12,7 +12,7 @@ export const AuthSchema = z.object({
 export const UserCreation = z.object({
   firstname: z.string().min(1, "First Name is required"),
   lastname: z.string().min(1, "Last Name is required"),
-  birthday: z.date(),
+  birthday: z.coerce.date(),
   phone: z.string().min(1, "Phone is required"),
   email: z.string().min(1, "Email Address is required"),
   role: z.enum(["admin", "manager", "staff"]),

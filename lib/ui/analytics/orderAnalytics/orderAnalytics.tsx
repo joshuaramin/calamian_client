@@ -19,7 +19,7 @@ export default function OrderAnalytics() {
     return (
         <div className={styles.container}>
             <div className={styles.orderHeader}>
-                <button onClick={() => router.push("/dashboard/admin/orders")}>See All</button>
+                <button onClick={() => router.push("/dashboard/orders")}>See All</button>
             </div>
             <div className={styles.orderTable}>
                 <table>

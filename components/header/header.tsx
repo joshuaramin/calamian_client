@@ -111,11 +111,11 @@ export default function Header() {
                     : null
             }
 
-            {/* {loading ?
+            {loading ?
                 <Spinner heigth={35} width={35} /> : <div onClick={() => setToggle(() => !toggle)} className={styles.profile}>
                     <h2 className={poppins.className}>{data?.getProfileByUserId?.fullname}</h2>
                     {toggle ? <TbChevronUp size={25} /> : <TbChevronDown size={25} />}
-                </div>} */}
+                </div>}
             {
                 toggle &&
                 <div className={styles.logoutContainer}>

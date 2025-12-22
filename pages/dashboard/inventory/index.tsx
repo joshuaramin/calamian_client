@@ -74,6 +74,7 @@ const Index: FC = () => {
             },
             onCompleted: () => {
                 toast.success("Successfully Created")
+                window.location.reload()
                 reset({
                     category: ""
                 })
