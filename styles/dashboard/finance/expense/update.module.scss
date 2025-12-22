@@ -1,0 +1,58 @@
+@use "../../variables.module" as *;
+
+.container {
+   height: auto;
+   width: 500px;
+   background-color: #fff;
+   box-shadow: 0px 0px 3px 0px #ccc;
+   padding: 10px;
+   border-radius: 5px;
+   display: flex;
+   flex-direction: column;
+   gap: 10px;
+   padding: 20px;
+
+   h2 {
+      text-align: center;
+   }
+
+   form {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+
+      input,
+      select {
+         width: 100%;
+         height: 50px;
+         padding: 10px;
+         border-radius: 3px;
+         border: none;
+         box-shadow: 0px 0px 3px 0px #ccc;
+         outline: none;
+      }
+
+      .addBtnGrp {
+         width: 100%;
+         height: 50px;
+         display: flex;
+         justify-content: center;
+         align-items: center;
+         gap: 3px;
+
+         button {
+            height: 50px;
+            width: 100%;
+            border-radius: 3px;
+            border: none;
+            cursor: pointer;
+         }
+
+         .addBtn {
+            background-color: $primaryBtn;
+            color: #fff;
+         }
+      }
+   }
+}

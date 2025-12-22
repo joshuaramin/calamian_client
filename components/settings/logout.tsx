@@ -1,14 +1,10 @@
 import React from 'react'
 import styles from './logout.module.scss'
-import { Poppins } from 'next/font/google'
 import Cookies from 'js-cookie'
 import { useRouter } from 'next/router'
-import { client } from '@/lib/apolloWrapper'
+import { client } from '@/lib/apollo/apolloWrapper'
+import { poppins } from '@/lib/typography'
 
-const poppins = Poppins({
-    weight: "500",
-    subsets: [ "latin" ]
-})
 export default function Settings({ close }: any) {
 
     const router = useRouter()

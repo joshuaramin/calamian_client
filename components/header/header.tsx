@@ -1,26 +1,17 @@
 import React, { useState, useEffect } from 'react'
 import { TbBell, TbSettings, TbChevronDown, TbChevronUp, TbLogout, TbBellRinging } from 'react-icons/tb'
-import { Oxygen, Poppins } from 'next/font/google'
-import { client } from '@/lib/apolloWrapper'
+import { client } from '@/lib/apollo/apolloWrapper'
 import { useRouter } from 'next/router'
-import { useQuery } from '@apollo/client'
-import { ProfileByUserId } from '@/lib/util/User/profile/profile.query'
-import { jwtDecode } from 'jwt-decode'
-import { GetAllNotification, GetAllUnreadNotification } from '@/lib/util/notification/notification.query'
+import { useQuery } from '@apollo/client/react'
+import { ProfileByUserId } from '@/lib/apollo/User/profile/profile.query'
+import { GetAllNotification, GetAllUnreadNotification } from '@/lib/apollo/notification/notification.query'
 import styles from './header.module.scss'
 import Cookies from 'js-cookie'
 import Notifications from './notification/notification'
+import store from 'store2'
+import { oxygen, poppins } from '@/lib/typography'
+import Spinner from '../spinner'
 
-
-const poppins = Poppins({
-    weight: "500",
-    subsets: [ "latin" ]
-})
-
-const oxygen = Oxygen({
-    weight: "400",
-    subsets: [ "latin" ]
-})
 
 export default function Header() {
     const router = useRouter();
@@ -38,22 +29,21 @@ export default function Header() {
         router.push("/")
 
     }
-    const [ roles, setRoles ] = useState("")
-    const [ toggle, setToggle ] = useState(false)
-    const [ userid, setUserId ] = useState("")
-    const [ notification, setNotification ] = useState(false)
-    const [ notif, setNotif ] = useState("all")
+    const [roles, setRoles] = useState("")
+    const [toggle, setToggle] = useState(false)
+    const [userid, setUserId] = useState("")
+    const [notification, setNotification] = useState(false)
+    const [notif, setNotif] = useState("all")
 
     const onHandleNotification = () => {
         setNotification(() => !notification)
     }
     useEffect(() => {
-        const cookies = Cookies.get("pha-tkn") as any
-        const { userId, role }: any = jwtDecode(cookies)
-        setUserId(userId)
-        setRoles(role)
+        const user = store.get("UserAccount")
+        setRoles(user.user_role)
+        setUserId(user.user_id)
 
-    }, [ userid, roles ])
+    }, [userid, roles])
 
 
     const { loading, data } = useQuery(ProfileByUserId, {
@@ -62,18 +52,14 @@ export default function Header() {
         }
     })
 
-    const { loading: notificationLoad, data: notificationData } = useQuery(GetAllNotification, {
-        pollInterval: 5000
-    })
-    const { loading: notificaitonUnreadLoad, data: notificationUnreadData } = useQuery(GetAllUnreadNotification, {
-        pollInterval: 5000
-    })
+    const { loading: notificationLoad, data: notificationData } = useQuery(GetAllNotification)
+    const { loading: notificaitonUnreadLoad, data: notificationUnreadData } = useQuery(GetAllUnreadNotification)
     return (
         <div className={styles.container}>
             {roles === "manager" ? null : <div className={styles.profileSettings}>
                 <button onClick={onHandleNotification}>
                     <TbBell size={30} />
-                    {notificationUnreadData?.getAllUnreadNotification.length > 0 ? <div className={styles.notificationBadge} /> : null}
+                    {notificationUnreadData?.getAllUnreadNotification.length > 0 && <div className={styles.notificationBadge} />}
                 </button>
             </div>}
             {
@@ -117,7 +103,7 @@ export default function Header() {
                             }
                         </div>
                         <div className={styles.notificationFooter}>
-                            <button onClick={() => router.push("/dashboard/admin/notification")}>
+                            <button onClick={() => router.push("/dashboard/notification")}>
                                 <span className={oxygen.className}>See All</span>
                             </button>
                         </div>
@@ -125,40 +111,36 @@ export default function Header() {
                     : null
             }
 
-            <div onClick={() => setToggle(() => !toggle)} className={styles.profile}>
-                {loading ? "" : data.getProfileByUserId.map(({ profileID, fullname }: any) => (
-                    <h2 key={profileID} className={poppins.className}>{fullname}</h2>
-                ))}
-                {toggle ? <TbChevronUp size={25} /> : <TbChevronDown size={25} />}
-            </div>
+            {loading ?
+                <Spinner heigth={35} width={35} /> : <div onClick={() => setToggle(() => !toggle)} className={styles.profile}>
+                    <h2 className={poppins.className}>{data?.getProfileByUserId?.fullname}</h2>
+                    {toggle ? <TbChevronUp size={25} /> : <TbChevronDown size={25} />}
+                </div>}
             {
-                toggle ?
-                    <div className={styles.logoutContainer}>
-                        <div className={styles.profileCon}>
-                            <div className={styles.prof}>
-                                {loading ? "" : data.getProfileByUserId.map(({ profileID, fullname, firstname, lastname }: any) => (
-                                    <div key={profileID}>
-                                        <div className={styles.avatar}>
-                                            <span className={poppins.className}>{firstname[ 0 ]}{lastname[ 0 ]}</span>
-                                        </div>
-                                        <h2 className={poppins.className}>{fullname}</h2>
-                                    </div>
-                                ))}
+                toggle &&
+                <div className={styles.logoutContainer}>
+                    <div className={styles.profileCon}>
+                        <div className={styles.prof}>
+                            <div key={data.getProfileByUserId.profileID}>
+                                <div className={styles.avatar}>
+                                    <span className={poppins.className}>{data.getProfileByUserId.firstname[0]}{data.getProfileByUserId.lastname[0]}</span>
+                                </div>
+                                <h2 className={poppins.className}>{data.getProfileByUserId.fullname}</h2>
                             </div>
                         </div>
-                        <hr />
-                        <button className={styles.settingsBtn} onClick={() => router.push("/dashboard/admin/settings")}>
-                            <TbSettings size={20} />
-                            <span className={oxygen.className}>Settings</span>
-                        </button>
-                        <hr />
-                        <button className={styles.logout} onClick={onHandleLogout}>
-                            <TbLogout size={20} />
-                            <span className={oxygen.className}>Logout</span>
-                        </button>
                     </div>
-                    :
-                    null
+                    <hr />
+                    <button className={styles.settingsBtn} onClick={() => router.push("/dashboard/settings")}>
+                        <TbSettings size={20} />
+                        <span className={oxygen.className}>Settings</span>
+                    </button>
+                    <hr />
+                    <button className={styles.logout} onClick={onHandleLogout}>
+                        <TbLogout size={20} />
+                        <span className={oxygen.className}>Logout</span>
+                    </button>
+                </div>
+
             }
         </div>
     )

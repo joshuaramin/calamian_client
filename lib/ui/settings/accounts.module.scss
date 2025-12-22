@@ -1,0 +1,72 @@
+// @import "../../../styles/dashboard/variables.module";
+@use "../../../styles/variables.module" as *;
+
+.container {
+   display: flex;
+   flex-direction: column;
+   gap: 10px;
+   width: 100%;
+
+   .header {
+      height: 55px;
+      display: flex;
+      align-items: center;
+   }
+
+   form {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+
+      .btn {
+         width: 100%;
+         display: flex;
+         justify-content: flex-end;
+
+         button {
+            padding: 12px 2rem;
+            background-color: $Primary500;
+            color: #fff;
+            border-radius: 3px;
+            border: none;
+            cursor: pointer;
+         }
+      }
+   }
+
+   .email,
+   .password {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      border-radius: 5px;
+      padding: 20px 0;
+
+      h2 {
+         font-size: $fntlg;
+      }
+   }
+
+   .password {
+      .passHeader {
+         width: 100%;
+         padding: 10px 0;
+      }
+
+      .pc {
+         width: 100%;
+         display: flex;
+         flex-direction: column;
+         gap: 10px;
+
+         .pass {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+         }
+      }
+   }
+}

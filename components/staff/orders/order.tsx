@@ -1,9 +1,9 @@
 import React, { SyntheticEvent, useState, useRef } from 'react'
 import { Oxygen, Rubik, Poppins } from 'next/font/google'
 import { TbTrash, TbLogout } from 'react-icons/tb'
-import { useQuery, useMutation, useReactiveVar } from '@apollo/client'
-import { GET_CARTITEMS, carrItemsVar } from '@/lib/apolloWrapper'
-import { CreateOrder } from '@/lib/util/order/order.mutation'
+import { useQuery, useMutation, useReactiveVar } from '@apollo/client/react'
+import { GET_CARTITEMS, carrItemsVar } from '@/lib/apollo/apolloWrapper'
+import { CreateOrder } from '@/lib/apollo/order/order.mutation'
 import { useReactToPrint } from 'react-to-print'
 import styles from './order.module.scss'
 import Head from 'next/head'
@@ -14,19 +14,19 @@ import Time from './time'
 const rubik = Rubik({
     display: "auto",
     weight: "500",
-    subsets: [ "latin" ]
+    subsets: ["latin"]
 })
 
 const oxygen = Oxygen({
     weight: "400",
     display: "auto",
-    subsets: [ "latin" ]
+    subsets: ["latin"]
 })
 
 const poppins = Poppins({
     weight: "500",
     display: "auto",
-    subsets: [ "latin" ]
+    subsets: ["latin"]
 })
 
 interface Items {
@@ -43,10 +43,10 @@ export default function Orders() {
 
     const cart = useReactiveVar(carrItemsVar)
     const { loading, data } = useQuery(GET_CARTITEMS)
-    const [ amountReceived, setAmountReceived ] = useState(0)
-    const [ settings, setSettings ] = useState(false)
-    const [ printing, setPrinting ] = useState(false)
-    const [ mutate ] = useMutation(CreateOrder)
+    const [amountReceived, setAmountReceived] = useState(0)
+    const [settings, setSettings] = useState(false)
+    const [printing, setPrinting] = useState(false)
+    const [mutate] = useMutation(CreateOrder)
 
 
     const componentToprint = useRef(null)

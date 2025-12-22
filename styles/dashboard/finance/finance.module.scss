@@ -1,0 +1,266 @@
+@use "../variables.module" as *;
+
+.container {
+   width: 100%;
+   padding: 10px;
+
+   .overlay {
+      width: 100%;
+      inset: 0;
+      position: fixed;
+      background-color: rgba(255, 255, 255, 0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+   }
+
+   .search {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+
+      input {
+         width: 100%;
+         height: 50px;
+         border-radius: 3px;
+         border: 1px solid #ccc;
+         padding: 10px;
+         outline: none;
+      }
+
+      button {
+         width: 100px;
+         height: 50px;
+         border-radius: 3px;
+         border: none;
+         background-color: $primaryBtn;
+         color: #fff;
+         cursor: pointer;
+
+         span {
+            font-size: 15px;
+         }
+      }
+   }
+
+   .filter {
+      width: 100%;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+
+      button {
+         width: 45px;
+         height: 45px;
+         display: flex;
+         align-items: center;
+         justify-content: center;
+         border: none;
+         border-radius: 100px;
+         background-color: transparent;
+         cursor: pointer;
+
+         svg {
+            stroke-width: 2px;
+            stroke: $primaryBtn;
+         }
+
+         &:hover {
+            background-color: #f5f5f5;
+         }
+      }
+   }
+
+   .row {
+      width: 100%;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, min(250px, 350px));
+      gap: 10px;
+      padding: 10px 0;
+
+      .categoryCard {
+         display: flex;
+         align-items: center;
+         justify-content: space-between;
+         box-shadow: 0px 0px 3px 0px #ccc;
+         width: 100%;
+         padding: 0 5px;
+         border-radius: 3px;
+
+         .card {
+            width: 100%;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            padding: 0 5px;
+
+            span {
+               font-size: 1rem;
+            }
+
+            svg {
+               fill: #fdd700;
+               stroke-width: 0px;
+            }
+         }
+
+         .btnGrp {
+            width: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+
+            .btnVertical {
+               width: 35px;
+               height: 30px;
+               display: flex;
+               align-items: center;
+               justify-content: center;
+               border-radius: 100px;
+               border: none;
+               background-color: transparent;
+               cursor: pointer;
+
+               svg {
+                  stroke: #b8b8b8;
+               }
+
+               &:hover {
+                  background-color: #f5f5f5;
+               }
+            }
+
+            .options {
+               width: 100px;
+               height: auto;
+               position: absolute;
+               top: 15px;
+               right: 30px;
+               background-color: #fff;
+               border-radius: 5px;
+               z-index: 999;
+               display: flex;
+               flex-direction: column;
+               justify-content: center;
+               box-shadow: 0px 0px 3px 0px #ccc;
+
+               button {
+                  height: 35px;
+                  background-color: transparent;
+                  border: none;
+                  text-align: left;
+                  padding: 10px;
+                  cursor: pointer;
+
+                  &:hover {
+                     background-color: #f5f5f5;
+                  }
+               }
+            }
+         }
+      }
+   }
+
+   .column {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      padding: 10px 0;
+
+      .categoryCard {
+         display: flex;
+         align-items: center;
+         justify-content: space-between;
+         border-top: 1px solid #ccc;
+         width: 100%;
+         padding: 0 5px;
+         border-radius: 3px;
+
+         &:last-child {
+            border-bottom: 1px solid #ccc;
+         }
+
+         .card {
+            width: 100%;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            padding: 0 5px;
+
+            span {
+               font-size: 1rem;
+            }
+
+            svg {
+               fill: #fdd700;
+               stroke-width: 0px;
+            }
+         }
+
+         .btnGrp {
+            width: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+
+            .btnVertical {
+               width: 35px;
+               height: 35px;
+               display: flex;
+               align-items: center;
+               justify-content: center;
+               border-radius: 100px;
+               border: none;
+               background-color: transparent;
+               cursor: pointer;
+
+               svg {
+                  stroke: #b8b8b8;
+               }
+
+               &:hover {
+                  background-color: #f5f5f5;
+               }
+            }
+
+            .options {
+               width: 100px;
+               height: auto;
+               position: absolute;
+               top: 15px;
+               right: 30px;
+               background-color: #fff;
+               border-radius: 5px;
+               z-index: 999;
+               display: flex;
+               flex-direction: column;
+               justify-content: center;
+               box-shadow: 0px 0px 3px 0px #ccc;
+
+               button {
+                  height: 35px;
+                  background-color: transparent;
+                  border: none;
+                  text-align: left;
+                  padding: 10px;
+                  cursor: pointer;
+
+                  &:hover {
+                     background-color: #f5f5f5;
+                  }
+               }
+            }
+         }
+      }
+   }
+}

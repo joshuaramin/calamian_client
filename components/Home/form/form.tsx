@@ -1,80 +1,81 @@
 "use client"
-import React, { SyntheticEvent, useEffect, useState } from 'react'
-import { Oxygen, Rubik, Poppins } from 'next/font/google'
-import { useMutation } from "@apollo/client"
-import { Authentication } from '@/lib/util/Authentication/authenticate.mutaiton'
-import { useLocalStorageValue } from "@react-hookz/web"
-import { jwtDecode } from 'jwt-decode'
+
+import React, { useState } from 'react'
+import { useMutation } from "@apollo/client/react"
+import { Authentication } from '@/lib/apollo/Authentication/authenticate.mutaiton'
 import { useRouter } from 'next/router'
 import styles from './form.module.scss'
+import store from 'store2'
+import z from 'zod'
+import { LoginSchema } from '@/lib/validation/AuthSchema'
+import { SubmitHandler, useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { oxygen, poppins, rubik } from '@/lib/typography'
 import Cookies from 'js-cookie'
-import Message from '@/components/message/message'
-const rubik = Rubik({
-    display: "auto",
-    subsets: [ "latin" ],
-    style: "normal",
-    weight: "600"
-})
-
-const oxygen = Oxygen({
-    weight: "400",
-    display: "auto",
-    subsets: [ "latin" ]
-})
+import { InputText } from '@/components/input'
+import ToastNotification from '@/components/toastNotification'
+import toast from 'react-hot-toast'
 
 
-const poppins = Poppins({
-    weight: "400",
-    style: "normal",
-    subsets: [ "latin" ]
-})
 
+
+type LoginFormValues = z.infer<typeof LoginSchema>
 
 export default function Form() {
 
     const router = useRouter()
-    const [ message, setMessage ] = useState<Boolean>(false)
+    const [message, setMessage] = useState<Boolean>(false)
     const years = new Date().getFullYear()
-    const [ users, setUsers ] = useState({
-        email: "",
-        password: ""
-    })
-    const [ toggle, setToggle ] = useState(false)
+
+    const [toggle, setToggle] = useState(false)
     const onToggleEvent = () => {
         setToggle(() => !toggle)
     }
 
+    const { register, formState: { errors }, handleSubmit } = useForm<LoginFormValues>({
+        resolver: zodResolver(LoginSchema)
+    })
 
-    const [ Authenticate, { error, loading, data } ] = useMutation(Authentication)
 
-    const onHandleSubmitForm = (e: SyntheticEvent) => {
-        e.preventDefault();
+    const [Authenticate, { error, loading, data }] = useMutation(Authentication)
+
+    const onHandleSubmitForm: SubmitHandler<LoginFormValues> = (data) => {
         Authenticate({
             variables: {
-                email: !dataStore.value?.username ? users.email : dataStore.value?.username,
-                password: !dataStore.value?.password ? users.password : dataStore.value?.password,
+                input: {
+                    email: data.email,
+                    password: data.password
+                }
             },
-            errorPolicy: "all",
             onCompleted: (data) => {
 
+                toast.success("Successfully Login")
+
+                store.set("UserAccount", {
+                    user_id: data.login.user.userID,
+                    email: data.login.user.email,
+                    profile: {
+                        fullname: data.login.user.myProfile.fullname,
+                    },
+                    user_role: data.login.user.role
+                })
                 setMessage(true)
 
-                Cookies.set("pha-tkn", data.login.token, {
-                    httpOnly: false,
-                    path: "/",
-                    sameSite: "none",
-                    secure: true
-                })
+                Cookies.set("pha_tkn", data.login.token)
 
-                console.log(data)
-                const { role }: any = jwtDecode(data.login.token)
 
-                if (role === "admin") {
-                    router.push(`/dashboard/admin/overview`)
-                } else if (role === "manager") {
-                    router.push(`/dashboard/manager/overview`)
-                } else {
-                    router.push(`/dashboard/staff`)
+                const role = data.login.user.role
+
+                switch (role) {
+                    case "admin":
+                        router.push(`/dashboard/overview`)
+                        break;
+                    case "manager":
+                        router.push(`/dashboard/overview`)
+                        break;
+                    default:
+                        router.push(`/dashboard/staff`)
+                        break
                 }
 
 
@@ -82,48 +83,29 @@ export default function Form() {
         })
     }
 
-    useEffect(() => {
-        const interval = setInterval(() => {
-            setMessage(false)
-        }, 2000);
+    // const dataStore = useLocalStorageValue("credentials", {
+    //     defaultValue: {
+    //         username: "",
+    //         password: "",
+    //         checked: toggle
+    //     }
+    // })
 
 
-        return () => clearInterval(interval)
-    }, [ message ])
+    // const onRememberME = () => {
 
+    //     dataStore.set({
+    //         username: users.email,
+    //         password: users.password,
+    //         checked: true
+    //     })
 
-
-    const dataStore = useLocalStorageValue("credentials", {
-        defaultValue: {
-            username: "",
-            password: "",
-            checked: toggle
-        }
-    })
-
-
-    const onRememberME = () => {
-
-        dataStore.set({
-            username: users.email,
-            password: users.password,
-            checked: true
-        })
-
-    }
+    // }
 
 
     return (
         <div className={styles.container}>
-            {
-                data && message == true ?
-                    <Message msg="Successfully Login" /> : null
-            }
             <div className={styles.con}>
-                {error ?
-                    <div className={styles.message}>
-                        <span>{error?.message}</span>
-                    </div> : null}
                 <div className={styles.intro}>
                     <h2 className={rubik.className}>Welcome</h2>
                     <span className={oxygen.className}>
@@ -131,11 +113,27 @@ export default function Form() {
                         Efficiently manage your store with enhanced speed and optimized productivity.
                     </span>
                 </div>
-                <form onSubmit={onHandleSubmitForm}>
-                    <input className={`${styles.inputForm} ${oxygen.className}`} defaultValue={!dataStore.value?.username ? users.email : dataStore.value?.username} type="email" placeholder='Email Address' onChange={(e) => setUsers({ ...users, email: e.target.value })} />
-                    <input className={`${styles.inputForm} ${oxygen.className}`} defaultValue={!dataStore.value?.password ? users.password : dataStore.value?.password} type="password" placeholder='Password' onChange={(e) => setUsers({ ...users, password: e.target.value })} />
+                <form onSubmit={handleSubmit(onHandleSubmitForm)}>
+                    <InputText
+                        icon={false}
+                        label={'Email Address'}
+                        name={'email'}
+                        isRequired={true}
+                        error={errors.email}
+                        register={register}
+                        type='text'
+                    />
+                    <InputText
+                        icon={false}
+                        label={'Password'}
+                        name={'password'}
+                        isRequired={true}
+                        error={errors.password}
+                        register={register}
+                        type='password'
+                    />
                     <div className={styles.rememberMe}>
-                        <input type="checkbox" className={styles.checkBox} onClick={onToggleEvent} defaultChecked={dataStore.value?.checked === true ? true : false} onChange={onRememberME} />
+                        <input type="checkbox" className={styles.checkBox} onClick={onToggleEvent} />
                         <label className={oxygen.className}>Remember Me</label>
                     </div>
                     <button disabled={loading} type="submit">
@@ -146,6 +144,7 @@ export default function Form() {
             <div className={styles.copyright}>
                 <span className={poppins.className}>&copy; {years} ALL RIGHTS RESERVED</span>
             </div>
+            <ToastNotification />
         </div >
     )
 }

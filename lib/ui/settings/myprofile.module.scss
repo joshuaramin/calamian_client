@@ -1,0 +1,44 @@
+@import "../../../styles/dashboard/variables.module";
+
+.container {
+   .header {
+      height: 55px;
+      display: flex;
+      align-items: center;
+   }
+
+   .profile {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      border-radius: 5px;
+      padding: 20px;
+
+      h2 {
+         font-size: 22px;
+      }
+   }
+
+   form {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+
+      .btn {
+         width: 100%;
+         display: flex;
+         justify-content: flex-end;
+
+         button {
+            width: 110px;
+            height: 48px;
+            background-color: $primaryBtn;
+            color: #fff;
+            border-radius: 3px;
+            border: none;
+            cursor: pointer;
+         }
+      }
+   }
+}
