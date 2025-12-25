@@ -15,7 +15,7 @@ export const CategoryObject = objectType({
           where: {
             category: {
               some: {
-                categoryID,
+                categoryID: categoryID || undefined,
               },
             },
           },
@@ -28,7 +28,7 @@ export const CategoryObject = objectType({
           where: {
             category: {
               some: {
-                categoryID,
+                categoryID: categoryID || undefined,
               },
             },
           },

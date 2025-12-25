@@ -12,7 +12,7 @@ export const expFolderQuery = extendType({
           where: {
             is_deleted: false,
             exFolder: {
-              contains: search,
+              contains: search || undefined,
               mode: "insensitive",
             },
           },

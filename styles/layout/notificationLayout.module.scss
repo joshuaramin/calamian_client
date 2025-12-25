@@ -1,4 +1,4 @@
-@import "../dashboard/variables.module";
+@use "../dashboard/variables.module" as *;
 
 .container {
    width: 100%;
@@ -11,19 +11,23 @@
 
    .notification {
       width: 500px;
+
       .notificationHeader {
          padding: 5px;
          border-bottom: 1px solid #ccc;
          display: flex;
          flex-direction: column;
          gap: 10px;
+
          h2 {
             font-size: 22px;
          }
+
          .btnGrp {
             width: 100%;
             display: flex;
             gap: 5px;
+
             button {
                width: auto;
                height: 45px;
@@ -31,18 +35,21 @@
                padding: 0 25px;
                background-color: transparent;
                border-radius: 5px;
+
                &:hover {
                   background-color: $primaryBtn;
                   color: #fff;
                   cursor: pointer;
                }
             }
+
             .actives {
                background-color: $primaryBtn;
                color: #fff;
             }
          }
       }
+
       .notificationBody {
          height: 500px;
          display: flex;
@@ -51,31 +58,38 @@
          gap: 10px;
          padding: 10px 0;
          overflow-y: auto;
+
          .noNotification {
             display: flex;
             height: 100%;
             flex-direction: column;
             justify-content: center;
             align-items: center;
+
             svg {
                stroke: #9c9c9c;
             }
+
             h2 {
                font-size: 18px;
                font-weight: 600;
                color: #9c9c9c;
             }
+
             span {
                color: #9c9c9c;
                font-size: 16px;
             }
          }
+
          &::-webkit-scrollbar {
             width: 5px;
          }
+
          &::-webkit-scrollbar-thumb {
             background-color: #ccc;
          }
+
          svg {
             stroke-width: 1.2px;
          }
@@ -90,18 +104,22 @@
             user-select: none;
 
             cursor: pointer;
+
             P {
                font-size: 16px;
             }
+
             h2 {
                font-size: 17px;
             }
+
             span {
                font-size: 14px;
             }
          }
       }
    }
+
    .goback {
       width: 500px;
       height: 45px;

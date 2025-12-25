@@ -24,7 +24,6 @@ type LoginFormValues = z.infer<typeof LoginSchema>
 export default function Form() {
 
     const router = useRouter()
-    const [message, setMessage] = useState<Boolean>(false)
     const years = new Date().getFullYear()
 
     const [toggle, setToggle] = useState(false)
@@ -49,35 +48,40 @@ export default function Form() {
             },
             onCompleted: (data) => {
 
-                toast.success("Successfully Login")
+                const login = data?.login;
 
-                store.set("UserAccount", {
-                    user_id: data.login.user.userID,
-                    email: data.login.user.email,
-                    profile: {
-                        fullname: data.login.user.myProfile.fullname,
-                    },
-                    user_role: data.login.user.role
-                })
-                setMessage(true)
-
-                Cookies.set("pha_tkn", data.login.token)
-
-
-                const role = data.login.user.role
-
-                switch (role) {
-                    case "admin":
-                        router.push(`/dashboard/overview`)
-                        break;
-                    case "manager":
-                        router.push(`/dashboard/overview`)
-                        break;
-                    default:
-                        router.push(`/dashboard/staff`)
-                        break
+                if (!login) {
+                    toast.error("Unexpected server response");
+                    return;
                 }
 
+                if (login.message) {
+                    toast.error(login.message);
+                    return;
+                }
+
+                toast.success("Successfully Logged In");
+
+                store.set("UserAccount", {
+                    user_id: login.user.userID,
+                    email: login.user.email,
+                    profile: {
+                        fullname: login.user.myProfile.fullname,
+                    },
+                    user_role: login.user.role,
+                });
+
+                Cookies.set("pha_tkn", login.token);
+
+                switch (login.user.role) {
+                    case "admin":
+                    case "manager":
+                        router.push("/dashboard/overview");
+                        break;
+                    default:
+                        router.push("/dashboard/staff");
+                        break;
+                }
 
             }
         })

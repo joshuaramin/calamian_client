@@ -538,7 +538,7 @@ export interface NexusGenFieldTypeNames {
 export interface NexusGenArgTypes {
   Mutation: {
     createAnOrder: { // args
-      orders?: Array<NexusGenInputs['orderInput'] | null> | null; // [orderInput]
+      orders: NexusGenInputs['orderInput'][]; // [orderInput!]!
     }
     createCategory: { // args
       category: string; // String!

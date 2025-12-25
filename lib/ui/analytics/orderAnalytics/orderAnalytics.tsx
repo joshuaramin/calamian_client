@@ -36,7 +36,7 @@ export default function OrderAnalytics() {
                             <td></td>
                             <td></td>
                             <td></td>
-                        </tr> : data.getCurrentOrdersBy20.map(({ order, itemCount, createdAt, total }: {
+                        </tr> : data?.getCurrentOrdersBy20.map(({ order, itemCount, createdAt, total }: {
                             order: string, itemCount: number, createdAt: any, total: number
                         }) => (
                             <tr key={order}>

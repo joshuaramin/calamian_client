@@ -142,7 +142,12 @@ export const UserMutation = extendType({
           },
         });
 
-        if (!user) throw new GraphQLError("Email Address is not found");
+        if (!user) {
+          return {
+            __typename: "ErrorObject",
+            message: "Email address is not found",
+          };
+        }
 
         const valid = await bcrypt.compare(password, user.password);
 
@@ -161,7 +166,6 @@ export const UserMutation = extendType({
             expiresIn: 60 * 60 * 24 * 1000,
           }
         );
-
 
         await prisma.logs.create({
           data: {
@@ -212,7 +216,7 @@ export const UserMutation = extendType({
             descriptions: "Your password has been reset to default",
             User: {
               connect: {
-                userID: usersProfile.userID,
+                userID,
               },
             },
           },

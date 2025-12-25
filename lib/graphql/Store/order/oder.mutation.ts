@@ -25,75 +25,71 @@ export const OrderMutation = extendType({
   definition(t) {
     t.field("createAnOrder", {
       type: "order",
-      args: { orders: list("orderInput") },
+      args: {
+        orders: nonNull(list(nonNull("orderInput"))),
+      },
       resolve: async (_, { orders }): Promise<any> => {
+        if (!orders || orders.length === 0) {
+          throw new Error("No orders provided");
+        }
+
+        // Correct reduce usage
+        const reduceTotal = orders.reduce(
+          (acc: number, curr: { total: number }) => acc + curr.total,
+          0
+        );
+
         return prisma.$transaction(async () => {
-          const reduceTotal = orders.reduce((a, { total }) => a + total, 0);
           const order = await prisma.order.create({
             data: {
               order: `#${makeid(8)}`,
               total: reduceTotal + reduceTotal * 0.12,
-              createdAt: new Date(Date.now()),
+              createdAt: new Date(),
               orderList: {
-                create: orders.map(({ itemsID, quantity, total }) => {
-                  return {
-                    quantity,
-                    total,
-                    items: {
-                      connect: {
-                        itemsID,
-                      },
-                    },
-                  };
-                }),
+                create: orders.map(({ itemsID, quantity, total }) => ({
+                  quantity,
+                  total,
+                  items: { connect: { itemsID } },
+                })),
               },
             },
           });
 
-          orders.map(async ({ itemsID, quantity }) => {
+          for (const { itemsID, quantity } of orders) {
             const prod = await prisma.items.findUnique({
-              where: {
-                itemsID,
-              },
-              include: {
-                info: true,
-              },
+              where: { itemsID },
+              include: { info: true },
+            });
+            if (!prod) continue;
+
+            const updatedStoreInfo = await prisma.storeInfo.update({
+              where: { itemsID },
+              data: { quantity: prod.info.quantity - quantity },
+              include: { items: true },
             });
 
-            const newlyData = await prisma.storeInfo.update({
-              data: {
-                quantity: prod.info.quantity - quantity,
-              },
-              where: {
-                itemsID,
-              },
-              include: {
-                items: true,
-              },
-            });
-
-            if (newlyData.quantity < 50) {
+            if (updatedStoreInfo.quantity < 50) {
               await prisma.notification.create({
                 data: {
-                  notification: `Attention! ${prod.items} quantity is currently ${newlyData.quantity}. Consider reordering soon to avoid shortages.`,
+                  notification: `Attention! ${prod.items} quantity is currently ${updatedStoreInfo.quantity}. Consider reordering soon.`,
                 },
               });
             }
-            if (newlyData.quantity <= 0) {
+
+            if (updatedStoreInfo.quantity <= 0) {
               await prisma.notification.create({
                 data: {
                   notification: `Attention! ${prod.items} is out of stock. Please contact your supplier.`,
                 },
               });
             }
+          }
 
-            return order;
-          });
-
-          pubsub.publish("createdOrders", orders);
+          return order;
         });
       },
     });
+
     t.list.field("generateOrderReport", {
       type: "order",
       args: { startDate: nonNull(stringArg()), endDate: nonNull(stringArg()) },

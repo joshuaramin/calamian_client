@@ -13,7 +13,7 @@ export const ExpenseFolder = objectType({
         return await prisma.expense.findMany({
           where: {
             expFolder: {
-              expFolderID,
+              expFolderID: expFolderID || undefined,
             },
           },
         });
