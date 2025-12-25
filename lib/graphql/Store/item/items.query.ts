@@ -27,7 +27,7 @@ export const itemQuery = extendType({
               },
             },
             items: {
-              contains: search,
+              contains: search || undefined,
               mode: "insensitive",
             },
           },
@@ -81,7 +81,7 @@ export const itemQuery = extendType({
                 categoryID,
               },
             },
-            items: { contains: search, mode: "insensitive" },
+            items: { contains: search || undefined, mode: "insensitive" },
           },
           orderBy: {
             info: {

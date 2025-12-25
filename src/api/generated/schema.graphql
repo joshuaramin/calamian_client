@@ -33,7 +33,7 @@ union ExpensePayload = ErrorObject | expenses
 union ItemPayload = ErrorObject | item
 
 type Mutation {
-  createAnOrder(orders: [orderInput]): order
+  createAnOrder(orders: [orderInput!]!): order
   createCategory(category: String!, userID: ID!): category
   createExpense(expFolderID: ID!, expenses: expenseInput): ExpensePayload
   createExpenseFolder(exFolder: String!, userID: ID!): expenseFolder

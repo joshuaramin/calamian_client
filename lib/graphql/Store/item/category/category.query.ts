@@ -12,7 +12,7 @@ export const CategoryQuery = extendType({
           where: {
             is_deleted: false,
             category: {
-              contains: search,
+              contains: search || undefined,
               mode: "insensitive",
             },
           },
