@@ -34,7 +34,7 @@ export const OrderMutation = extendType({
         }
 
         // Correct reduce usage
-        const reduceTotal = orders.reduce(
+        const reduceTotal: number = orders.reduce(
           (acc: number, curr: { total: number }) => acc + curr.total,
           0
         );

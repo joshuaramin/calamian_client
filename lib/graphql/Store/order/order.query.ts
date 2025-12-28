@@ -27,7 +27,7 @@ export const OrderQUery = extendType({
         return {
           totalRevenue,
           totalOrders,
-          totalItems
+          totalItems,
         };
       },
     });
@@ -72,12 +72,20 @@ export const OrderQUery = extendType({
                             period;
                     `)) as any;
 
-            return weekly.map(({ period, record_count }) => {
-              return {
-                date: format(new Date(period), "MMMM dd, yyyy"),
-                total: parseInt(record_count),
-              };
-            });
+            return weekly.map(
+              ({
+                period,
+                record_count,
+              }: {
+                period: string;
+                record_count: string;
+              }) => {
+                return {
+                  date: format(new Date(period), "MMMM dd, yyyy"),
+                  total: parseInt(record_count),
+                };
+              }
+            );
           case "Monthly":
             const monthly = (await prisma.$queryRawUnsafe(`SELECT
                         EXTRACT(MONTH FROM "createdAt") AS period,
@@ -90,12 +98,20 @@ export const OrderQUery = extendType({
                         period;
                     `)) as any;
 
-            return monthly.map(({ period, record_count }) => {
-              return {
-                date: format(new Date(period), "MMMM"),
-                total: parseInt(record_count),
-              };
-            });
+            return monthly.map(
+              ({
+                period,
+                record_count,
+              }: {
+                period: string;
+                record_count: string;
+              }) => {
+                return {
+                  date: format(new Date(period), "MMMM"),
+                  total: parseInt(record_count),
+                };
+              }
+            );
           case "Yearly":
             const yearly = (await prisma.$queryRawUnsafe(`SELECT
                         EXTRACT(YEAR FROM "createdAt") AS period,
@@ -107,12 +123,20 @@ export const OrderQUery = extendType({
                     ORDER BY
                         period;`)) as any;
 
-            return yearly.map(({ period, record_count }) => {
-              return {
-                date: format(new Date(period), "yyyy"),
-                total: parseInt(record_count),
-              };
-            });
+            return yearly.map(
+              ({
+                period,
+                record_count,
+              }: {
+                period: string;
+                record_count: string;
+              }) => {
+                return {
+                  date: format(new Date(period), "yyyy"),
+                  total: parseInt(record_count),
+                };
+              }
+            );
           default:
             throw new GraphQLError(
               "Please selecet on the given enum, Weekly, Monthly, and Yearly"
