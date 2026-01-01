@@ -33,6 +33,7 @@ export default function DeleteExepenses({ close, items, data, folderId, deleted 
                 setMessage(true)
                 deleted()
                 close()
+                window.location.reload()
             },
             refetchQueries: [{
                 query: GetAllExpense,

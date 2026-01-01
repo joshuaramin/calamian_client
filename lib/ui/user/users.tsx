@@ -53,9 +53,9 @@ export default function UsersQuery({ userID, email, role, salary, fullname, phon
     const [deleteMutate] = useMutation(DeleteUserAccount)
 
     const { register, handleSubmit, formState: { errors } } = useForm<UserFormValues>({
-        resolver: zodResolver(UserCreation),
+        resolver: zodResolver(UserCreation) as any,
         defaultValues: {
-            birthday: birthday,
+            birthday: birthday ? new Date(birthday) : undefined,
             email: email,
             firstname: firstname,
             lastname: lastname,

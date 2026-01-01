@@ -15,6 +15,7 @@ import {
   UserCreation,
   UserSchema,
 } from "@/lib/validation/UserSchema";
+import { roles } from "@/lib/generated/prisma/enums";
 
 const { sign } = jsonwebtoken;
 
@@ -73,7 +74,7 @@ export const UserMutation = extendType({
           data: {
             email,
             password: pass,
-            role,
+            role: roles[role as keyof typeof roles],
             Profile: {
               create: {
                 firstname,

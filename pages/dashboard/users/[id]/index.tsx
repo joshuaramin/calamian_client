@@ -1,3 +1,5 @@
+"use client"
+
 import Dashboard from '@/layout/dashboard.layout'
 import PageWithLayout from '@/layout/page.layout'
 import { client } from '@/lib/apollo/apolloWrapper'
@@ -9,48 +11,86 @@ import { oxygen, poppins, rubik } from '@/lib/typography'
 import Image from 'next/image'
 import { format } from 'date-fns'
 
+/** User profile interface */
+interface UserProfile {
+    fullname: string
+    birthday: string
+    phone: string
+}
+
+/** User interface */
+interface User {
+    userID: string
+    role: string
+    salary: { salary: number }
+    myProfile: UserProfile
+}
+
+/** GraphQL query response interfaces */
+interface GetAllUserAccountResponse {
+    getAllUserAccount: User[]
+}
+
+interface GetUserByIdResponse {
+    getUserById: User
+}
+
+interface Props {
+    user: User | null
+}
+
+// -------------------- STATIC PATHS --------------------
 export const getStaticPaths: GetStaticPaths = async () => {
-    const { data: { getAllUserAccount } } = await client.query({
-        query: getAllUserQuery,
+    const { data } = await client.query<GetAllUserAccountResponse>({
+        query: getAllUserQuery
     })
 
-    const paths = getAllUserAccount.map(({ userID }: { userID: string }) => ({
-        params: { id: userID },
-    }))
+    const paths = data?.getAllUserAccount.map(user => ({
+        params: { id: user.userID }
+    })) || []
 
     return { paths, fallback: true }
 }
 
-export const getStaticProps: GetStaticProps = async (context: GetStaticPropsContext) => {
+// -------------------- STATIC PROPS --------------------
+export const getStaticProps: GetStaticProps<Props> = async (context: GetStaticPropsContext) => {
     const userId = context.params?.id as string
 
-    const { data: { getUserById } } = await client.query({
+    const { data } = await client.query<GetUserByIdResponse>({
         query: GetUserByid,
-        variables: { userId },
+        variables: { userId }
     })
 
     return {
         props: {
-            user: getUserById,
+            user: data?.getUserById ?? null
         },
-        revalidate: 60,
+        revalidate: 60
     }
 }
 
-const Index: FC<{ user: any }> = ({ user }) => {
-    if (!user) return <div>Loading...</div>
+// -------------------- COMPONENT --------------------
+const UserDetail: FC<Props> = ({ user }) => {
+    if (!user) return <div>Loading user...</div>
 
     return (
         <div className={styles.container}>
             <div className={styles.header}>
                 <div className={styles.avatar}>
-                    <Image src={"/default.jpg"} alt={user.myProfile.fullname} layout='fill' objectFit='cover' objectPosition='center' />
+                    <Image
+                        src="/default.jpg"
+                        alt={user.myProfile.fullname}
+                        fill
+                        style={{ objectFit: 'cover', objectPosition: 'center' }}
+                        priority
+                    />
                 </div>
                 <div className={styles.basicInfo}>
                     <h1 className={poppins.className}>{user.myProfile.fullname}</h1>
-                    <p className={oxygen.className}>{user.role}</p>
+                    <p className={oxygen.className}>{user.role.toUpperCase()}</p>
                 </div>
             </div>
+
             <div className={styles.body}>
                 <table>
                     <tbody>
@@ -60,7 +100,9 @@ const Index: FC<{ user: any }> = ({ user }) => {
                         </tr>
                         <tr>
                             <th className={rubik.className}>Birthday</th>
-                            <td className={oxygen.className}>{format(new Date(user.myProfile.birthday), "MMMM dd, yyyy")}</td>
+                            <td className={oxygen.className}>
+                                {format(new Date(user.myProfile.birthday), "MMMM dd, yyyy")}
+                            </td>
                         </tr>
                         <tr>
                             <th className={rubik.className}>Phone Number</th>
@@ -68,7 +110,9 @@ const Index: FC<{ user: any }> = ({ user }) => {
                         </tr>
                         <tr>
                             <th className={rubik.className}>Salary</th>
-                            <td className={oxygen.className}>{Intl.NumberFormat("en-PH", { style: "currency", currency: "PHP" }).format(user.salary.salary)}</td>
+                            <td className={oxygen.className}>
+                                {Intl.NumberFormat("en-PH", { style: "currency", currency: "PHP" }).format(user.salary.salary)}
+                            </td>
                         </tr>
                     </tbody>
                 </table>
@@ -77,6 +121,6 @@ const Index: FC<{ user: any }> = ({ user }) => {
     )
 }
 
-
-(Index as PageWithLayout).layout = Dashboard
-export default Index
+// Layout
+(UserDetail as PageWithLayout).layout = Dashboard
+export default UserDetail

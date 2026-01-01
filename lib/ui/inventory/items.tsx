@@ -1,18 +1,16 @@
 import React, { useState, useEffect } from 'react'
 import { useQuery } from '@apollo/client/react'
 import { getItemByCategoryid } from '@/lib/apollo/Items/item.query'
-
-import { createItemSubscriptons } from '@/lib/apollo/Items/items.subscriptionts'
 import ItemQuery from './itemQuery'
 import { poppins } from '@/lib/typography'
 import ToastNotification from '@/components/toastNotification'
-
+import { useRouter } from 'next/router'
 
 type Items = {
     itemsID: string
     items: string
-    dosage: number
-    storeInfo: []
+    dosage: string
+    storeInfo: Info[]
 }
 
 type Info = {
@@ -21,14 +19,18 @@ type Info = {
     expiredDate: any
 }
 
+interface Props {
+    getItemsByCategoryId: Items[]
+}
+
 const heads = ["Name", "Price", "Quantity", "Dosage", "Expired Date", "Actions"]
 
 export default function Items({ categoryID, search, userId }: any) {
 
+    const router = useRouter()
 
-
-    const { loading, data, subscribeToMore } = useQuery(getItemByCategoryid,
-        { variables: { categoryId: categoryID, search: search } })
+    const { loading, data } = useQuery<Props>(getItemByCategoryid,
+        { variables: { categoryId: router.query.id, search: search } })
 
     return (
         <div>
@@ -41,14 +43,35 @@ export default function Items({ categoryID, search, userId }: any) {
                     </tr>
                 </thead>
                 <tbody>
-                    {loading ?
-                        "No data" : data?.getItemsByCategoryId.map(({ itemsID, items, dosage, storeInfo }: Items) => (
-                            storeInfo.map(({ price, quantity, expiredDate }: Info) => (
-                                <ItemQuery key={itemsID} itemsID={itemsID} items={items} dosage={dosage} price={price} quantity={quantity} expiredDate={expiredDate} categoryID={categoryID} userId={userId} />
+                    {loading ? (
+                        <tr>
+                            <td colSpan={6} className={poppins.className}>
+                                Loading...
+                            </td>
+                        </tr>
+                    ) : !data?.getItemsByCategoryId || data.getItemsByCategoryId.length === 0 ? (
+                        <tr>
+                            <td colSpan={6} className={poppins.className}>
+                                No data
+                            </td>
+                        </tr>
+                    ) : (
+                        data.getItemsByCategoryId.map(({ itemsID, items, dosage, storeInfo }, itemIndex) =>
+                            storeInfo.map(({ price, quantity, expiredDate }: any, infoIndex: any) => (
+                                <ItemQuery
+                                    key={`${itemsID}-${infoIndex}`} // unique key
+                                    itemsID={itemsID}
+                                    items={items}
+                                    dosage={dosage}
+                                    price={price}
+                                    quantity={quantity}
+                                    expiredDate={expiredDate}
+                                    categoryID={categoryID}
+                                    userId={userId}
+                                />
                             ))
-                        ))
-                    }
-
+                        )
+                    )}
                 </tbody>
             </table>
             <ToastNotification />

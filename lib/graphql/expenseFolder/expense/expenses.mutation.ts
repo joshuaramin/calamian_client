@@ -24,13 +24,13 @@ export const ExepensesMutation = extendType({
         if (!parsedData.success) {
           return {
             __typename: "ErrorObject",
-            message: "Invalid Schema Parse",
+            message: parsedData.error.issues,
           };
         }
 
         const { amount, expense, mod, payDate } = await parsedData.data;
 
-        return await prisma.expense.create({
+        const result = await prisma.expense.create({
           data: {
             expense,
             amount,
@@ -43,6 +43,11 @@ export const ExepensesMutation = extendType({
             },
           },
         });
+
+        return {
+          __typename: "expenses",
+          ...result,
+        };
       },
     });
     t.field("updateExpense", {

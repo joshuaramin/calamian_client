@@ -29,33 +29,47 @@ ChartJS.register(CategoryScale,
     Legend);
 
 
+interface ExpenseFolder {
+    expFolderID: string
+    exFolder: string
+}
+
+interface Expense {
+    expenseID: string
+    expense: string
+    amount: number
+    mod: string
+    payDate: string
+}
+
+interface ExpenseFolderProps {
+    expensed: ExpenseFolder[]
+}
+
 export const getStaticPaths = async () => {
 
-    const { data: { getAllExpenseFolder } } = await client.query({
+    const { data } = await client.query<{ getAllExpenseFolder: ExpenseFolder[] }>({
         query: GetAllExpenseFolder
     })
+    const paths = data?.getAllExpenseFolder.map(folder => ({
+        params: { id: folder.expFolderID }
+    }))
 
-    const paths = getAllExpenseFolder.map(({ expFolderID }: { expFolderID: string }) => {
-        return { params: { id: expFolderID } }
-    })
     return { paths, fallback: true }
 }
 
 
 export const getStaticProps = async (context: GetStaticPropsContext) => {
 
-    const financeid = context.params?.id
+    const financeId = context.params?.id
 
-    const { data: { getExpenseFolderById } } = await client.query({
+    const { data } = await client.query<{ getExpenseFolderById: ExpenseFolder[] }>({
         query: GetExpenseFolderById,
-        variables: {
-            expFolderId: financeid
-        }
+        variables: { expFolderId: financeId }
     })
+
     return {
-        props: {
-            expensed: getExpenseFolderById
-        }
+        props: { expensed: data?.getExpenseFolderById }
     }
 }
 
@@ -84,18 +98,20 @@ const FinanceID: FC = ({ expensed }: any) => {
 
     const [AddNewExpense] = useMutation(CreateExpense)
 
-    const { loading, data } = useQuery(GetAllExpense, {
+    const { loading, data } = useQuery<{ getAllExpense: Expense[] }>(GetAllExpense, {
         variables: {
             expFolderId: router.query.id
         }
     })
+
+    console.log(data)
 
     const { loading: loadingGroup, data: expenseGroup } = useQuery(GetExpenseByGroup, {
         variables: {
             expFolderId: router.query.id
         },
     })
-
+    console.log(expenseGroup)
     useEffect(() => {
 
         if (!addNewExpenses.amount || !addNewExpenses.expense || !addNewExpenses.mod || !addNewExpenses.payDate) {
@@ -120,6 +136,8 @@ const FinanceID: FC = ({ expensed }: any) => {
                         mod: "-",
                         payDate: ""
                     })
+
+                    window.location.reload()
                 }
             })
         }

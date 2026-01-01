@@ -30,14 +30,23 @@ export const UpdateExpenseFolder = gql`mutation UpdateExpenseFolder($expFolderId
 // expense
 
 
-export const CreateExpense = gql`mutation CreateExpense($expFolderId: ID!, $expenses: expenseInput) {
+export const CreateExpense = gql`
+  mutation CreateExpense($expFolderId: ID!, $expenses: expenseInput) {
     createExpense(expFolderID: $expFolderId, expenses: $expenses) {
-      expenseID
-      expense
-      createdAt
-      amount
+      ... on expenses {
+        expenseID
+        expense
+        createdAt
+        amount
+        mod
+        payDate
+      }
+      ... on ErrorObject {
+        message
+      }
     }
-  }`
+  }
+`;
 
 export const DeleteExpense = gql`mutation DeleteExpense($expenseId: [ID]!) {
   deleteExpense(expenseID: $expenseId) {

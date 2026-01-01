@@ -12,6 +12,10 @@ const orders = [
     { name: "Oldest", value: "asc" }
 ]
 
+interface Props {
+    getLogByUserId: []
+}
+
 export default function ActivityLogs() {
 
 
@@ -25,7 +29,7 @@ export default function ActivityLogs() {
     const [order, setOrders] = useState("desc")
     const [pages, setPages] = useState(0)
     const [orderOpen, setOrderOpen] = useState(false)
-    const { loading, data } = useQuery(UsersActivityLogs, {
+    const { loading, data } = useQuery<Props>(UsersActivityLogs, {
         variables: {
             userId: userID,
             orders: order,
@@ -54,7 +58,7 @@ export default function ActivityLogs() {
                 </div> : null}
             </div>
             <div className={styles.logsContanier}>
-                {data.getLogByUserId.map(({ logsID, logs, descriptions, createdAt }: { logsID: string, logs: string, descriptions: string, createdAt: any }) => (
+                {data?.getLogByUserId.map(({ logsID, logs, descriptions, createdAt }: { logsID: string, logs: string, descriptions: string, createdAt: any }) => (
                     <div className={styles.card} key={logsID}>
                         <div className={styles.cardHeader}>
                             <h2 className={poppins.className}>{logs}</h2>
@@ -69,7 +73,7 @@ export default function ActivityLogs() {
                     <TbChevronLeft size={18} />
                     <span>Prev</span>
                 </button>
-                <button disabled={data.getLogByUserId.length < 10} onClick={() => setPages(() => pages + 1)}>
+                <button disabled={(data?.getLogByUserId?.length ?? 0) < 10} onClick={() => setPages(() => pages + 1)}>
                     <span>Next</span>
                     <TbChevronRight size={18} />
                 </button>

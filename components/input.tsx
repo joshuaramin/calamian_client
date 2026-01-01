@@ -6,13 +6,13 @@ import cn from '@/lib/util/cn'
 
 
 interface InputFieldProps<T extends FieldValues = any> {
-    icon: boolean
+    icon?: boolean
     label: string;
     name: keyof T & string;
     type?: string;
     isRequired: boolean;
     placeholder?: string;
-    error: FieldError | undefined;
+    error?: FieldError;
     register: UseFormRegister<T>;
 }
 

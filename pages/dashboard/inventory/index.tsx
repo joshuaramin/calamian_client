@@ -1,3 +1,5 @@
+"use client"
+
 import Dashboard from '@/layout/dashboard.layout'
 import PageWithLayout from '@/layout/page.layout'
 import React, { FC, useState, useEffect } from 'react'
@@ -12,7 +14,7 @@ import store from 'store2'
 import CentralPrompt from '@/components/prompt'
 import { InputText } from '@/components/input'
 import { SubmitHandler, useForm } from 'react-hook-form'
-import z from 'zod'
+import { z } from 'zod'
 import { CategorySchema } from '@/lib/validation/CategorySchema'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { AddCategory } from '@/lib/apollo/category/category.mutation'
@@ -24,11 +26,16 @@ type Categories = {
     categoryID: string
     category: string
 }
+type GetAllCategoryQuery = {
+    getAllCategory: {
+        categoryID: string
+        category: string
+    }[]
+}
+type CategoriesFormValues = z.input<typeof CategorySchema>
 
-type CategoriesFormValues = z.infer<typeof CategorySchema>
 const Index: FC = () => {
-
-    const user = store.get("UserAccount");
+    const user = store.get("UserAccount")
     const [userID, setUserId] = useState("")
 
     useEffect(() => {
@@ -37,32 +44,22 @@ const Index: FC = () => {
 
     const dataStore = useLocalStorageValue("CROW", { initializeWithValue: false })
     const onHandleLocalStorageStore = () => {
-        dataStore.set(true)
-        if (dataStore.value === true) {
-            dataStore.set(false)
-        }
+        dataStore.set(!dataStore.value)
     }
 
+    // Search
     const [search, setSearch] = useState("")
-    const { loading, data, error, subscribeToMore } = useQuery(GetAllCategory, {
-        variables: {
-            search: search
-        }
+    const { loading, data } = useQuery<GetAllCategoryQuery>(GetAllCategory, {
+        variables: { search }
     })
 
     const [addNewCategory, setNewCategory] = useState(false)
-
-    const onHandleCancelCategory = () => {
-        setNewCategory(false)
-    }
+    const onHandleCancelCategory = () => setNewCategory(false)
 
     const { register, formState: { errors }, handleSubmit, reset } = useForm<CategoriesFormValues>({
         resolver: zodResolver(CategorySchema),
-        defaultValues: {
-            category: ""
-        }
+        defaultValues: { category: "" },
     })
-
 
     const [mutate] = useMutation(AddCategory)
 
@@ -70,15 +67,14 @@ const Index: FC = () => {
         mutate({
             variables: {
                 category: data.category,
-                userId: userID
+                userId: userID,
             },
             onCompleted: () => {
                 toast.success("Successfully Created")
+                reset({ category: "" })
+                setNewCategory(false)
                 window.location.reload()
-                reset({
-                    category: ""
-                })
-            }
+            },
         })
     }
 
@@ -87,8 +83,9 @@ const Index: FC = () => {
             <Head>
                 <title>Inventory</title>
             </Head>
-            {
-                addNewCategory &&
+
+            {/* Add New Category Modal */}
+            {addNewCategory &&
                 <CentralPrompt
                     footer={true}
                     headerClose={false}
@@ -97,44 +94,56 @@ const Index: FC = () => {
                     buttoName='Add'
                     submitHandler={handleSubmit(onHandleSubmit)}
                     body={
-                        <>
-                            <InputText
-                                type='text'
-                                icon={false}
-                                isRequired={true}
-                                label='Category'
-                                name='category'
-                                register={register}
-                                error={errors.category}
-
-                            />
-                        </>
+                        <InputText
+                            type='text'
+                            icon={false}
+                            isRequired={true}
+                            label='Category'
+                            name='category'
+                            register={register}
+                            error={errors.category}
+                        />
                     }
                 />
             }
-            <div className={styles.search}>
-                <input type="search" onChange={(e) => {
-                    setSearch(e.target.value)
-                }} />
-                <button onClick={() => setNewCategory(() => !addNewCategory)}>New</button>
 
-            </div >
+            <div className={styles.search}>
+                <input
+                    type="search"
+                    placeholder="Search category..."
+                    onChange={(e) => setSearch(e.target.value)}
+                />
+                <button onClick={() => setNewCategory(!addNewCategory)}>New</button>
+            </div>
+
+            {/* Layout toggle */}
             <div className={styles.filter}>
                 <button onClick={onHandleLocalStorageStore}>
                     {dataStore.value ? <TbLayoutList size={25} /> : <TbLayoutColumns size={25} />}
                 </button>
             </div>
-            <div className={dataStore.value ? `${styles.row}` : `${styles.column}`}>
-                {loading ? <Spinner heigth={35} width={35} /> :
+
+            {/* Category list */}
+            <div className={dataStore.value ? styles.row : styles.column}>
+                {loading ? (
+                    <Spinner heigth={35} width={35} />
+                ) : (
                     data?.getAllCategory.map(({ categoryID, category }: Categories) => (
-                        <CardCategory key={categoryID} category={category} categoryID={categoryID} userID={userID} />
-                    ))}
+                        <CardCategory
+                            key={categoryID}
+                            category={category}
+                            categoryID={categoryID}
+                            userID={userID}
+                        />
+                    ))
+                )}
             </div>
+
             <ToastNotification />
-        </div >
+        </div>
     )
 }
 
-
+// Apply layouts
 (Index as PageWithLayout).layout = Dashboard
 export default Index

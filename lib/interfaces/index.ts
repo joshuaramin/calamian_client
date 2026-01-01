@@ -1,5 +1,3 @@
-import { items } from "@prisma/client";
-
 enum Roles {
   admin,
   manager,
@@ -67,7 +65,7 @@ interface Order {
 }
 
 interface CartItem {
-  items: items;
+  items: Items;
 }
 
 interface OrderCart {

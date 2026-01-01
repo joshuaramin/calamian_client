@@ -1,6 +1,8 @@
+"use client"
+
 import Dashboard from '@/layout/dashboard.layout'
 import PageWithLayout from '@/layout/page.layout'
-import React, { FC, useEffect, useState } from 'react'
+import React, { FC, useState } from 'react'
 import Head from 'next/head'
 import styles from '@/styles/dashboard/users/user.module.scss'
 
@@ -9,13 +11,12 @@ import UsersQuery from '@/lib/ui/user/users'
 import { oxygen, poppins } from '@/lib/typography'
 import CentralPrompt from '@/components/prompt'
 import { InputText } from '@/components/input'
-import { SubmitHandler, useForm } from 'react-hook-form'
-import z from 'zod'
-import { UserCreation } from '@/lib/validation/UserSchema'
+import { useForm, SubmitHandler } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { CreateUser } from '@/lib/apollo/User/user.mutation'
+import { UserCreation } from '@/lib/validation/UserSchema'
 import { useMutation, useQuery } from '@apollo/client/react'
 import { getAllUserQuery } from '@/lib/apollo/User/user.query'
+import { CreateUser } from '@/lib/apollo/User/user.mutation'
 import ToastNotification from '@/components/toastNotification'
 import toast from 'react-hot-toast'
 import useSearch from '@/lib/hooks/useSearch'
@@ -23,10 +24,33 @@ import useToggle from '@/lib/hooks/useToggle'
 import { TbChevronDown, TbChevronUp } from 'react-icons/tb'
 import { format } from 'date-fns'
 import { useRouter } from 'next/router'
+import { z } from 'zod'
 
-
+// -------------------- TYPES --------------------
 type UserFormValues = z.infer<typeof UserCreation>
 
+interface UserProfile {
+    fullname: string
+    firstname: string
+    lastname: string
+    phone: string
+    birthday: string
+}
+
+interface User {
+    userID: string
+    email: string
+    role: "admin" | "manager" | "staff"
+    salary: { salary: number }
+    createdAt: string
+    myProfile: UserProfile
+}
+
+interface GetAllUserQueryResponse {
+    getAllUserAccount: User[]
+}
+
+// -------------------- CONSTANTS --------------------
 const UserThead = ["Name", "Email Address", "Role", "Contact No.", "Salary", "Actions"]
 
 const userRoles = [
@@ -35,154 +59,124 @@ const userRoles = [
     { name: "Staff", value: "staff" }
 ]
 
-
+// -------------------- COMPONENT --------------------
 const Users: FC = () => {
-
     const search = useSearch()
     const toggle = useToggle()
     const router = useRouter()
+    const [roleDropdown, setRoleDropdown] = useState(false)
 
-    const [role, setRoles] = useState<boolean>(false)
+    // -------------------- APOLLO QUERY --------------------
+    const { loading, data } = useQuery<GetAllUserQueryResponse>(getAllUserQuery, {
+        variables: { search: search.search }
+    })
 
-    const { loading, data } = useQuery(getAllUserQuery, {
-        variables: {
-            search: search.search
+    // -------------------- FORM --------------------
+    const { register, handleSubmit, watch, setValue, formState: { errors }, reset } = useForm<UserFormValues>({
+        resolver: zodResolver(UserCreation) as any,
+        defaultValues: {
+            birthday: undefined,
+            email: "",
+            firstname: "",
+            lastname: "",
+            phone: "",
+            role: "manager",
+            salary: 0,
         }
     })
 
+    // -------------------- CREATE USER --------------------
+    const [createUser] = useMutation(CreateUser)
 
-    const { register, handleSubmit, formState: { errors }, reset, watch, setValue } =
-        useForm<UserFormValues>({
-            resolver: zodResolver(UserCreation),
-            defaultValues: {
-                birthday: undefined, // ✅ correct
-                email: "",
-                firstname: "",
-                lastname: "",
-                phone: "",
-                role: "manager",
-                salary: 0,
-            },
-        });
-
-    const [mutate] = useMutation(CreateUser)
-
-    const onHandleSubmit: SubmitHandler<UserFormValues> = (data) => {
-        mutate({
-            variables: {
-                input: {
-                    birthday: format(data.birthday, "yyyy-MM-dd"), // ✅ Date
-                    email: data.email,
-                    firstname: data.firstname,
-                    lastname: data.lastname,
-                    phone: data.phone,
-                    role: data.role,
-                    salary: data.salary,
-                },
-            },
-            onCompleted: () => {
-                toast.success("User created successfully")
-                router.reload()
-            }
-        });
-    };
+    const onHandleSubmit: SubmitHandler<UserFormValues> = async (formData) => {
+        try {
+            await createUser({
+                variables: {
+                    input: {
+                        ...formData,
+                        birthday: format(new Date(formData.birthday!), "yyyy-MM-dd") // ensure birthday is a string
+                    }
+                }
+            })
+            toast.success("User created successfully")
+            reset()
+            toggle.updateToggle()
+            router.reload()
+        } catch (error: any) {
+            toast.error(error.message || "Something went wrong")
+        }
+    }
 
     return (
         <div className={styles.container}>
             <Head>
                 <title>Users</title>
             </Head>
-            {
-                toggle.toggle && <CentralPrompt
-                    title={'Add New User'}
+
+            {/* Add New User Modal */}
+            {toggle.toggle && (
+                <CentralPrompt
+                    title="Add New User"
                     headerClose={false}
-                    body={<>
-                        <InputText
-                            icon={false}
-                            isRequired={true}
-                            label='Email'
-                            name='email'
-                            register={register}
-                            type='text'
-                            error={errors.email}
-                        />
-                        <InputText
-                            icon={false}
-                            isRequired={true}
-                            label='First Name'
-                            name='firstname'
-                            register={register}
-                            type='text'
-                            error={errors.email}
-                        />
-                        <InputText
-                            icon={false}
-                            isRequired={true}
-                            label='Last Name'
-                            name='lastname'
-                            register={register}
-                            type='text'
-                            error={errors.lastname}
-                        />
-                        <InputText
-                            icon={false}
-                            isRequired={true}
-                            label='Phone'
-                            name='phone'
-                            register={register}
-                            type='text'
-                            error={errors.phone}
-                            placeholder='start at +63 (e.g. +639499...)'
-                        />
-                        <InputText
-                            icon={false}
-                            isRequired={true}
-                            label='Birthday'
-                            name='birthday'
-                            register={register}
-                            type='date'
-                            error={errors.birthday}
-                        />
-                        <InputText
-                            icon={false}
-                            isRequired={true}
-                            label='Salary'
-                            name='salary'
-                            register={register}
-                            type='number'
-                            error={errors.salary}
-                        />
-                        <div className={styles.selection}>
-                            <div onClick={() => setRoles(() => !role)} className={styles.select}>
-                                <span className={oxygen.className}>Select Role: {watch("role")} </span>
-                                {role ? <TbChevronUp /> : <TbChevronDown />}
-                            </div>
-                            {role ? <div className={styles.options}>
-                                {userRoles.map(({ name, value }) => (
-                                    <button onClick={(e) => {
-                                        setValue("role", value)
-                                        setRoles(false)
-                                    }} className={value === watch("role") ? `${styles.active}` : `${styles.notactive}`} type="button" key={name} value={value}>{name}</button>
-                                ))}
-                            </div> : null}
-                        </div>
-                    </>}
-                    buttoName='Add new User'
                     submitHandler={handleSubmit(onHandleSubmit)}
+                    buttoName="Add new User"
                     onClose={toggle.updateToggle}
-                    footer={true} />
-            }
+                    footer
+                    body={
+                        <>
+                            <InputText label="Email" name="email" register={register} type="text" error={errors.email} isRequired />
+                            <InputText label="First Name" name="firstname" register={register} type="text" error={errors.firstname} isRequired />
+                            <InputText label="Last Name" name="lastname" register={register} type="text" error={errors.lastname} isRequired />
+                            <InputText label="Phone" name="phone" register={register} type="text" error={errors.phone} placeholder="+639..." isRequired />
+                            <InputText label="Birthday" name="birthday" register={register} type="date" error={errors.birthday} isRequired />
+                            <InputText label="Salary" name="salary" register={register} type="number" error={errors.salary} isRequired />
 
+                            {/* Role selection */}
+                            <div className={styles.selection}>
+                                <div onClick={() => setRoleDropdown(!roleDropdown)} className={styles.select}>
+                                    <span className={oxygen.className}>Select Role: {watch("role")}</span>
+                                    {roleDropdown ? <TbChevronUp /> : <TbChevronDown />}
+                                </div>
+                                {roleDropdown && (
+                                    <div className={styles.options}>
+                                        {userRoles.map(({ name, value }) => (
+                                            <button
+                                                key={value}
+                                                type="button"
+                                                value={value}
+                                                onClick={() => {
+                                                    setValue("role", value)
+                                                    setRoleDropdown(false)
+                                                }}
+                                                className={watch("role") === value ? styles.active : styles.notactive}
+                                            >
+                                                {name}
+                                            </button>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        </>
+                    }
+                />
+            )}
+
+            {/* Search & Add */}
             <div className={styles.addbtn}>
-
-                <input type='search' className={oxygen.className} placeholder='Find User'
-                    onChange={(e) => search.updateSearch(e.currentTarget.value)} />
+                <input
+                    type="search"
+                    className={oxygen.className}
+                    placeholder="Find User"
+                    onChange={(e) => search.updateSearch(e.currentTarget.value)}
+                />
                 <div>
                     <button className={styles.addBtn} onClick={toggle.updateToggle}>
                         <span className={oxygen.className}>Add</span>
                     </button>
                 </div>
             </div>
+
+            {/* Users Table */}
             <div>
                 <table>
                     <thead>
@@ -193,20 +187,31 @@ const Users: FC = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {loading ? <tr>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                        </tr> : data?.getAllUserAccount.map(({ userID, email, role, salary, createdAt, myProfile }: any) => (
-
-                            <UsersQuery key={userID} userID={userID} email={email} role={role} salary={salary.salary} createdAt={createdAt} fullname={myProfile.fullname} phone={myProfile.phone} firstname={myProfile.firstname} lastname={myProfile.lastname} birthday={myProfile.birthday} />
-
-                        ))}
+                        {loading ? (
+                            <tr>
+                                {Array(UserThead.length).fill(<td key={Math.random()}></td>)}
+                            </tr>
+                        ) : (
+                            data?.getAllUserAccount.map(user => (
+                                <UsersQuery
+                                    key={user.userID}
+                                    userID={user.userID}
+                                    email={user.email}
+                                    role={user.role}
+                                    salary={user.salary.salary}
+                                    createdAt={user.createdAt}
+                                    fullname={user.myProfile.fullname}
+                                    phone={user.myProfile.phone}
+                                    firstname={user.myProfile.firstname}
+                                    lastname={user.myProfile.lastname}
+                                    birthday={user.myProfile.birthday}
+                                />
+                            ))
+                        )}
                     </tbody>
                 </table>
             </div>
+
             <ToastNotification />
         </div>
     )

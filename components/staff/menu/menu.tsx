@@ -29,17 +29,13 @@ interface SearchItemsResponse {
 }
 
 export default function Menu() {
-    /* -------------------- STATE -------------------- */
     const [search, setSearch] = useState("")
 
-    /* -------------------- QUERIES -------------------- */
     const {
         loading,
         data,
-        startPolling,
-        stopPolling
     } = useQuery<GetAllItemsResponse>(GetAllItemQuery, {
-        pollInterval: 5000 // ✅ correct polling
+
     })
 
     const [
@@ -47,7 +43,6 @@ export default function Menu() {
         { data: searchData, loading: searchLoading }
     ] = useLazyQuery<SearchItemsResponse>(getSearchStaff)
 
-    /* -------------------- HANDLERS -------------------- */
     const onChangeSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value
         setSearch(value)
@@ -59,12 +54,10 @@ export default function Menu() {
         }
     }
 
-    /* -------------------- DATA SOURCE -------------------- */
     const items = search
         ? searchData?.getItemsByStaff
         : data?.getAllStoreItems
 
-    /* -------------------- RENDER -------------------- */
     return (
         <div className={styles.container}>
             <div className={styles.searchContainer}>

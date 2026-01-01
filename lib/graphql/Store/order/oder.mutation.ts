@@ -1,22 +1,25 @@
-import { extendType, inputObjectType, list, nonNull, stringArg } from "nexus";
+import { extendType, inputObjectType, nonNull, stringArg, list } from "nexus";
 import { prisma } from "@/lib/util/index";
 
-export const orderInput = inputObjectType({
-  name: "orderInput",
+
+export const OrderInput = inputObjectType({
+  name: "OrderInput",
   definition(t) {
-    t.id("itemsID");
-    t.int("quantity");
-    t.float("total");
+    t.nonNull.id("itemsID");
+    t.nonNull.int("quantity");
+    t.nonNull.float("total");
   },
 });
 
-function makeid(length: number) {
-  var result = "";
-  var characters = "ABCDEFGHIJKLMNOPQWERTUVWXYZ1234567890";
-  var charactersLength = characters.length;
-  for (var i = 0; i < length; i++) {
-    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+
+function makeid(length: number): string {
+  const chars = "ABCDEFGHIJKLMNOPQWERTUVWXYZ1234567890";
+  let result = "";
+
+  for (let i = 0; i < length; i++) {
+    result += chars.charAt(Math.floor(Math.random() * chars.length));
   }
+
   return result;
 }
 
@@ -26,60 +29,69 @@ export const OrderMutation = extendType({
     t.field("createAnOrder", {
       type: "order",
       args: {
-        orders: nonNull(list(nonNull("orderInput"))),
+        orders: nonNull(list(nonNull("OrderInput"))),
       },
-      resolve: async (_, { orders }): Promise<any> => {
-        if (!orders || orders.length === 0) {
+      async resolve(_, { orders }): Promise<any> {
+        if (orders.length === 0) {
           throw new Error("No orders provided");
         }
 
-        // Correct reduce usage
-        const reduceTotal: number = orders.reduce(
-          (acc: number, curr: { total: number }) => acc + curr.total,
+        const reduceTotal = orders.reduce(
+          (acc, curr: any) => acc + curr.total,
           0
         );
 
-        return prisma.$transaction(async () => {
-          const order = await prisma.order.create({
+        return prisma.$transaction(async (tx) => {
+          const order = await tx.order.create({
             data: {
               order: `#${makeid(8)}`,
-              total: reduceTotal + reduceTotal * 0.12,
+              total: reduceTotal * 1.12,
               createdAt: new Date(),
               orderList: {
-                create: orders.map(({ itemsID, quantity, total }) => ({
+                create: orders.map(({ itemsID, quantity, total }: any) => ({
                   quantity,
                   total,
-                  items: { connect: { itemsID } },
+                  items: {
+                    connect: { itemsID },
+                  },
                 })),
               },
             },
           });
 
-          for (const { itemsID, quantity } of orders) {
-            const prod = await prisma.items.findUnique({
-              where: { itemsID },
+          for (const order of orders) {
+            const prod = await tx.items.findUnique({
+              where: { itemsID: order.itemsID as string },
               include: { info: true },
             });
-            if (!prod) continue;
 
-            const updatedStoreInfo = await prisma.storeInfo.update({
-              where: { itemsID },
-              data: { quantity: prod.info.quantity - quantity },
+            if (!prod?.info) continue;
+
+            if (!order.quantity) {
+              return;
+            }
+
+            const newQuantity = Math.max(
+              prod.info.quantity - order.quantity,
+              0
+            );
+
+            const updatedStoreInfo = await tx.storeInfo.update({
+              where: { itemsID: order.itemsID as string },
+              data: { quantity: newQuantity },
               include: { items: true },
             });
 
-            if (updatedStoreInfo.quantity < 50) {
-              await prisma.notification.create({
+            if (newQuantity <= 0) {
+              await tx.notification.create({
                 data: {
-                  notification: `Attention! ${prod.items} quantity is currently ${updatedStoreInfo.quantity}. Consider reordering soon.`,
+                  notification: `Attention! ${updatedStoreInfo.items?.items} is out of stock. Please contact your supplier.`,
                 },
               });
-            }
-
-            if (updatedStoreInfo.quantity <= 0) {
-              await prisma.notification.create({
+            } else if (newQuantity < 50) {
+              await tx.notification.create({
                 data: {
-                  notification: `Attention! ${prod.items} is out of stock. Please contact your supplier.`,
+                  notification: `Attention! ${updatedStoreInfo.items?.items} quantity is currently ${newQuantity}. Consider reordering soon.`,
                 },
               });
             }
@@ -92,13 +104,16 @@ export const OrderMutation = extendType({
 
     t.list.field("generateOrderReport", {
       type: "order",
-      args: { startDate: nonNull(stringArg()), endDate: nonNull(stringArg()) },
-      resolve: async (_, { startDate, endDate }): Promise<any> => {
-        return await prisma.order.findMany({
+      args: {
+        startDate: nonNull(stringArg()),
+        endDate: nonNull(stringArg()),
+      },
+      async resolve(_, { startDate, endDate }) {
+        return prisma.order.findMany({
           where: {
             createdAt: {
-              lte: new Date(endDate),
               gte: new Date(startDate),
+              lte: new Date(endDate),
             },
           },
         });

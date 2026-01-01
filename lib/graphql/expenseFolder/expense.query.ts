@@ -24,7 +24,7 @@ export const expFolderQuery = extendType({
       type: "expenseFolder",
       args: { expFolderID: nonNull(idArg()) },
       resolve: async (_, { expFolderID }): Promise<any> => {
-        return await prisma.expFolder.findFirst({
+        return await prisma.expFolder.findMany({
           where: {
             expFolderID,
           },

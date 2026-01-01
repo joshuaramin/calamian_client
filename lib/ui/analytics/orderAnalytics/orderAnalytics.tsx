@@ -7,6 +7,10 @@ import styles from './orderAnalytics.module.scss'
 import { oxygen, poppins } from '@/lib/typography';
 
 
+interface Props {
+    getCurrentOrdersBy20: []
+}
+
 const orderTableHead = ["Orders No.", "No. of Items", "Total", "Order Created"]
 
 export default function OrderAnalytics() {
@@ -14,7 +18,7 @@ export default function OrderAnalytics() {
     const router = useRouter();
 
 
-    const { loading, data, error } = useQuery(GetAllCurrentOrdersBy20)
+    const { loading, data, error } = useQuery<Props>(GetAllCurrentOrdersBy20)
 
     return (
         <div className={styles.container}>
