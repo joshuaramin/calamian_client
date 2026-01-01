@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "tauri": "tauri",
-    "postinstall": "npx prisma generate --platform=rhel-openssl-3.0.x"
+    "postinstall": "npx prisma generate"
   },
   "dependencies": {
     "@apollo/client": "^4.0.9",
