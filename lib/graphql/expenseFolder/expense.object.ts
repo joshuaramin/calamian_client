@@ -26,7 +26,7 @@ export const ExpenseFolder = objectType({
             expFolderID,
           },
         });
-        return expense.reduce((a, { amount }) => a + amount, 0);
+        return expense.reduce((a: any, { amount }: any) => a + amount, 0);
       },
     });
   },
