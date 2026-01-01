@@ -3,32 +3,25 @@
 import Dashboard from '@/layout/dashboard.layout'
 import PageWithLayout from '@/layout/page.layout'
 import { client } from '@/lib/apollo/apolloWrapper'
-import { GetUserByid, getAllUserQuery } from '@/lib/apollo/User/user.query'
-import { GetStaticPaths, GetStaticProps, GetStaticPropsContext } from 'next'
+import { GetUserByid } from '@/lib/apollo/User/user.query'
+import { GetServerSideProps, GetServerSidePropsContext } from 'next'
 import React, { FC } from 'react'
 import styles from '@/styles/dashboard/users/id.module.scss'
 import { oxygen, poppins, rubik } from '@/lib/typography'
 import Image from 'next/image'
 import { format } from 'date-fns'
 
-/** User profile interface */
 interface UserProfile {
     fullname: string
     birthday: string
     phone: string
 }
 
-/** User interface */
 interface User {
     userID: string
     role: string
     salary: { salary: number }
     myProfile: UserProfile
-}
-
-/** GraphQL query response interfaces */
-interface GetAllUserAccountResponse {
-    getAllUserAccount: User[]
 }
 
 interface GetUserByIdResponse {
@@ -39,37 +32,26 @@ interface Props {
     user: User | null
 }
 
-// -------------------- STATIC PATHS --------------------
-export const getStaticPaths: GetStaticPaths = async () => {
-    const { data } = await client.query<GetAllUserAccountResponse>({
-        query: getAllUserQuery
-    })
-
-    const paths = data?.getAllUserAccount.map(user => ({
-        params: { id: user.userID }
-    })) || []
-
-    return { paths, fallback: true }
-}
-
-// -------------------- STATIC PROPS --------------------
-export const getStaticProps: GetStaticProps<Props> = async (context: GetStaticPropsContext) => {
+export const getServerSideProps: GetServerSideProps<Props> = async (context: GetServerSidePropsContext) => {
     const userId = context.params?.id as string
 
-    const { data } = await client.query<GetUserByIdResponse>({
-        query: GetUserByid,
-        variables: { userId }
-    })
+    try {
+        const { data } = await client.query<GetUserByIdResponse>({
+            query: GetUserByid,
+            variables: { userId }
+        })
 
-    return {
-        props: {
-            user: data?.getUserById ?? null
-        },
-        revalidate: 60
+        return {
+            props: {
+                user: data?.getUserById ?? null
+            }
+        }
+    } catch (error) {
+        console.error('Error fetching user:', error)
+        return { props: { user: null } }
     }
 }
 
-// -------------------- COMPONENT --------------------
 const UserDetail: FC<Props> = ({ user }) => {
     if (!user) return <div>Loading user...</div>
 
@@ -121,6 +103,5 @@ const UserDetail: FC<Props> = ({ user }) => {
     )
 }
 
-// Layout
 (UserDetail as PageWithLayout).layout = Dashboard
 export default UserDetail

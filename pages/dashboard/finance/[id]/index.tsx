@@ -3,7 +3,7 @@ import { TbFileTypePdf, TbFileTypeCsv, TbTrash, TbChartBar, TbChartBarOff, TbArr
 import { useRouter } from 'next/router'
 import { client } from '@/lib/apollo/apolloWrapper'
 import { GetAllExpenseFolder, GetExpenseFolderById, GetAllExpense, GetExpenseByGroup } from '@/lib/apollo/finance/finance.query'
-import { GetStaticPropsContext } from 'next'
+import { GetServerSideProps, GetStaticPropsContext } from 'next'
 import { useMutation, useQuery } from '@apollo/client/react'
 import { CreateExpense } from '@/lib/apollo/finance/finance.mutation'
 import { Chart as ChartJS, Tooltip, Legend, CategoryScale, LinearScale, BarElement, LineElement, PointElement, Title, ArcElement } from "chart.js";
@@ -51,33 +51,25 @@ interface ExpenseFolderProps {
     expensed: ExpenseFolder[]
 }
 
-export const getStaticPaths = async () => {
-
-    const { data } = await client.query<{ getAllExpenseFolder: ExpenseFolder[] }>({
-        query: GetAllExpenseFolder
-    })
-    const paths = data?.getAllExpenseFolder.map(folder => ({
-        params: { id: folder.expFolderID }
-    }))
-
-    return { paths, fallback: true }
-}
-
-
-export const getStaticProps = async (context: GetStaticPropsContext) => {
-
+export const getServerSideProps: GetServerSideProps = async (context) => {
     const financeId = context.params?.id
 
-    const { data } = await client.query<{ getExpenseFolderById: ExpenseFolder[] }>({
-        query: GetExpenseFolderById,
-        variables: { expFolderId: financeId }
-    })
+    try {
+        const { data } = await client.query<{ getExpenseFolderById: ExpenseFolder[] }>({
+            query: GetExpenseFolderById,
+            variables: { expFolderId: financeId }
+        })
 
-    return {
-        props: { expensed: data?.getExpenseFolderById }
+        if (!data?.getExpenseFolderById || data.getExpenseFolderById.length === 0) {
+            return { notFound: true }
+        }
+
+        return { props: { expensed: data.getExpenseFolderById } }
+    } catch (err) {
+        console.error('Error fetching expense folder:', err)
+        return { notFound: true }
     }
 }
-
 
 const Thead = ["Date", "Descriptions", "Amount", "Mode of Payment"]
 const FinanceID: FC = ({ expensed }: any) => {
@@ -196,10 +188,6 @@ const FinanceID: FC = ({ expensed }: any) => {
 
     const onHandleDeleteToggle = () => {
         setDeleteList(() => !deleteList)
-    }
-
-    if (router.isFallback) {
-        return (<p>Loading....</p>)
     }
 
     return (
