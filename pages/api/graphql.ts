@@ -21,7 +21,6 @@ export const config = {
 
 let apolloServer: ApolloServer | null = null;
 
-
 function getApolloServer() {
   if (!apolloServer) {
     const schema = makeSchema({
@@ -49,25 +48,7 @@ function getApolloServer() {
   return apolloServer;
 }
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
-  const server = getApolloServer();
-  const apolloHandler = startServerAndCreateNextHandler(server);
+const server = getApolloServer();
+const handler = startServerAndCreateNextHandler(server);
 
-  if (
-    req.method === "POST" &&
-    req.headers["content-type"]?.includes("application/json")
-  ) {
-    let body = "";
-    for await (const chunk of req) body += chunk;
-    try {
-      req.body = body ? JSON.parse(body) : {};
-    } catch {
-      req.body = {};
-    }
-  }
-
-  return apolloHandler(req, res);
-}
+export default handler;
