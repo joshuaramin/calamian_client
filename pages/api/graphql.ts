@@ -21,6 +21,7 @@ export const config = {
 
 let apolloServer: ApolloServer | null = null;
 
+
 function getApolloServer() {
   if (!apolloServer) {
     const schema = makeSchema({
