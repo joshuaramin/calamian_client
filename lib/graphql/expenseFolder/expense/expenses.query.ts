@@ -8,7 +8,7 @@ export const expenseQuery = extendType({
       type: "expenses",
       args: { expFolderID: nonNull(idArg()) },
       resolve: async (_, { expFolderID }): Promise<any> => {
-        return await prisma.expense.findFirst({
+        return await prisma.expense.findMany({
           where: {
             is_deleted: false,
             expFolder: {

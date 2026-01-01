@@ -33,11 +33,11 @@ union ExpensePayload = ErrorObject | expenses
 union ItemPayload = ErrorObject | item
 
 type Mutation {
-  createAnOrder(orders: [orderInput!]!): order
+  createAnOrder(orders: [OrderInput!]!): order
   createCategory(category: String!, userID: ID!): category
   createExpense(expFolderID: ID!, expenses: expenseInput): ExpensePayload
   createExpenseFolder(exFolder: String!, userID: ID!): expenseFolder
-  createMedicalItems(categoryID: ID!, items: itemInput, userID: ID!): ItemPayload
+  createMedicalItems(categoryID: ID!, item: itemInput, userID: ID!): ItemPayload
   createNotificationSystem: notification
   createUserAccount(input: userInput): UserPaylaod
   deleteCategory(categoryID: ID!, userID: ID!): category
@@ -51,12 +51,18 @@ type Mutation {
   updateCategory(category: String!, categoryID: ID!, userID: ID!): category
   updateExpense(expenseID: ID!, expenses: expenseInput): expenses
   updateExpenseFolder(exFolder: String!, expFolderID: ID!, userID: ID!): expenseFolder
-  updateMedicalitems(items: itemInput, itemsID: ID!, userID: ID!): item
+  updateMedicalitems(item: itemInput, itemsID: ID!, userID: ID!): item
   updateNotificationSystem(notificationID: ID!): notification
   updateUserAccounts(user: userInput, userID: ID!): UserPaylaod
   updateUserEmailAddress(email: EmailAddress!, userID: ID!): user
   updateUserPassword(currentPasword: String!, password: String!, retype: String!, userID: ID!): user
   updateUserProfile(birthday: Date!, firstname: String!, lastname: String!, phone: PhoneNumber!, userID: ID!): profile
+}
+
+input OrderInput {
+  itemsID: ID!
+  quantity: Int!
+  total: Float!
 }
 
 type OrderTotal {
@@ -176,12 +182,6 @@ type orderCart {
   cartItem: [item]
   createdAt: DateTime
   orderListItemID: ID
-  quantity: Int
-  total: Float
-}
-
-input orderInput {
-  itemsID: ID
   quantity: Int
   total: Float
 }

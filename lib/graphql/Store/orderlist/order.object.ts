@@ -15,7 +15,7 @@ export const OrderObject = objectType({
           where: {
             OrderListItem: {
               some: {
-                orderListItemID,
+                orderListItemID: orderListItemID as string,
               },
             },
           },

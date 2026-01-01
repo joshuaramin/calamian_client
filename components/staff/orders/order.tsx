@@ -15,7 +15,6 @@ const rubik = Rubik({ display: "auto", weight: "500", subsets: ["latin"] })
 const oxygen = Oxygen({ display: "auto", weight: "400", subsets: ["latin"] })
 const poppins = Poppins({ display: "auto", weight: "500", subsets: ["latin"] })
 
-// -------------------- TYPES --------------------
 interface CartItem {
     itemsID: string
     items: string
@@ -28,7 +27,6 @@ interface CartData {
     cartItems: CartItem[]
 }
 
-// -------------------- COMPONENT --------------------
 export default function Orders() {
     const cart = useReactiveVar(carrItemsVar)
     const { loading, data } = useQuery<CartData>(GET_CARTITEMS)
@@ -77,7 +75,6 @@ export default function Orders() {
         <div className={styles.container}>
             <Head><title>Pharmaceutical-Staff</title></Head>
 
-            {/* PRINTING MODAL */}
             {printing && (
                 <div className={styles.settings}>
                     <div className={styles.data}>
@@ -90,10 +87,8 @@ export default function Orders() {
                 </div>
             )}
 
-            {/* SETTINGS MODAL */}
             {settings && <div className={styles.settings}><Logout close={onHandleCloseLogout} /></div>}
 
-            {/* CURRENT CART HEADER */}
             <div className={styles.currentCart}>
                 <div>
                     <h2 className={rubik.className}>Current Cart</h2>
@@ -104,12 +99,10 @@ export default function Orders() {
                 </div>
             </div>
 
-            {/* RECEIPT */}
             <div className={styles.receipt} ref={contentRef}>
                 <ReceiptPdf data={data} amountReceived={amountReceived} />
             </div>
 
-            {/* CART TABLE */}
             <div className={styles.cartContainer}>
                 <table>
                     <thead>
@@ -144,7 +137,6 @@ export default function Orders() {
                 </table>
             </div>
 
-            {/* ORDER SUMMARY */}
             <div className={styles.orders}>
                 <div className={styles.change}>
                     <div className={styles.excah}>

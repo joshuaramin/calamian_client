@@ -1,7 +1,6 @@
 import { extendType, idArg, inputObjectType, nonNull } from "nexus";
 import { prisma } from "@/lib/util/index";
 import { ItemSchema } from "@/lib/validation/ItemSchema";
-
 export const itemInput = inputObjectType({
   name: "itemInput",
   definition(t) {
@@ -19,65 +18,67 @@ export const ItemMutation = extendType({
     t.field("createMedicalItems", {
       type: "ItemPayload",
       args: {
-        items: "itemInput",
+        item: "itemInput",
         categoryID: nonNull(idArg()),
         userID: nonNull(idArg()),
       },
-      resolve: async (_, { categoryID, items, userID }): Promise<any> => {
-        const parsedData = ItemSchema.safeParse(items);
+      resolve: async (_, { categoryID, item, userID }) => {
+        const parsedData = ItemSchema.safeParse(item);
         if (!parsedData.success) {
           return {
             __typename: "ErrorObject",
-            message: "Invalid Schema Parse",
+            message: parsedData.error.message,
           };
         }
 
-        const { dosage, expiredDate, item, price, quantity } =
-          await parsedData.data;
-        const itemss = await prisma.items.create({
+        const { dosage, expiredDate, items, price, quantity } = parsedData.data;
+
+        console.log(parsedData.data);
+
+        console.log("Creating item:", {
+          categoryID,
+          item,
+          dosage,
+          expiredDate,
+          price,
+          quantity,
+        });
+
+        const createdItem = await prisma.items.create({
           data: {
-            items: item,
+            items,
             dosage,
-            category: {
-              connect: {
-                categoryID,
-              },
-            },
-            info: {
-              create: {
-                price,
-                expiredDate,
-                quantity,
-              },
-            },
+            category: { connect: { categoryID } },
+            info: { create: { price, expiredDate, quantity } },
+          },
+          include: {
+            info: true,
           },
         });
 
         await prisma.logs.create({
           data: {
             logs: "Created an Item",
-            descriptions: "You have been created new Item.",
-            User: {
-              connect: {
-                userID,
-              },
-            },
+            descriptions: "You have created a new item.",
+            User: { connect: { userID } },
           },
         });
 
-        return itemss;
+        return {
+          __typename: "item",
+          ...createdItem,
+        };
       },
     });
-
     t.field("updateMedicalitems", {
       type: "item",
       args: {
-        items: "itemInput",
+        item: "itemInput",
         itemsID: nonNull(idArg()),
         userID: nonNull(idArg()),
       },
-      resolve: async (_, { items, itemsID, userID }): Promise<any> => {
-        const parsedData = ItemSchema.safeParse(items);
+      resolve: async (_, { item, itemsID, userID }): Promise<any> => {
+        const parsedData = ItemSchema.safeParse(item);
         if (!parsedData.success) {
           return {
             __typename: "ErrorObject",
@@ -85,13 +86,13 @@ export const ItemMutation = extendType({
           };
         }
 
-        const { dosage, expiredDate, item, price, quantity } =
+        const { dosage, expiredDate, items, price, quantity } =
           await parsedData.data;
 
         await prisma.logs.create({
           data: {
             logs: "Updated an Item",
-            descriptions: `You updated an Item: ${item}`,
+            descriptions: `You updated an Item: ${items}`,
             User: {
               connect: {
                 userID,
@@ -101,7 +102,7 @@ export const ItemMutation = extendType({
         });
         return await prisma.items.update({
           data: {
-            items: item,
+            items,
             dosage,
             updatedAt: new Date(Date.now()),
             info: {

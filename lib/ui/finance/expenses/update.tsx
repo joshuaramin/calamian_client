@@ -21,7 +21,7 @@ export default function UpdateExpensed({ expenseID, expense, amount, mod, payDat
     const search = useSearch();
 
     const { register, handleSubmit, reset, formState: { errors }, setValue, watch } = useForm<ExpenseFormValue>({
-        resolver: zodResolver(ExpenseSchema),
+        resolver: zodResolver(ExpenseSchema) as any,
         defaultValues: {
             amount: amount, expense: expense, mod: "Card", payDate: payDate
         }

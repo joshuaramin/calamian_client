@@ -2,22 +2,21 @@ import { gql } from "@apollo/client";
 
 export const ItemMutation = gql`
   mutation CreateMedicalItems(
-    $categoryId: ID!
     $userId: ID!
     $items: itemInput
+    $categoryId: ID!
   ) {
-    createMedicalItems(
-      categoryID: $categoryId
-      userID: $userId
-      items: $items
-    ) {
-      itemsID
-      items
-      dosage
-      storeInfo {
-        price
-        quantity
-        storeInfoID
+    createMedicalItems(userID: $userId, item: $items, categoryID: $categoryId) {
+      ... on item {
+        itemsID
+        items
+        dosage
+        storeInfo {
+          price
+        }
+      }
+      ... on ErrorObject {
+        message
       }
     }
   }

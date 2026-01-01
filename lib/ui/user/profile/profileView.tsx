@@ -18,16 +18,23 @@ const oxygen = Oxygen({
     weight: "400",
     subsets: ["latin"]
 })
+
+interface UserProps {
+    getUserById: []
+}
+interface LogsProps {
+    getLogByUserId: []
+}
 export default function ProfileView({ userID, close }: { userID: string, close: () => void }) {
 
-    const { loading, data } = useQuery(GetUserByid, {
+    const { loading, data } = useQuery<UserProps>(GetUserByid, {
         variables: {
             userId: userID
         }
     })
 
     const [pages, setPages] = useState(0)
-    const { loading: loadingLogs, data: logsData } = useQuery(UsersActivityLogs, {
+    const { loading: loadingLogs, data: logsData } = useQuery<LogsProps>(UsersActivityLogs, {
         variables: {
             userId: userID,
             orders: "desc",
@@ -44,7 +51,7 @@ export default function ProfileView({ userID, close }: { userID: string, close: 
                 </button>
             </div>
             <div>
-                {loading ? "" : data.getUserById.map(({ userID, email, role, myProfile, logs, salary }: any) => (
+                {loading ? "" : data?.getUserById.map(({ userID, email, role, myProfile, logs, salary }: any) => (
                     <div key={userID} className={styles.profile}>
 
                         <div key={myProfile.profileID} className={styles.prof}>
@@ -67,7 +74,7 @@ export default function ProfileView({ userID, close }: { userID: string, close: 
                                 <h2 className={poppins.className}>User Activity</h2>
                             </div>
                             <div className={styles.logsContainer}>
-                                {loadingLogs ? "Loading" : logsData.getLogByUserId.map(({ logsID, createdAt, descriptions, logs }: { logsID: string, createdAt: any, descriptions: string, logs: string }) => (
+                                {loadingLogs ? "Loading" : logsData?.getLogByUserId.map(({ logsID, createdAt, descriptions, logs }: { logsID: string, createdAt: any, descriptions: string, logs: string }) => (
                                     <div className={styles.card} key={logsID}>
                                         <div className={styles.cardHeader}>
                                             <h2 className={poppins.className}>{logs}</h2>
@@ -84,7 +91,7 @@ export default function ProfileView({ userID, close }: { userID: string, close: 
                                     <TbChevronLeft size={18} />
                                     <span>Prev</span>
                                 </button>
-                                <button disabled={loadingLogs ? true : logsData.getLogByUserId.length < 10} onClick={() => setPages(() => pages + 1)}>
+                                <button disabled={loadingLogs ? true : (logsData?.getLogByUserId.length ?? 0) < 10} onClick={() => setPages(() => pages + 1)}>
                                     <span>Next</span>
                                     <TbChevronRight size={18} />
                                 </button>

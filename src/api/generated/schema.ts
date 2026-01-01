@@ -56,6 +56,11 @@ export interface NexusGenInputs {
     email?: string | null; // String
     password?: string | null; // String
   }
+  OrderInput: { // input type
+    itemsID: string; // ID!
+    quantity: number; // Int!
+    total: number; // Float!
+  }
   expenseInput: { // input type
     amount?: number | null; // Float
     expense?: string | null; // String
@@ -68,11 +73,6 @@ export interface NexusGenInputs {
     items?: string | null; // String
     price?: number | null; // Float
     quantity?: number | null; // Int
-  }
-  orderInput: { // input type
-    itemsID?: string | null; // ID
-    quantity?: number | null; // Int
-    total?: number | null; // Float
   }
   userInput: { // input type
     birthday?: NexusGenScalars['Date'] | null; // Date
@@ -538,7 +538,7 @@ export interface NexusGenFieldTypeNames {
 export interface NexusGenArgTypes {
   Mutation: {
     createAnOrder: { // args
-      orders: NexusGenInputs['orderInput'][]; // [orderInput!]!
+      orders: NexusGenInputs['OrderInput'][]; // [OrderInput!]!
     }
     createCategory: { // args
       category: string; // String!
@@ -554,7 +554,7 @@ export interface NexusGenArgTypes {
     }
     createMedicalItems: { // args
       categoryID: string; // ID!
-      items?: NexusGenInputs['itemInput'] | null; // itemInput
+      item?: NexusGenInputs['itemInput'] | null; // itemInput
       userID: string; // ID!
     }
     createUserAccount: { // args
@@ -604,7 +604,7 @@ export interface NexusGenArgTypes {
       userID: string; // ID!
     }
     updateMedicalitems: { // args
-      items?: NexusGenInputs['itemInput'] | null; // itemInput
+      item?: NexusGenInputs['itemInput'] | null; // itemInput
       itemsID: string; // ID!
       userID: string; // ID!
     }
@@ -715,12 +715,12 @@ export type NexusGenUnionNames = keyof NexusGenUnions;
 
 export type NexusGenObjectsUsingAbstractStrategyIsTypeOf = never;
 
-export type NexusGenAbstractsUsingStrategyResolveType = never;
+export type NexusGenAbstractsUsingStrategyResolveType = "AuthPayload" | "ExpensePayload" | "ItemPayload" | "UserPaylaod";
 
 export type NexusGenFeaturesConfig = {
   abstractTypeStrategies: {
-    resolveType: false
     isTypeOf: false
+    resolveType: true
     __typename: false
   }
 }

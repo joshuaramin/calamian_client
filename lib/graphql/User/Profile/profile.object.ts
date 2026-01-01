@@ -19,7 +19,7 @@ export const ProfleObject = objectType({
       resolve: async ({ profileID }) => {
         return await prisma.profile.findMany({
           where: {
-            profileID,
+            profileID: profileID as string,
           },
         });
       },

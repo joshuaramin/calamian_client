@@ -16,6 +16,15 @@ import ToastNotification from '@/components/toastNotification'
 
 type ProfileFormValues = z.infer<typeof ProfileSchema>
 
+interface Props {
+    getProfileByUserId: {
+        firstname: string,
+        lastname: string,
+        birthday: string,
+        phone: string,
+    }
+}
+
 export default function MyProfile() {
 
 
@@ -28,7 +37,7 @@ export default function MyProfile() {
         setUserID(user.user_id)
     }, [userID])
 
-    const { data } = useQuery(ProfileByUserId, {
+    const { data } = useQuery<Props>(ProfileByUserId, {
         variables: {
             userId: userID
         }
