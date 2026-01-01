@@ -15,7 +15,7 @@ import {
   UserCreation,
   UserSchema,
 } from "@/lib/validation/UserSchema";
-import { roles } from "@/lib/generated/prisma/enums";
+import { roles } from "@/lib/prisma/generated/prisma/enums";
 
 const { sign } = jsonwebtoken;
 

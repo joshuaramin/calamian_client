@@ -16,7 +16,7 @@ export const OrderQUery = extendType({
       type: "total",
       resolve: async (): Promise<any> => {
         const totalRevenue = (await prisma.order.findMany()).reduce(
-          (a, b) => a + b.total,
+          (a: any, b: { total: any; }) => a + b.total,
           0
         );
 
@@ -46,7 +46,7 @@ export const OrderQUery = extendType({
       resolve: async (): Promise<any> => {
         const orders = await prisma.order.findMany();
 
-        return orders.reduce((a, b) => a + b.total, 0);
+        return orders.reduce((a: any, b: { total: any; }) => a + b.total, 0);
       },
     });
     t.int("getTotalNoOfOrders", {

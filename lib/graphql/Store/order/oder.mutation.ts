@@ -41,7 +41,7 @@ export const OrderMutation = extendType({
           0
         );
 
-        return prisma.$transaction(async (tx) => {
+        return prisma.$transaction(async (tx: { order: { create: (arg0: { data: { order: string; total: number; createdAt: Date; orderList: { create: { quantity: any; total: any; items: { connect: { itemsID: any; }; }; }[]; }; }; }) => any; }; items: { findUnique: (arg0: { where: { itemsID: string; }; include: { info: boolean; }; }) => any; }; storeInfo: { update: (arg0: { where: { itemsID: string; }; data: { quantity: number; }; include: { items: boolean; }; }) => any; }; notification: { create: (arg0: { data: { notification: string; } | { notification: string; }; }) => any; }; }) => {
           const order = await tx.order.create({
             data: {
               order: `#${makeid(8)}`,
