@@ -29,6 +29,12 @@ function getApolloServer() {
         schema: join(process.cwd(), "src/api/generated/schema.graphql"),
         typegen: join(process.cwd(), "src/api/generated/schema.ts"),
       },
+      features: {
+        abstractTypeStrategies: {
+          resolveType: false,
+          isTypeOf: false,
+        },
+      },
       plugins: [declarativeWrappingPlugin()],
     });
 
@@ -42,4 +48,25 @@ function getApolloServer() {
   return apolloServer;
 }
 
-export default startServerAndCreateNextHandler(getApolloServer());
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
+  const server = getApolloServer();
+  const apolloHandler = startServerAndCreateNextHandler(server);
+
+  if (
+    req.method === "POST" &&
+    req.headers["content-type"]?.includes("application/json")
+  ) {
+    let body = "";
+    for await (const chunk of req) body += chunk;
+    try {
+      req.body = body ? JSON.parse(body) : {};
+    } catch {
+      req.body = {};
+    }
+  }
+
+  return apolloHandler(req, res);
+}
