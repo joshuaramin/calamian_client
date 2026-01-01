@@ -42,6 +42,11 @@ interface Expense {
     payDate: string
 }
 
+
+interface ExpenseByGroup {
+    getAllExpenseByGroup: []
+}[]
+
 interface ExpenseFolderProps {
     expensed: ExpenseFolder[]
 }
@@ -106,12 +111,11 @@ const FinanceID: FC = ({ expensed }: any) => {
 
     console.log(data)
 
-    const { loading: loadingGroup, data: expenseGroup } = useQuery(GetExpenseByGroup, {
+    const { loading: loadingGroup, data: expenseGroup } = useQuery<ExpenseByGroup>(GetExpenseByGroup, {
         variables: {
             expFolderId: router.query.id
         },
     })
-    console.log(expenseGroup)
     useEffect(() => {
 
         if (!addNewExpenses.amount || !addNewExpenses.expense || !addNewExpenses.mod || !addNewExpenses.payDate) {
@@ -162,7 +166,7 @@ const FinanceID: FC = ({ expensed }: any) => {
         setCSV(() => !CSV)
     }
 
-    const expenses = data?.getAllExpense
+    const expenses = data?.getAllExpense ?? []
 
     const toggleExpense = () => {
         setSelectedAll(!selectedAll)
@@ -283,7 +287,7 @@ const FinanceID: FC = ({ expensed }: any) => {
 
                                     return "rgba(" + r + "," + g + "," + b + ", 0.8)";
                                 },
-                                data: loadingGroup ? "" : expenseGroup.getAllExpenseByGroup.map(({ expense, amount }: { expense: string, amount: number }) => {
+                                data: loadingGroup ? "" : expenseGroup?.getAllExpenseByGroup.map(({ expense, amount }: { expense: string, amount: number }) => {
                                     return {
                                         x: expense, y: amount
                                     }
@@ -334,7 +338,7 @@ const FinanceID: FC = ({ expensed }: any) => {
                             </select>
                         </td>
                     </tr>
-                    {loading ? "" : data.getAllExpense.map(({ expenseID, expense, amount, mod, payDate }:
+                    {loading ? "" : data?.getAllExpense.map(({ expenseID, expense, amount, mod, payDate }:
                         { expenseID: string, expense: string, amount: number, mod: string, payDate: string }) => (
                         <ExpenseQuery
                             key={expenseID}
