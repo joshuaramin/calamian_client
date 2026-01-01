@@ -1,5 +1,7 @@
 import { ApolloServer } from "@apollo/server";
+import { ApolloServerPluginLandingPageLocalDefault } from "@apollo/server/plugin/landingPage/default";
 import { startServerAndCreateNextHandler } from "@as-integrations/next";
+import type { NextApiRequest, NextApiResponse } from "next";
 import { makeSchema, declarativeWrappingPlugin } from "nexus";
 import { join } from "node:path";
 
@@ -11,7 +13,13 @@ import * as Notification from "@/lib/graphql/Notification/notification";
 import * as ErrorObject from "@/lib/graphql/error/error.object";
 import * as Union from "@/lib/graphql/union/index";
 
-let apolloServer: ApolloServer;
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+};
+
+let apolloServer: ApolloServer | null = null;
 
 function getApolloServer() {
   if (!apolloServer) {
@@ -27,19 +35,11 @@ function getApolloServer() {
     apolloServer = new ApolloServer({
       schema,
       introspection: true,
+      plugins: [ApolloServerPluginLandingPageLocalDefault({ embed: true })],
     });
   }
 
   return apolloServer;
 }
 
-// Singleton wrapper to start the server **once**
-let serverHandler: any;
-export default async function handler(req: any, res: any) {
-  if (!serverHandler) {
-    const server = getApolloServer();
-    serverHandler = startServerAndCreateNextHandler(server);
-  }
-
-  return serverHandler(req, res);
-}
+export default startServerAndCreateNextHandler(getApolloServer());
