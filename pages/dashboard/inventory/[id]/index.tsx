@@ -234,17 +234,17 @@ export const getServerSideProps: GetServerSideProps<CategoryProps> = async (cont
     const categoryId = context.params?.id as string;
 
     try {
-        const { data } = await client.query<{ getCategoryById: Category }>({
+        const { data } = await client.query<{ getCategotiesById: Category }>({
             query: GetCategoryID,
             variables: { categoryId },
         });
 
-        if (!data?.getCategoryById) {
+        if (!data?.getCategotiesById) {
             return { notFound: true };
         }
 
         return {
-            props: { data: data.getCategoryById },
+            props: { data: data?.getCategotiesById },
         };
     } catch (err) {
         console.error("Error fetching category:", err);
