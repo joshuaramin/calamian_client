@@ -719,8 +719,8 @@ export type NexusGenAbstractsUsingStrategyResolveType = "AuthPayload" | "Expense
 
 export type NexusGenFeaturesConfig = {
   abstractTypeStrategies: {
+    resolveType: false
     isTypeOf: false
-    resolveType: true
     __typename: false
   }
 }

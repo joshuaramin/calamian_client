@@ -1,5 +1,5 @@
 import { objectType } from "nexus";
-import { prisma } from "@/lib/util/index";
+import { prisma } from "@/lib/prisma";
 
 export const ExpenseFolder = objectType({
   name: "expenseFolder",

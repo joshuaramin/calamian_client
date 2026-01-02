@@ -1,5 +1,5 @@
 import { extendType, idArg, nonNull, stringArg } from "nexus";
-import { prisma } from "@/lib/util/index";
+import { prisma } from "@/lib/prisma";
 import { Prisma, User } from "@/lib/prisma/generated/prisma/client";
 export const UserQuery = extendType({
   type: "Query",

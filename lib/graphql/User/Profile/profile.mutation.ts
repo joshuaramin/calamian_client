@@ -1,5 +1,5 @@
 import { extendType, idArg, nonNull, stringArg } from "nexus";
-import { prisma } from "@/lib/util/index";
+import { prisma } from "@/lib/prisma";
 import { GraphQLError } from "graphql";
 
 export const ProfileMutation = extendType({

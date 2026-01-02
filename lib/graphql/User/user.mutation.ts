@@ -6,7 +6,7 @@ import {
   nonNull,
   stringArg,
 } from "nexus";
-import { prisma } from "@/lib/util/index";
+import { prisma } from "@/lib/prisma";
 import jsonwebtoken from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import { GraphQLError } from "graphql";

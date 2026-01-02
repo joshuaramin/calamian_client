@@ -1,6 +1,5 @@
 import { extendType, inputObjectType, nonNull, stringArg, list } from "nexus";
-import { prisma } from "@/lib/util/index";
-
+import { prisma } from "@/lib/prisma";
 
 export const OrderInput = inputObjectType({
   name: "OrderInput",
@@ -10,7 +9,6 @@ export const OrderInput = inputObjectType({
     t.nonNull.float("total");
   },
 });
-
 
 function makeid(length: number): string {
   const chars = "ABCDEFGHIJKLMNOPQWERTUVWXYZ1234567890";
@@ -41,64 +39,101 @@ export const OrderMutation = extendType({
           0
         );
 
-        return prisma.$transaction(async (tx: { order: { create: (arg0: { data: { order: string; total: number; createdAt: Date; orderList: { create: { quantity: any; total: any; items: { connect: { itemsID: any; }; }; }[]; }; }; }) => any; }; items: { findUnique: (arg0: { where: { itemsID: string; }; include: { info: boolean; }; }) => any; }; storeInfo: { update: (arg0: { where: { itemsID: string; }; data: { quantity: number; }; include: { items: boolean; }; }) => any; }; notification: { create: (arg0: { data: { notification: string; } | { notification: string; }; }) => any; }; }) => {
-          const order = await tx.order.create({
-            data: {
-              order: `#${makeid(8)}`,
-              total: reduceTotal * 1.12,
-              createdAt: new Date(),
-              orderList: {
-                create: orders.map(({ itemsID, quantity, total }: any) => ({
-                  quantity,
-                  total,
-                  items: {
-                    connect: { itemsID },
-                  },
-                })),
+        return prisma.$transaction(
+          async (tx: {
+            order: {
+              create: (arg0: {
+                data: {
+                  order: string;
+                  total: number;
+                  createdAt: Date;
+                  orderList: {
+                    create: {
+                      quantity: any;
+                      total: any;
+                      items: { connect: { itemsID: any } };
+                    }[];
+                  };
+                };
+              }) => any;
+            };
+            items: {
+              findUnique: (arg0: {
+                where: { itemsID: string };
+                include: { info: boolean };
+              }) => any;
+            };
+            storeInfo: {
+              update: (arg0: {
+                where: { itemsID: string };
+                data: { quantity: number };
+                include: { items: boolean };
+              }) => any;
+            };
+            notification: {
+              create: (arg0: {
+                data: { notification: string } | { notification: string };
+              }) => any;
+            };
+          }) => {
+            const order = await tx.order.create({
+              data: {
+                order: `#${makeid(8)}`,
+                total: reduceTotal * 1.12,
+                createdAt: new Date(),
+                orderList: {
+                  create: orders.map(({ itemsID, quantity, total }: any) => ({
+                    quantity,
+                    total,
+                    items: {
+                      connect: { itemsID },
+                    },
+                  })),
+                },
               },
-            },
-          });
-
-          for (const order of orders) {
-            const prod = await tx.items.findUnique({
-              where: { itemsID: order.itemsID as string },
-              include: { info: true },
             });
 
-            if (!prod?.info) continue;
+            for (const order of orders) {
+              const prod = await tx.items.findUnique({
+                where: { itemsID: order.itemsID as string },
+                include: { info: true },
+              });
 
-            if (!order.quantity) {
-              return;
+              if (!prod?.info) continue;
+
+              if (!order.quantity) {
+                return;
+              }
+
+              const newQuantity = Math.max(
+                prod.info.quantity - order.quantity,
+                0
+              );
+
+              const updatedStoreInfo = await tx.storeInfo.update({
+                where: { itemsID: order.itemsID as string },
+                data: { quantity: newQuantity },
+                include: { items: true },
+              });
+
+              if (newQuantity <= 0) {
+                await tx.notification.create({
+                  data: {
+                    notification: `Attention! ${updatedStoreInfo.items?.items} is out of stock. Please contact your supplier.`,
+                  },
+                });
+              } else if (newQuantity < 50) {
+                await tx.notification.create({
+                  data: {
+                    notification: `Attention! ${updatedStoreInfo.items?.items} quantity is currently ${newQuantity}. Consider reordering soon.`,
+                  },
+                });
+              }
             }
 
-            const newQuantity = Math.max(
-              prod.info.quantity - order.quantity,
-              0
-            );
-
-            const updatedStoreInfo = await tx.storeInfo.update({
-              where: { itemsID: order.itemsID as string },
-              data: { quantity: newQuantity },
-              include: { items: true },
-            });
-
-            if (newQuantity <= 0) {
-              await tx.notification.create({
-                data: {
-                  notification: `Attention! ${updatedStoreInfo.items?.items} is out of stock. Please contact your supplier.`,
-                },
-              });
-            } else if (newQuantity < 50) {
-              await tx.notification.create({
-                data: {
-                  notification: `Attention! ${updatedStoreInfo.items?.items} quantity is currently ${newQuantity}. Consider reordering soon.`,
-                },
-              });
-            }
+            return order;
           }
-
-          return order;
-        });
+        );
       },
     });
 

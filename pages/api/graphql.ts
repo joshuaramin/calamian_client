@@ -48,7 +48,25 @@ function getApolloServer() {
   return apolloServer;
 }
 
-const server = getApolloServer();
-const handler = startServerAndCreateNextHandler(server);
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
+  const server = getApolloServer();
+  const apolloHandler = startServerAndCreateNextHandler(server);
 
-export default handler;
+  if (
+    req.method === "POST" &&
+    req.headers["content-type"]?.includes("application/json")
+  ) {
+    let body = "";
+    for await (const chunk of req) body += chunk;
+    try {
+      req.body = body ? JSON.parse(body) : {};
+    } catch {
+      req.body = {};
+    }
+  }
+
+  return apolloHandler(req, res);
+}

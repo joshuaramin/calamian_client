@@ -1,5 +1,5 @@
 import { extendType, idArg, intArg, nonNull, stringArg } from "nexus";
-import { prisma } from "@/lib/util/index";
+import { prisma } from "@/lib/prisma";
 
 export const LogsQuery = extendType({
   type: "Query",

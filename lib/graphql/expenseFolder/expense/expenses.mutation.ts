@@ -1,5 +1,5 @@
 import { extendType, idArg, inputObjectType, list, nonNull } from "nexus";
-import { prisma } from "@/lib/util/index";
+import { prisma } from "@/lib/prisma";
 import { ExpenseSchema } from "@/lib/validation/ExpenseSchema";
 
 export const ExpensesInput = inputObjectType({

@@ -16,59 +16,19 @@ import type * as Prisma from "./prismaNamespace"
 
 
 const config: runtime.GetPrismaClientConfig = {
-  "generator": {
-    "name": "client",
-    "provider": {
-      "fromEnvVar": null,
-      "value": "prisma-client"
-    },
-    "output": {
-      "value": "C:\\Users\\RAMIN\\Desktop\\calamian_client\\lib\\prisma\\generated\\prisma",
-      "fromEnvVar": null
-    },
-    "config": {
-      "engineType": "client"
-    },
-    "binaryTargets": [
-      {
-        "fromEnvVar": null,
-        "value": "windows",
-        "native": true
-      }
-    ],
-    "previewFeatures": [],
-    "sourceFilePath": "C:\\Users\\RAMIN\\Desktop\\calamian_client\\lib\\prisma\\schema.prisma",
-    "isCustomOutput": true
-  },
-  "relativePath": "../..",
-  "clientVersion": "6.19.0",
-  "engineVersion": "2ba551f319ab1df4bc874a89965d8b3641056773",
-  "datasourceNames": [
-    "db"
-  ],
+  "previewFeatures": [],
+  "clientVersion": "7.2.0",
+  "engineVersion": "0c8ef2ce45c83248ab3df073180d5eda9e8be7a3",
   "activeProvider": "postgresql",
-  "postinstall": false,
-  "inlineDatasources": {
-    "db": {
-      "url": {
-        "fromEnvVar": "DATABASE_URL",
-        "value": null
-      }
-    }
-  },
-  "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\ngenerator client {\n  provider   = \"prisma-client\"\n  output     = \"./generated/prisma\"\n  engineType = \"client\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nenum roles {\n  admin\n  manager\n  staff\n}\n\nenum notifStatus {\n  read\n  unread\n}\n\nmodel User {\n  userID       String         @id @default(cuid())\n  email        String         @unique\n  password     String\n  role         roles\n  Profile      Profile?\n  salary       salary?\n  notification notification[]\n  expFolder    expFolder[]\n  logs         logs[]\n  is_deleted   Boolean        @default(false) @db.Boolean\n  createdAt    DateTime       @default(now()) @db.Timestamp()\n  updatedAt    DateTime       @default(now()) @db.Timestamp()\n}\n\nmodel notification {\n  notificationID String      @id @default(cuid())\n  notification   String\n  notifStatus    notifStatus @default(unread)\n  createdAt      DateTime    @default(now())\n  User           User?       @relation(fields: [userID], references: [userID])\n  userID         String?\n}\n\nmodel expFolder {\n  expFolderID String    @id @default(cuid())\n  exFolder    String\n  createdAt   DateTime  @default(now()) @db.Timestamp()\n  expense     expense[]\n  is_deleted  Boolean   @default(false) @db.Boolean\n  User        User?     @relation(fields: [userID], references: [userID])\n  userID      String?\n}\n\nmodel expense {\n  expenseID   String     @id @default(cuid())\n  expense     String\n  amount      Float\n  mod         String\n  payDate     DateTime\n  is_deleted  Boolean    @default(false) @db.Boolean\n  createdAt   DateTime   @default(now()) @db.Timestamp()\n  updatedAt   DateTime   @default(now()) @db.Timestamp()\n  expFolder   expFolder? @relation(fields: [expFolderID], references: [expFolderID])\n  expFolderID String?\n}\n\nmodel salary {\n  salaryID  String   @id @default(cuid())\n  salary    Float\n  createdAt DateTime @default(now()) @db.Timestamp()\n  updatedAt DateTime @default(now()) @db.Timestamp()\n  User      User?    @relation(fields: [userID], references: [userID])\n  userID    String?  @unique\n}\n\nmodel Profile {\n  profileID String   @id @default(cuid())\n  firstname String\n  lastname  String\n  phone     String\n  birthday  DateTime @db.Date\n  User      User?    @relation(fields: [userID], references: [userID])\n  userID    String?  @unique\n}\n\nmodel category {\n  categoryID String   @id @default(cuid())\n  category   String\n  is_deleted Boolean  @default(false) @db.Boolean\n  createdAt  DateTime @default(now()) @db.Timestamp()\n  updatedAt  DateTime @default(now()) @db.Timestamp()\n  items      items[]\n}\n\nmodel items {\n  itemsID       String           @id @default(cuid())\n  items         String\n  dosage        String?\n  category      category[]\n  info          storeInfo?\n  is_deleted    Boolean          @default(false) @db.Boolean\n  createdAt     DateTime         @default(now()) @db.Timestamp()\n  updatedAt     DateTime         @default(now()) @db.Timestamp()\n  OrderListItem OrederListitem[]\n}\n\nmodel storeInfo {\n  storeinfoID String    @id @default(cuid())\n  price       Float\n  quantity    Int\n  expiredDate DateTime? @db.Date\n  createdAt   DateTime  @default(now()) @db.Timestamp()\n  updatedAt   DateTime  @default(now()) @db.Timestamp()\n  items       items?    @relation(fields: [itemsID], references: [itemsID])\n  itemsID     String?   @unique\n}\n\nmodel OrederListitem {\n  orderListItemID String   @id @default(cuid())\n  total           Float\n  quantity        Int\n  items           items[]\n  createdAt       DateTime @default(now()) @db.Timestamp()\n  Order           Order?   @relation(fields: [orderID], references: [orderID])\n  orderID         String?\n}\n\nmodel Order {\n  orderID   String           @id @default(cuid())\n  order     String\n  total     Float\n  orderList OrederListitem[]\n  createdAt DateTime\n}\n\nmodel logs {\n  logsID       String   @id @default(cuid())\n  logs         String\n  descriptions String\n  createdAt    DateTime @default(now()) @db.Timestamp()\n  User         User?    @relation(fields: [userID], references: [userID])\n  userID       String?\n}\n",
-  "inlineSchemaHash": "2ac0e38d64e29cd4ddc548e741d592c2a18d32c9c3c7da230b435f87b2ddcbf9",
-  "copyEngine": true,
+  "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\ngenerator client {\n  provider   = \"prisma-client\"\n  output     = \"./generated/prisma\"\n  engineType = \"client\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n}\n\nenum roles {\n  admin\n  manager\n  staff\n}\n\nenum notifStatus {\n  read\n  unread\n}\n\nmodel User {\n  userID       String         @id @default(cuid())\n  email        String         @unique\n  password     String\n  role         roles\n  Profile      Profile?\n  salary       salary?\n  notification notification[]\n  expFolder    expFolder[]\n  logs         logs[]\n  is_deleted   Boolean        @default(false) @db.Boolean\n  createdAt    DateTime       @default(now()) @db.Timestamp()\n  updatedAt    DateTime       @default(now()) @db.Timestamp()\n}\n\nmodel notification {\n  notificationID String      @id @default(cuid())\n  notification   String\n  notifStatus    notifStatus @default(unread)\n  createdAt      DateTime    @default(now())\n  User           User?       @relation(fields: [userID], references: [userID])\n  userID         String?\n}\n\nmodel expFolder {\n  expFolderID String    @id @default(cuid())\n  exFolder    String\n  createdAt   DateTime  @default(now()) @db.Timestamp()\n  expense     expense[]\n  is_deleted  Boolean   @default(false) @db.Boolean\n  User        User?     @relation(fields: [userID], references: [userID])\n  userID      String?\n}\n\nmodel expense {\n  expenseID   String     @id @default(cuid())\n  expense     String\n  amount      Float\n  mod         String\n  payDate     DateTime\n  is_deleted  Boolean    @default(false) @db.Boolean\n  createdAt   DateTime   @default(now()) @db.Timestamp()\n  updatedAt   DateTime   @default(now()) @db.Timestamp()\n  expFolder   expFolder? @relation(fields: [expFolderID], references: [expFolderID])\n  expFolderID String?\n}\n\nmodel salary {\n  salaryID  String   @id @default(cuid())\n  salary    Float\n  createdAt DateTime @default(now()) @db.Timestamp()\n  updatedAt DateTime @default(now()) @db.Timestamp()\n  User      User?    @relation(fields: [userID], references: [userID])\n  userID    String?  @unique\n}\n\nmodel Profile {\n  profileID String   @id @default(cuid())\n  firstname String\n  lastname  String\n  phone     String\n  birthday  DateTime @db.Date\n  User      User?    @relation(fields: [userID], references: [userID])\n  userID    String?  @unique\n}\n\nmodel category {\n  categoryID String   @id @default(cuid())\n  category   String\n  is_deleted Boolean  @default(false) @db.Boolean\n  createdAt  DateTime @default(now()) @db.Timestamp()\n  updatedAt  DateTime @default(now()) @db.Timestamp()\n  items      items[]\n}\n\nmodel items {\n  itemsID       String           @id @default(cuid())\n  items         String\n  dosage        String?\n  category      category[]\n  info          storeInfo?\n  is_deleted    Boolean          @default(false) @db.Boolean\n  createdAt     DateTime         @default(now()) @db.Timestamp()\n  updatedAt     DateTime         @default(now()) @db.Timestamp()\n  OrderListItem OrederListitem[]\n}\n\nmodel storeInfo {\n  storeinfoID String    @id @default(cuid())\n  price       Float\n  quantity    Int\n  expiredDate DateTime? @db.Date\n  createdAt   DateTime  @default(now()) @db.Timestamp()\n  updatedAt   DateTime  @default(now()) @db.Timestamp()\n  items       items?    @relation(fields: [itemsID], references: [itemsID])\n  itemsID     String?   @unique\n}\n\nmodel OrederListitem {\n  orderListItemID String   @id @default(cuid())\n  total           Float\n  quantity        Int\n  items           items[]\n  createdAt       DateTime @default(now()) @db.Timestamp()\n  Order           Order?   @relation(fields: [orderID], references: [orderID])\n  orderID         String?\n}\n\nmodel Order {\n  orderID   String           @id @default(cuid())\n  order     String\n  total     Float\n  orderList OrederListitem[]\n  createdAt DateTime\n}\n\nmodel logs {\n  logsID       String   @id @default(cuid())\n  logs         String\n  descriptions String\n  createdAt    DateTime @default(now()) @db.Timestamp()\n  User         User?    @relation(fields: [userID], references: [userID])\n  userID       String?\n}\n",
   "runtimeDataModel": {
     "models": {},
     "enums": {},
     "types": {}
-  },
-  "dirname": ""
+  }
 }
 
 config.runtimeDataModel = JSON.parse("{\"models\":{\"User\":{\"fields\":[{\"name\":\"userID\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"password\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"role\",\"kind\":\"enum\",\"type\":\"roles\"},{\"name\":\"Profile\",\"kind\":\"object\",\"type\":\"Profile\",\"relationName\":\"ProfileToUser\"},{\"name\":\"salary\",\"kind\":\"object\",\"type\":\"salary\",\"relationName\":\"UserTosalary\"},{\"name\":\"notification\",\"kind\":\"object\",\"type\":\"notification\",\"relationName\":\"UserTonotification\"},{\"name\":\"expFolder\",\"kind\":\"object\",\"type\":\"expFolder\",\"relationName\":\"UserToexpFolder\"},{\"name\":\"logs\",\"kind\":\"object\",\"type\":\"logs\",\"relationName\":\"UserTologs\"},{\"name\":\"is_deleted\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null},\"notification\":{\"fields\":[{\"name\":\"notificationID\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"notification\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"notifStatus\",\"kind\":\"enum\",\"type\":\"notifStatus\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"User\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"UserTonotification\"},{\"name\":\"userID\",\"kind\":\"scalar\",\"type\":\"String\"}],\"dbName\":null},\"expFolder\":{\"fields\":[{\"name\":\"expFolderID\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"exFolder\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"expense\",\"kind\":\"object\",\"type\":\"expense\",\"relationName\":\"expFolderToexpense\"},{\"name\":\"is_deleted\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"User\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"UserToexpFolder\"},{\"name\":\"userID\",\"kind\":\"scalar\",\"type\":\"String\"}],\"dbName\":null},\"expense\":{\"fields\":[{\"name\":\"expenseID\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"expense\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"amount\",\"kind\":\"scalar\",\"type\":\"Float\"},{\"name\":\"mod\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"payDate\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"is_deleted\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"expFolder\",\"kind\":\"object\",\"type\":\"expFolder\",\"relationName\":\"expFolderToexpense\"},{\"name\":\"expFolderID\",\"kind\":\"scalar\",\"type\":\"String\"}],\"dbName\":null},\"salary\":{\"fields\":[{\"name\":\"salaryID\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"salary\",\"kind\":\"scalar\",\"type\":\"Float\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"User\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"UserTosalary\"},{\"name\":\"userID\",\"kind\":\"scalar\",\"type\":\"String\"}],\"dbName\":null},\"Profile\":{\"fields\":[{\"name\":\"profileID\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"firstname\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"lastname\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"phone\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"birthday\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"User\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"ProfileToUser\"},{\"name\":\"userID\",\"kind\":\"scalar\",\"type\":\"String\"}],\"dbName\":null},\"category\":{\"fields\":[{\"name\":\"categoryID\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"category\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"is_deleted\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"items\",\"kind\":\"object\",\"type\":\"items\",\"relationName\":\"categoryToitems\"}],\"dbName\":null},\"items\":{\"fields\":[{\"name\":\"itemsID\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"items\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"dosage\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"category\",\"kind\":\"object\",\"type\":\"category\",\"relationName\":\"categoryToitems\"},{\"name\":\"info\",\"kind\":\"object\",\"type\":\"storeInfo\",\"relationName\":\"itemsTostoreInfo\"},{\"name\":\"is_deleted\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"OrderListItem\",\"kind\":\"object\",\"type\":\"OrederListitem\",\"relationName\":\"OrederListitemToitems\"}],\"dbName\":null},\"storeInfo\":{\"fields\":[{\"name\":\"storeinfoID\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"price\",\"kind\":\"scalar\",\"type\":\"Float\"},{\"name\":\"quantity\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"expiredDate\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"items\",\"kind\":\"object\",\"type\":\"items\",\"relationName\":\"itemsTostoreInfo\"},{\"name\":\"itemsID\",\"kind\":\"scalar\",\"type\":\"String\"}],\"dbName\":null},\"OrederListitem\":{\"fields\":[{\"name\":\"orderListItemID\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"total\",\"kind\":\"scalar\",\"type\":\"Float\"},{\"name\":\"quantity\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"items\",\"kind\":\"object\",\"type\":\"items\",\"relationName\":\"OrederListitemToitems\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"Order\",\"kind\":\"object\",\"type\":\"Order\",\"relationName\":\"OrderToOrederListitem\"},{\"name\":\"orderID\",\"kind\":\"scalar\",\"type\":\"String\"}],\"dbName\":null},\"Order\":{\"fields\":[{\"name\":\"orderID\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"order\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"total\",\"kind\":\"scalar\",\"type\":\"Float\"},{\"name\":\"orderList\",\"kind\":\"object\",\"type\":\"OrederListitem\",\"relationName\":\"OrderToOrederListitem\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null},\"logs\":{\"fields\":[{\"name\":\"logsID\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"logs\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"descriptions\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"User\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"UserTologs\"},{\"name\":\"userID\",\"kind\":\"scalar\",\"type\":\"String\"}],\"dbName\":null}},\"enums\":{},\"types\":{}}")
-config.engineWasm = undefined
 
 async function decodeBase64AsWasm(wasmBase64: string): Promise<WebAssembly.Module> {
   const { Buffer } = await import('node:buffer')
@@ -87,7 +47,6 @@ config.compilerWasm = {
 
 
 
-
 export type LogOptions<ClientOptions extends Prisma.PrismaClientOptions> =
   'log' extends keyof ClientOptions ? ClientOptions['log'] extends Array<Prisma.LogLevel | Prisma.LogDefinition> ? Prisma.GetEvents<ClientOptions['log']> : never : never
 
@@ -103,7 +62,7 @@ export interface PrismaClientConstructor {
    * const users = await prisma.user.findMany()
    * ```
    * 
-   * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client).
+   * Read more in our [docs](https://pris.ly/d/client).
    */
 
   new <
@@ -111,7 +70,7 @@ export interface PrismaClientConstructor {
     LogOpts extends LogOptions<Options> = LogOptions<Options>,
     OmitOpts extends Prisma.PrismaClientOptions['omit'] = Options extends { omit: infer U } ? U : Prisma.PrismaClientOptions['omit'],
     ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs
-  >(options?: Prisma.Subset<Options, Prisma.PrismaClientOptions> ): PrismaClient<LogOpts, OmitOpts, ExtArgs>
+  >(options: Prisma.Subset<Options, Prisma.PrismaClientOptions> ): PrismaClient<LogOpts, OmitOpts, ExtArgs>
 }
 
 /**
@@ -125,12 +84,12 @@ export interface PrismaClientConstructor {
  * const users = await prisma.user.findMany()
  * ```
  * 
- * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client).
+ * Read more in our [docs](https://pris.ly/d/client).
  */
 
 export interface PrismaClient<
   in LogOpts extends Prisma.LogLevel = never,
-  in out OmitOpts extends Prisma.PrismaClientOptions['omit'] = Prisma.PrismaClientOptions['omit'],
+  in out OmitOpts extends Prisma.PrismaClientOptions['omit'] = undefined,
   in out ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs
 > {
   [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['other'] }
@@ -154,7 +113,7 @@ export interface PrismaClient<
    * const result = await prisma.$executeRaw`UPDATE User SET cool = ${true} WHERE email = ${'user@email.com'};`
    * ```
    *
-   * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/raw-database-access).
+   * Read more in our [docs](https://pris.ly/d/raw-queries).
    */
   $executeRaw<T = unknown>(query: TemplateStringsArray | Prisma.Sql, ...values: any[]): Prisma.PrismaPromise<number>;
 
@@ -166,7 +125,7 @@ export interface PrismaClient<
    * const result = await prisma.$executeRawUnsafe('UPDATE User SET cool = $1 WHERE email = $2 ;', true, 'user@email.com')
    * ```
    *
-   * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/raw-database-access).
+   * Read more in our [docs](https://pris.ly/d/raw-queries).
    */
   $executeRawUnsafe<T = unknown>(query: string, ...values: any[]): Prisma.PrismaPromise<number>;
 
@@ -177,7 +136,7 @@ export interface PrismaClient<
    * const result = await prisma.$queryRaw`SELECT * FROM User WHERE id = ${1} OR email = ${'user@email.com'};`
    * ```
    *
-   * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/raw-database-access).
+   * Read more in our [docs](https://pris.ly/d/raw-queries).
    */
   $queryRaw<T = unknown>(query: TemplateStringsArray | Prisma.Sql, ...values: any[]): Prisma.PrismaPromise<T>;
 
@@ -189,7 +148,7 @@ export interface PrismaClient<
    * const result = await prisma.$queryRawUnsafe('SELECT * FROM User WHERE id = $1 OR email = $2;', 1, 'user@email.com')
    * ```
    *
-   * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/raw-database-access).
+   * Read more in our [docs](https://pris.ly/d/raw-queries).
    */
   $queryRawUnsafe<T = unknown>(query: string, ...values: any[]): Prisma.PrismaPromise<T>;
 
@@ -210,7 +169,6 @@ export interface PrismaClient<
   $transaction<P extends Prisma.PrismaPromise<any>[]>(arg: [...P], options?: { isolationLevel?: Prisma.TransactionIsolationLevel }): runtime.Types.Utils.JsPromise<runtime.Types.Utils.UnwrapTuple<P>>
 
   $transaction<R>(fn: (prisma: Omit<PrismaClient, runtime.ITXClientDenyList>) => runtime.Types.Utils.JsPromise<R>, options?: { maxWait?: number, timeout?: number, isolationLevel?: Prisma.TransactionIsolationLevel }): runtime.Types.Utils.JsPromise<R>
-
 
   $extends: runtime.Types.Extensions.ExtendsHook<"extends", Prisma.TypeMapCb<OmitOpts>, ExtArgs, runtime.Types.Utils.Call<Prisma.TypeMapCb<OmitOpts>, {
     extArgs: ExtArgs
@@ -337,7 +295,6 @@ export interface PrismaClient<
   get logs(): Prisma.logsDelegate<ExtArgs, { omit: OmitOpts }>;
 }
 
-export function getPrismaClientClass(dirname: string): PrismaClientConstructor {
-  config.dirname = dirname
+export function getPrismaClientClass(): PrismaClientConstructor {
   return runtime.getPrismaClient(config) as unknown as PrismaClientConstructor
 }
