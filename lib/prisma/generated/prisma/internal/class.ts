@@ -23,7 +23,7 @@ const config: runtime.GetPrismaClientConfig = {
       "value": "prisma-client"
     },
     "output": {
-      "value": "C:\\Users\\ramin\\Desktop\\calamian\\calamian_client\\lib\\prisma\\generated\\prisma",
+      "value": "C:\\Users\\RAMIN\\Desktop\\calamian_client\\lib\\prisma\\generated\\prisma",
       "fromEnvVar": null
     },
     "config": {
@@ -37,7 +37,7 @@ const config: runtime.GetPrismaClientConfig = {
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "C:\\Users\\ramin\\Desktop\\calamian\\calamian_client\\lib\\prisma\\schema.prisma",
+    "sourceFilePath": "C:\\Users\\RAMIN\\Desktop\\calamian_client\\lib\\prisma\\schema.prisma",
     "isCustomOutput": true
   },
   "relativePath": "../..",
