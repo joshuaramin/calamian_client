@@ -32,7 +32,7 @@ type ItemTrProps = {
 type UpdateMedicalItemVars = {
     itemsId: string;
     userId: string;
-    items: {
+    item: {
         items: string;
         price: number;
         quantity: number;
@@ -61,8 +61,8 @@ export default function ItemTr({
     const [ed, setEdit] = useState(false);
     const [del, setDelete] = useState(false);
 
-    const [UpdateMutate] = useMutation<unknown, UpdateMedicalItemVars>(UpdateMedicalItem);
-    const [DeleteMutation] = useMutation<unknown, DeleteMedicalItemVars>(DeleteMedicalItem);
+    const [UpdateMutate] = useMutation<UpdateMedicalItemVars>(UpdateMedicalItem);
+    const [DeleteMutation] = useMutation<DeleteMedicalItemVars>(DeleteMedicalItem);
 
     const { register, formState: { errors }, handleSubmit } = useForm<ItemFormValue>({
         resolver: zodResolver(ItemSchema),
@@ -81,7 +81,7 @@ export default function ItemTr({
             variables: {
                 itemsId: itemsID,
                 userId,
-                items: {
+                item: {
                     items: data.items,
                     price: data.price,
                     quantity: data.quantity,
@@ -89,7 +89,10 @@ export default function ItemTr({
                     dosage: data.dosage || "",
                 },
             },
-            onCompleted: () => toast.success('Successfully Updated'),
+            onCompleted: () => {
+                toast.success('Successfully Updated')
+                router.reload();
+            },
             refetchQueries: [
                 {
                     query: getItemByCategoryid,
@@ -165,7 +168,7 @@ export default function ItemTr({
                                     icon={false}
                                     isRequired={true}
                                     label="Item Name"
-                                    name="item"
+                                    name="items"
                                     type="text"
                                     register={register}
                                     error={errors.items}

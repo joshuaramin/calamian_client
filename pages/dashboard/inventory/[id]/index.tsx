@@ -106,6 +106,8 @@ const Index: FC<CategoryProps> = ({ data }) => {
                     quantity: 1,
                 });
                 add.updateToggle();
+
+                router.reload()
             },
         });
     };

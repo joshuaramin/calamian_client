@@ -59,7 +59,7 @@ export default function Items({ categoryID, search, userId }: any) {
                         data.getItemsByCategoryId.map(({ itemsID, items, dosage, storeInfo }, itemIndex) =>
                             storeInfo.map(({ price, quantity, expiredDate }: any, infoIndex: any) => (
                                 <ItemQuery
-                                    key={`${itemsID}-${infoIndex}`} // unique key
+                                    key={`${itemsID}-${infoIndex}`}
                                     itemsID={itemsID}
                                     items={items}
                                     dosage={dosage}

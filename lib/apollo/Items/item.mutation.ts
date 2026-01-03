@@ -31,8 +31,8 @@ export const DeleteMedicalItem = gql`
 `;
 
 export const UpdateMedicalItem = gql`
-  mutation UpdateMedicalitems($itemsId: ID!, $userId: ID!, $items: itemInput) {
-    updateMedicalitems(itemsID: $itemsId, userID: $userId, items: $items) {
+  mutation UpdateMedicalitems($itemsId: ID!, $userId: ID!, $item: itemInput) {
+    updateMedicalitems(itemsID: $itemsId, userID: $userId, item: $item) {
       dosage
       items
       itemsID
